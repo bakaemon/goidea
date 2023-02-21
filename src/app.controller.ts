@@ -6,8 +6,13 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get("/login")
+  login(@Res() res: Response) {
+    return res.render('login', { layout: 'login' });
+  }
   @Get()
   root(@Res() res: Response) {
-    return res.render('index', { layout: 'login' });
+    return res.render('index', { layout: 'main' });
   }
+
 }

@@ -1,34 +1,108 @@
-window.onload = function () {
-    if (localStorage.getItem('token') == null) {
-        window.location.href = "/auth/login";
-    }
-    else {
-        var token = localStorage.getItem('token');
-        var decoded = jwt_decode(token);
-        if (decoded.role != "admin") {
-            window.location.href = "/auth/login";
-        }
-        else {
-            var id = decoded.id;
-            var username = decoded.username;
-            var displayName = decoded.display_name;
-            var role = decoded.role;
-            var email = decoded.email;
-            var created_at = decoded.created_at;
-            var updated_at = decoded.updated_at;
+// async function loadTable() {
+//     var table = new DataTable('#information');
+//     var res = await fetch('/accounts/api/all', {headers: {'Authorization': 'Bearer ' + getCookie('token')}});
+//     if (!res.ok) {
+//         var resData = await res.json();
+//         console.log(resData);
+//         alert(resData.message);
+//         return;
+//     }
+//     var jsonData = (await res.json()).data;
+//     var tableData = [];
+//     for (var row of jsonData)
+//     {
+//         row.actions = `
+//         <button class="actionBtn fa fa-pencil-square-o"
+//                                 onclick="editUser('${row._id}')">Edit</button>
+//         <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
+//         `;
+//         tableData.push(row);
+//     }
+//     console.log(tableData);
+//     table.insert(tableData);
+// }
 
-            document.getElementById('id').innerHTML = id;
-            document.getElementById('username').innerHTML = username;
-            document.getElementById('displayName').innerHTML = displayName;
-            document.getElementById('role').innerHTML = role;
-            document.getElementById('email').innerHTML = email;
-            document.getElementById('created_at').innerHTML = created_at;
-            document.getElementById('updated_at').innerHTML = updated_at;
+// async function loadTable() {
+//     var table = new simpleDatatables.DataTable('#information');
+//     var res = await fetch('/accounts/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } });
+//     var jsonData = await (await res.json()).data;
+//     var newData = [];
+//     for (var row of jsonData) {
+//         var roles = row.roles;
+//         delete row.roles;
+//         delete row.__v;
+//         var newRow = {
+//             ...row,
+//             roles: roles.join(', '),
+//             actions: `
+//         <button class="actionBtn fa fa-pencil-square-o"
+//                                 onclick="editUser('${row._id}')">Edit</button>
+//         <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
+//         `,
 
-    }
+//         };
+//         newData.push(newRow);
+//     }
+//     console.log(newData);
+//     table.insert(newData);
+// }
+async function loadTable() {
+    var tableArea = document.getElementById('table-area');
+    tableArea.innerHTML = "";
+    var table = document.createElement('table');
+    table.id = 'information';
+    document.getElementById('table-area').appendChild(table);
+    // fetch("https://raw.githubusercontent.com/fiduswriter/simple-datatables/main/docs/demos/18-fetch-api/demo.json")
+    fetch('/accounts/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } })
+        .then(
+            response => response.json()
+        ).then(
+            resData => {
+                var data = resData.data;
+                if (!data.length) {
+                    return
+                }
+                var newHeaders = Object.keys(data[0]);
+                newHeaders[newHeaders.indexOf('_id')] = 'ID';
+                newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
+                newHeaders.push('Actions');
+                var newRows = [];
+                for (var row of data) {
+                    var newRow = [];
+                    for (var key in row) {
+                        if (key == 'roles') {
+                            newRow.push(row[key].join(', '));
+                        }
+                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt') {
+                            continue;
+                        } else newRow.push(row[key]);
+                    }
+                    newRow.push(`
+                        <button class="actionBtn fa fa-pencil-square-o"
+                                                onclick="editUser('${row._id}')">Edit</button>
+                        <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
+                `);
+                    newRows.push(newRow);
+                }
+                console.log(newRows);
+                new simpleDatatables.DataTable(table, {
+                    data: {
+                        headings: newHeaders,
+                        data: newRows
+                    }
+                })
+            }
+        )
 }
 
-async function deleteAccount() {
+
+
+async function editUser(id) {
+    document.getElementById('id01').style.display = 'block'
+}
+
+
+async function deleteAccount(id) {
     var x = confirm("Are you sure you want to delete this account?");
     if (x) {
         try {
@@ -36,18 +110,19 @@ async function deleteAccount() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + getCookie('token')
                 },
                 body: JSON.stringify({
-                    id: id
+                    accountId: id
                 })
             });
-            if (res.success) {
-                alert(res.message);
-                window.location.href = "/admin/users";
+            var data = await res.json();
+            if (data.success) {
+                alert(data.message);
+                loadTable();
             }
             else {
-                alert(res.message);
+                alert(data.message);
             }
         }
         catch (err) {
@@ -58,3 +133,6 @@ async function deleteAccount() {
         return false;
 }
 
+window.onload = async (e) => {
+    loadTable();
+}

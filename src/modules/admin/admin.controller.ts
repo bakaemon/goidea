@@ -1,10 +1,16 @@
-import { Controller, Get, Render, Res } from '@nestjs/common';
+import { Controller, Get, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Response } from 'express';
+import Role from '@src/common/enums/role.enum';
+import RoleGuard from '@src/common/guards/role.guard';
+import { HttpAuthFilter } from '@common/filters/http-unauthorize-filter';
+import HttpRoleGuard from '@src/common/guards/http-role.guard';
 
 @Controller()
+@UseFilters(HttpAuthFilter)
+@UseGuards(HttpRoleGuard(Role.Admin))
 export class AdminController {
-  constructor(private readonly appService: AdminService) {}
+  constructor(private readonly appService: AdminService) { }
 
   @Get()
   root(@Res() res: Response) {
@@ -13,7 +19,7 @@ export class AdminController {
 
   @Get('users')
   users(@Res() res: Response) {
-    return res.render('roles/admin/user_index', { layout: 'admin' });
+    return res.render('roles/admin/user_index', { layout: 'main' });
   }
 
   @Get('users/create')

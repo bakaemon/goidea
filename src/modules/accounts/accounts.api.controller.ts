@@ -27,7 +27,13 @@ export class AccountsAPIController {
         @Query() filter: FindAccountFilterDto,
         @Query() options: PaginationParamsDto
     ) {
-        return this.accountsService.findAll(filter, options);
+        try {
+            return this.accountsService.findAll(filter, options);
+        } catch (error) {
+            return {
+                message: error.message
+            }
+        }
     }
 
 

@@ -17,7 +17,7 @@ import RoleGuard from '@src/common/guards/role.guard';
 
 
 @Controller('api')
-export class AuthController {
+export class AuthAPIController {
     constructor(
         private authService: AuthService,
         private accountService: AccountsService,
@@ -85,7 +85,7 @@ export class AuthController {
     // }
 
     @Post("login")
-    async login(@Body() loginDto: LoginDto) {
+    async login(@Body() loginDto: LoginDto, @Res({passthrough: true}) res) {
         try {
 
             const account = await this.authService.authenticate(loginDto.loginField, loginDto.password);
@@ -102,20 +102,22 @@ export class AuthController {
                 accessTokenExpiresAt
             } = await this.authService.generateAuthTokens(payload, account);
 
-
-            return {
+            const response = {
                 access_token,
                 access_token_expires_at: accessTokenExpiresAt,
                 refresh_token,
                 account,
                 success: true
             };
+            
+            return response;
         } catch (e) {
             console.log(e);
             if (e.message === "verifyAccount") throw new HttpException("Please verify your email to continue", HttpStatus.INTERNAL_SERVER_ERROR);
             else throw new HttpException("Login failed", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     @Post("refresh")
     async refresh_token(@Req() req, @Res() res) {

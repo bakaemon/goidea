@@ -6,6 +6,7 @@ import * as hbs from 'express-handlebars';
 import * as bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
 import { RATE_LIMIT_MAX, PORT } from './configs/env';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,6 +24,9 @@ async function bootstrap() {
 
   // NOTE: body parser
   app.use(bodyParser.json({ limit: "50mb" }));
+
+  // cookie parser
+  app.use(cookieParser());
 
   app.use(
     bodyParser.urlencoded({

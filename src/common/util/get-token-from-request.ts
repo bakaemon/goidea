@@ -14,3 +14,13 @@ export const getTokenFromRequest = (req) => {
     }
     return token;
 }
+
+export const getTokenFromCookies = (req) => {
+    let token;
+
+    const tokenQuery = req.cookies['token'];
+    if (tokenQuery) {
+        token = tokenQuery;
+    }
+    return token;
+}
