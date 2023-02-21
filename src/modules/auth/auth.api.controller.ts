@@ -14,6 +14,8 @@ import { RegisterAccountDto } from "./dto/register.dto";
 import { ForgetPasswordDto } from "./dto/forget-password.dto";
 import Role from '@src/common/enums/role.enum';
 import RoleGuard from '@src/common/guards/role.guard';
+import { Request } from 'express';
+import { ObjectId } from 'mongoose';
 
 
 @Controller('api')
@@ -160,7 +162,12 @@ export class AuthAPIController {
 
     @Delete("admin_remove")
     @UseGuards(RoleGuard(Role.Admin))
-    async removeAccount(@Body() { accountId }: { accountId: string }) {
+    async removeAccount(@Body() { accountId }: { accountId: string }, @AccountDecorator() account: AccountDocument) {
+        const id = account._id as ObjectId;
+        console.log(id.toString());
+        if (id.toString() == accountId) {
+            throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
+        }
         await this.accountService.delete({ _id: accountId });
         return {
             message: "Remove account successfully",
