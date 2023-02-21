@@ -13,7 +13,7 @@ export class AdminController {
 
   @Get('users')
   users(@Res() res: Response) {
-    return res.render('roles/admin/user_index', { layout: 'auth' });
+    return res.render('roles/admin/user_index', { layout: 'admin' });
   }
 
   @Get('users/create')

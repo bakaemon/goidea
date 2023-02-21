@@ -1,23 +1,4 @@
-<section class="page-content">
-    <section class="search-and-user">
-        <form>
-            <input type="search" placeholder="Search Users..." style="color: black;">
-            <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                    <use xlink:href="#search"></use>
-                </svg>
-            </button>
-        </form>
-        <div class="admin-profile">
-            <span class="greeting">Hello admin</span>
-            <div class="notifications">
-                <span class="badge">1</span>
-                <svg>
-                    <use xlink:href="#users"></use>
-                </svg>
-            </div>
-        </div>
-    </section>
+
     <section>
         <h2>Users Page</h3>
             <form class="btnPos">
@@ -41,22 +22,27 @@
                         <td>lorem3</td>
                         <td>lorem4</td>
                         <td>
-
                             <button class="actionBtn fa fa-pencil-square-o"
                                 onclick="document.getElementById('id01').style.display='block'">Edit</button>
                             <div id="id01" class="modal">
-                                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-                                <div class="container">
-                                    <label for="name"><b>Name</b></label>
-                                    <input type="text" placeholder="User Name" id="username" name="name" required>
-                                    <label for="email"><b>Email</b></label>
-                                    <input type="email" placeholder="abc@email.com" name="email" id="email" required>
-                                </div>
-                                <div class="container" style="background-color:#f1f1f1">
-                                    <button type="button" onclick="document.getElementById('id01').style.display='none'"
-                                        class="cancelbtn">Cancel</button>
-                                    <span class="psw">Forgot <a href="#">password?</a></span>
-                                </div>
+                                <form class="modal-content animate">
+                                    <div class="imgcontainer">
+                                        <span onclick="document.getElementById('id01').style.display='none'"
+                                            class="close" title="Close">&times;</span>
+                                    </div>
+                                    <div class="container">
+                                        <label for="name"><b>Name</b></label>
+                                        <input type="text" placeholder="User Name" id="username" name="name" required>
+                                        <label for="email"><b>Email</b></label>
+                                        <input type="email" placeholder="abc@email.com" name="email" id="email"
+                                            required>
+                                    </div>
+                                    <div class="container" style="background-color:#f1f1f1">
+                                        <button type="button"
+                                            onclick="document.getElementById('id01').style.display='none'"
+                                            class="updateBtn">Update</button>
+                                    </div>
+                                </form>
                             </div>
                             <button class="actionBtn fa fa-trash-o" onclick="deleteAccount()">Remove</button>
 
