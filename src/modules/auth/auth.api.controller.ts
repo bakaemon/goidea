@@ -164,7 +164,6 @@ export class AuthAPIController {
     @UseGuards(RoleGuard(Role.Admin))
     async removeAccount(@Body() { accountId }: { accountId: string }, @AccountDecorator() account: AccountDocument) {
         const id = account._id as ObjectId;
-        console.log(id.toString());
         if (id.toString() == accountId) {
             throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
         }
