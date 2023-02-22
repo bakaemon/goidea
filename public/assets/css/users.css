@@ -326,10 +326,13 @@ body {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+  position: relative;
+  top: 22%;
+  left: 85%;
+  transform: translate(-50%, -50%);
 }
 
 .whiteBtn {
-  
   border: none;
   color: #020204;
   padding: 10px;
@@ -392,7 +395,7 @@ body {
 }
 
 .boxBtn {
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
@@ -440,8 +443,8 @@ span.psw {
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
   padding-top: 60px;
 }
 
@@ -470,17 +473,25 @@ span.psw {
 
 .animate {
   -webkit-animation: animatezoom 0.6s;
-  animation: animatezoom 0.6s
+  animation: animatezoom 0.6s;
 }
 
 @-webkit-keyframes animatezoom {
-  from {-webkit-transform: scale(0)}
-  to {-webkit-transform: scale(1)}
+  from {
+    -webkit-transform: scale(0);
+  }
+  to {
+    -webkit-transform: scale(1);
+  }
 }
 
 @keyframes animatezoom {
-  from {transform: scale(0)}
-  to {transform: scale(1)}
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 .imgcontainer {
