@@ -123,9 +123,6 @@
                 </svg>
             </button>
             <ul class="admin-menu">
-                <li class="menu-heading">
-                    <h3>Admin</h3>
-                </li>
                 <li>
                     <a href="/admin/organization">
                         <svg>
@@ -266,6 +263,22 @@
                 localStorage.setItem("dark-mode", "true");
             }
         });
+
+        function logout() {
+            fetch("/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.href = "/login";
+                    }
+                });
+        }
     </script>
 </body>
 
