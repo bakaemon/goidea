@@ -29,7 +29,7 @@ export class AdminController {
 
   @Get('departments')
   Organization(@Res() res: Response) {
-    return res.render('departments/dashboard', { layout: 'auth' });
+    return res.render('departments/dashboard', { layout: 'main' });
   }
 
   @Get('departments/create')
