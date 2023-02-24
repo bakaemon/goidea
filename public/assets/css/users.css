@@ -1214,21 +1214,3 @@ i.icon.fa-thumbs-down {
 i.icon.fa-thumbs-down:hover {
   background: #ffebee;
 }
-
-/* VIEW IDEA */
-.viewIdea{
-  background-color: #ffffff;
-  height: 100px;
-  width: 70%;
-  /* margin: auto; */
-  border-radius: 5px 5px 5px;
-  border: 2px solid #000;
-  margin: auto;
-}
-
-.avatar{
-  height: 50px;
-  width: 50px;
-  border-radius: 100%;
-  border: 2px solid #000;
-}
