@@ -1,20 +1,20 @@
 import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch } from '@nestjs/common';
 import { DepartmentService } from "./department.service";
-import RoleGuard from '../../../dist/common/guards/role.guard';
+import RoleGuard from '@common/guards/role.guard';
 import Role from '@src/common/enums/role.enum';
 import { DepartmentDto } from './dto/department.dto';
 import { Response } from 'express';
 
 @Controller('api')
-export class DepartmentAPIController{
+export class DepartmentAPIController {
     constructor(
-        private readonly departmentService: DepartmentService,
+        private readonly service: DepartmentService,
     ) { }
     @Post("create")
     @UseGuards(RoleGuard(Role.Admin))
-    async createDepartment(@Body() departmentDto: DepartmentDto, @Res() res : Response) {
+    async createDepartment(@Body() departmentDto: DepartmentDto, @Res() res: Response) {
         try {
-            await this.departmentService.create(departmentDto);
+            await this.service.create(departmentDto);
             return {
                 success: true,
                 message: "Create department successfully"
@@ -30,13 +30,13 @@ export class DepartmentAPIController{
 
     @Get("all")
     async getAllDepartment() {
-        return await this.departmentService.findAll({});
+        return await this.service.findAll({});
     }
 
     @Get(":id")
     async getDepartmentById(@Param() id: String, @Res() res: Response) {
         try {
-            return await this.departmentService.findOne({ _id: id });
+            return await this.service.findOne({ _id: id });
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -52,7 +52,7 @@ export class DepartmentAPIController{
         @Body() departmentDto: DepartmentDto, @Res() res: Response
     ) {
         try {
-            await this.departmentService.update({_id: id}, departmentDto);
+            await this.service.update({ _id: id }, departmentDto);
             return {
                 success: true,
                 message: "Update department successfully"

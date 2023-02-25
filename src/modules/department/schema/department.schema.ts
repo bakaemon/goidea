@@ -7,6 +7,9 @@ export type DepartmentDocument = Department & Document;
 export class Department {
   @Prop({ required: true })
   name: string;
+
+  @Prop({ required: true })
+  description: string;
 }
 
 export const DepartmentSchema = SchemaFactory.createForClass(Department);
