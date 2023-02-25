@@ -22,6 +22,8 @@
 //     table.insert(tableData);
 // }
 
+// const { async } = require("rxjs");
+
 // async function loadTable() {
 //     var table = new simpleDatatables.DataTable('#information');
 //     var res = await fetch('/accounts/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } });
@@ -99,7 +101,50 @@ async function loadTable() {
 
 async function editUser(id) {
     document.getElementById('id01').style.display = 'block'
+
 }
+
+async function updateAccounts() {
+        var username = document.getElementById("username").value;
+        var email = document.getElementById("email").value;
+        var dateofbirth = document.getElementById("DateOfBirth").value;
+        var roles = document.getElementById("roles").value;
+
+        if (username == "" || email == "" ||  dateofbirth == "") {
+            alert("Please fill all the fields");
+            return;
+        }
+        var data = {
+            username: username,
+            email: email,
+            DateOfBirth: dateofbirth,
+            roles: roles,
+
+        };
+        try {
+            var response = await fetch('/accounts/api/:id', {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+
+            });
+            var data = await response.json();
+            if (data.success) {
+                alert(data.message);
+                window.location.href = "/admin/users";
+                return;
+            }
+            else {
+                alert(data.message);
+                return;
+            }
+        } catch (error) {
+            alert(error);
+        }
+        return false;
+    }
 
 
 async function deleteAccount(id) {

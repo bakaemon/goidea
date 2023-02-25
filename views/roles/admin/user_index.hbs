@@ -49,11 +49,87 @@
 </section>
 </section>
 
+<div id="id01" class="modal">
+    <form class="modal-content animate">
+        <div class="imgcontainer">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close"
+                title="Close">&times;</span>
+        </div>
+        <div class="container">
+            <label for="name"><b>Name</b></label>
+            <input type="text" placeholder="User Name" id="username" name="name" required>
+            <label for="email"><b>Email</b></label>
+            <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+            <label for="DateOfBirth"><b>Date of Birth</b></label>
+            <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+            <div style="width:200">
+                <label for="roles"><b>Roles</b></label>
+                <br>
+                <select name="roles" class="selectedItem" id="roles" required>
+                    <option value="1">Staff</option>
+                    <option value="2">Quality Assurance Coordinator</option>
+                    <option value="3">Quality Assurance Manager</option>
+                </select>
+            </div>
+        </div>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="updateAccounts()"
+                class="updateBtn">Update</button>
+        </div>
+    </form>
+</div>
+
 <script src="/assets/js/user_index.js"></script>
 
+
+
 <script>
+
+    async function updateAccounts() {
+            var modal = document.getElementById('id01');
+
+            var username = document.getElementById("username").value;
+            var email = document.getElementById("email").value;
+            var dateofbirth = document.getElementById("DateOfBirth").value;
+            var roles = document.getElementById("roles").value;
+
+            if (username == "" || email == "" || dateofbirth == "") {
+                alert("Please fill all the fields");
+                return;
+            }
+            var data = {
+                username: username,
+                email: email,
+                DateOfBirth: dateofbirth,
+                roles: roles,
+
+            };
+            try {
+                var response = await fetch('/accounts/api/:id', {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+
+                });
+                var data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = "/admin/users";
+                    return;
+                }
+                else {
+                    alert(data.message);
+                    return;
+                }
+            } catch (error) {
+                alert(error);
+            }
+            return false;
+        }
     // Get the modal
-    var modal = document.getElementById('id01');
+    
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {

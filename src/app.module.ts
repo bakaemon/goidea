@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AccountsService } from './modules/accounts/accounts.service';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { StaffModule } from './modules/staff/staff.module';
+import { QamModule } from './modules/qam/qam.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
@@ -33,6 +34,7 @@ import { TagModule } from './modules/tag/tag.module';
     AdminModule,
     IdeaModule,
     StaffModule,
+    QamModule,
     DepartmentModule,
     CategoryModule,
     TagModule
