@@ -67,7 +67,7 @@ export const AccountSchema = SchemaFactory.createForClass(Account);
 
 AccountSchema.pre("save", async function (next) {
     const doc = this;
-    this.populate("organization");
+    this.populate("department");
     if (!doc.displayName) doc.displayName = doc.username;
     if (doc.isModified("password") && doc.password) doc.password = hashSync(doc.password, BCRYPT_SALT);
     next();
