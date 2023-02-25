@@ -16,6 +16,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { CategoryModule } from './modules/category/category.module';
+import { TagModule } from './modules/tag/tag.module';
 
 
 @Module({
@@ -33,7 +34,8 @@ import { CategoryModule } from './modules/category/category.module';
     IdeaModule,
     StaffModule,
     DepartmentModule,
-    CategoryModule
+    CategoryModule,
+    TagModule
   ],
   controllers: [AppController],
   providers: [AppService],
