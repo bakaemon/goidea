@@ -78,9 +78,9 @@ async function loadTable() {
                         } else newRow.push(row[key]);
                     }
                     newRow.push(`
-                        <button class="actionBtn fa fa-pencil-square-o"
+                        <button class="actionBtn"
                                                 onclick="editUser('${row._id}')">Edit</button>
-                        <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
+                        <button class="actionBtn" onclick="deleteAccount('${row._id}')">Delete</button>
                 `);
                     newRows.push(newRow);
                 }

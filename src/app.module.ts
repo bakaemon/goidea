@@ -13,6 +13,7 @@ import configs from './configs';
 import { AuthModule } from './modules/auth/auth.module';
 import { AccountsService } from './modules/accounts/accounts.service';
 import { AccountsModule } from './modules/accounts/accounts.module';
+import { StaffModule } from './modules/staff/staff.module';
 
 
 @Module({
@@ -28,7 +29,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
     TokensModule,
     AdminModule,
     IdeaModule,
-
+    StaffModule,
   ],
   controllers: [AppController],
   providers: [AppService],
