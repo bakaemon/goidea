@@ -1,9 +1,9 @@
 import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch, Delete } from '@nestjs/common';
-import RoleGuard from '../../../dist/common/guards/role.guard';
 import Role from '@src/common/enums/role.enum';
 import { Response } from 'express';
 import { DepartmentDto } from '../department/dto/department.dto';
 import { CategoryService } from './category.service';
+import RoleGuard from '@src/common/guards/role.guard';
 
 @Controller('api')
 export class CategoryAPIController {
