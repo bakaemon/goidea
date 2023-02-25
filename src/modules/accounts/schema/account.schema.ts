@@ -38,9 +38,9 @@ export class Account {
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Organization"
+        ref: "Department"
     })
-    organization: string;
+    department: string;
 
 
     @Prop({
