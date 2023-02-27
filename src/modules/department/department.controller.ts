@@ -2,7 +2,7 @@ import { Controller, Get, Render, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 @Controller()
-export class OrganizationController {
+export class DepartmentController {
   constructor() {}
 
   @Get()

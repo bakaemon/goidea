@@ -1,30 +1,19 @@
-<section class="page-content">
-    <section class="search-and-user">
-        <form>
-  
-        </form>
-        <div class="admin-profile">
-            <span class="greeting">Hello admin</span>
-            <div class="notifications">
-                <span class="badge">1</span>
-                <svg>
-                    <use xlink:href="#users"></use>
-                </svg>
-            </div>
-        </div>
-    </section>
-    <section>
-        <h2>Organizations Page</h3>
-            <form class="btnPos">
-                <input type="button" class="darkBlueBtn" value="Create Organiztion"
-                    onclick="location.href='organization/create'">
-            </form>
-            <br>
-            <table>
+// this is just a placeholder for the departments_create.hbs file
 
-            </table>
-    </section>
-</section>
+<form id="create">
+    <div class="container">
+        <h2>Create a new Departments</h2>
+        <hr>
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="Departments Name" id="name" name="name" required>
+        <label for="location"><b>Location</b></label>
+        <input type="text" placeholder="Departments Location" id="location" name="location" required>
+        <label for="description"><b>Description</b></label>
+        <input type="text" placeholder="Departments Description" id="description" name="description" required>
+        <hr>
+        <button class="createBtn" type="submit" id="register">Create</button>
+</form>
+
 <script>
     const html = document.documentElement;
     const body = document.body;
@@ -91,4 +80,57 @@
             localStorage.setItem("dark-mode", "true");
         }
     });
+</script>
+<script>
+    function submit() {
+        var name = document.getElementById("name").value;
+        var location = document.getElementById("location").value;
+        var description = document.getElementById("description").value;
+        
+
+        var data = {
+            name: name,
+            location: location,
+            description: description,
+            CreatedDate: CreatedDate
+        };
+
+        fetch('/admin/organization', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            if (data.status == 200) {
+                alert("Organization Created Successfully");
+            }
+            else {
+                alert("Error Creating Organization");
+            }
+        });
+        return false;
+
+    }
+    var form = document.getElementById("register");
+    form.addEventListener("click", (e) => {
+        var name = document.getElementById("name");
+        var location = document.getElementById("location");
+        var description = document.getElementById("description");
+
+        var fields = [name, location, description, CreatedDate];
+        var validity = true;
+
+        for (var e of fields) {
+            if (e.checkValidity() == false) {
+                validity = false;
+                e.reportValidity();
+            }
+        }
+        if (validity == true) {
+            submit();
+        }
+    })
 </script>
