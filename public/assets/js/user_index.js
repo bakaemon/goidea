@@ -1,3 +1,5 @@
+var selectedid = null;
+
 // async function loadTable() {
 //     var table = new DataTable('#information');
 //     var res = await fetch('/accounts/api/all', {headers: {'Authorization': 'Bearer ' + getCookie('token')}});
@@ -52,6 +54,7 @@ async function loadTable() {
     var tableArea = document.getElementById('table-area');
     tableArea.innerHTML = "";
     var table = document.createElement('table');
+    table.style.width = '100%';
     table.id = 'information';
     document.getElementById('table-area').appendChild(table);
     // fetch("https://raw.githubusercontent.com/fiduswriter/simple-datatables/main/docs/demos/18-fetch-api/demo.json")
@@ -98,13 +101,24 @@ async function loadTable() {
 }
 
 
+var inputid = document.createElement('input');
 
 async function editUser(id) {
-    document.getElementById('id01').style.display = 'block'
+    selectedid = id;
+    var modal = document.getElementById('id01');
+    modal.style.display = 'block';
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            selectedid = null;
+        }
+    }
 
 }
 
 async function updateAccounts() {
+        var id = selectedid;
         var username = document.getElementById("username").value;
         var email = document.getElementById("email").value;
         var dateofbirth = document.getElementById("DateOfBirth").value;
@@ -114,7 +128,8 @@ async function updateAccounts() {
             alert("Please fill all the fields");
             return;
         }
-        var data = {
+    var data = {
+            _id: id,
             username: username,
             email: email,
             DateOfBirth: dateofbirth,
@@ -125,7 +140,8 @@ async function updateAccounts() {
             var response = await fetch('/accounts/api/:id', {
                 method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + getCookie("token")
                 },
                 body: JSON.stringify(data)
 
