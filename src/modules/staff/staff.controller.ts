@@ -17,8 +17,8 @@ export class StaffController {
   upload(@Res() res: Response) {
     return res.render('roles/staff/upload_index', { layout: 'main' });
   }
-  @Get('viewIdea')
+  @Get('listidea')
   idea(@Res() res: Response) {
-    return res.render('roles/staff/view_idea', { layout: 'main' });
+    return res.render('roles/staff/pop_idea', { layout: 'main' });
   }
 }
