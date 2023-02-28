@@ -1,0 +1,21 @@
+{{setVarIter "scripts" "<script src='/assets/js/modal.js'></script>"}}
+{{setVarIter "head" "<link rel='stylesheet' href='/assets/css/modal.css'>"}}
+<a href="#modal-window" id="popup" class="actionBtn modal-trigger" modal-param="abc">Trigger</a>
+
+<div id="modal-window" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{> title}}</h4>
+            </div>
+            <div class="modal-body">
+                {{> content}}
+            </div>
+            <div class="modal-footer">
+                {{> footer}}
+            </div>
+        </div>
+        <button class="modal-close">&#10005;</button>
+    </div>
+</div>

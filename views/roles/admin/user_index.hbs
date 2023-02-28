@@ -1,5 +1,20 @@
+{{setVar "head"
+
+"
+<link href='https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css' rel='stylesheet' type='text/css'>
+
+"
+
+}}
+{{setVarIter "head" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>"
+
+}}
+
+{{setVar "title" "Users Page ABC"}}
+{{setVar "user" "Guest"}}
 <section>
-    <h2>Users Page</h3>
+    <h2>{{title}}</h3>
         <form>
             <input type="button" class="darkBlueBtn" value="Create User" onclick="location.href='/admin/users/create'">
         </form>
@@ -10,6 +25,38 @@
 </section>
 </section>
 
-<div id="modal-area"></div>
+{{#> widgets/modal }}
+{{#*inline "title"}}
+    Update User
+{{/inline}}
+{{#*inline "content"}}
+<form id="editForm">
+    <div class="container">
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="User Name" id="username" name="name" required>
+        <label for="email"><b>Email</b></label>
+        <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+        <label for="DateOfBirth"><b>Date of Birth</b></label>
+        <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+        <div style="width:200">
+            <label for="department"><b>Department</b></label>
+            <br>
+            <select name="departments" class="selectedItem" id="departments" required>
+            </select>
+        </div>
+        <div style="width:200">
+            <label for="roles"><b>Roles</b></label>
+            <br>
+            <select name="roles" class="selectedItem" id="roles" required>
+            </select>
+        </div>
+    </div>
+</form>
+{{/inline}}
+{{#*inline "footer"}}
+<button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
+{{/inline}}
+{{/ widgets/modal}}
 
-<script src="/assets/js/user_index.js"></script>
+
+{{setVarIter "scripts" '<script src="/assets/js/user_index.js"></script>'}}

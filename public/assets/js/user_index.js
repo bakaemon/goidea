@@ -83,8 +83,8 @@ async function loadTable() {
                         } else newRow.push(row[key]);
                     }
                     newRow.push(`
-                        <button class="actionBtn"
-                                                onclick="editUser('${row._id}')">Edit</button>
+                        <a class="actionBtn modal-trigger"
+                                                onclick="editUser(this, '${row._id}')" modal-param="${row._id}">Edit</a>
                         <button class="actionBtn" onclick="deleteAccount('${row._id}')">Delete</button>
                 `);
                     newRows.push(newRow);
@@ -103,79 +103,135 @@ async function loadTable() {
 
 var modalArea = document.getElementById('modal-area');
 
-function closeModal(e) {
-    e.style.display = "none";
-    selectedid = null;
+// function closeModal(e) {
+//     e.style.display = "none";
+//     selectedid = null;
+// }
+
+// async function editUser(id) {
+//     selectedid = id;
+//     modalArea.innerHTML = `<div id="id01" class="modal">
+//         <form class="modal-content animate" id="editForm">
+//         <div class="imgcontainer">
+//             <span onclick="closeModal(document.getElementById('id01'))" class="close"
+//                 title="Close">&times;</span>
+//         </div>
+//         <div class="container">
+//             <label for="name"><b>Name</b></label>
+//             <input type="text" placeholder="User Name" id="username" name="name" required>
+//             <label for="email"><b>Email</b></label>
+//             <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+//             <label for="DateOfBirth"><b>Date of Birth</b></label>
+//             <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+//             <div style="width:200">
+//                 <label for="department"><b>Department</b></label>
+//                 <br>
+//                 <select name="departments" class="selectedItem" id="departments" required>
+//                 </select>
+//             </div>
+//             <div style="width:200">
+//                 <label for="roles"><b>Roles</b></label>
+//                 <br>
+//                 <select name="roles" class="selectedItem" id="roles" required>
+//                 </select>
+//             </div>
+//         </div>
+//         <div class="container" style="background-color:#f1f1f1">
+//             <button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
+//         </div>
+//     </form>
+//     </div>`;
+//     var modal = document.getElementById('id01');
+//     var res = await fetch("/accounts/api/get?id=" + id);
+//     if (!res.ok) {
+//         alert((await res.json()).message);
+//         return;
+//     }
+//     var data = await res.json();
+//     console.log(data);
+//     document.getElementById('username').value = data.username;
+//     document.getElementById('email').value = data.email;
+//     document.getElementById('DateOfBirth').value = data.DateOfBirth;
+//     document.getElementById('roles').value = data.roles;
+//     var departmentSelect = document.getElementById('departments');
+//     departmentSelect.innerHTML = "";
+//     for (var i = 0; i < data.department.length; i++) {
+//         var option = document.createElement('option');
+//         option.value = data.department[i].name;
+//         option.innerHTML = data.department[i].name;
+//         departmentSelect.appendChild(option);
+//     }
+//     var rolesSelect = document.getElementById('roles');
+//     rolesSelect.innerHTML = "";
+//     for (var i = 0; i < data.roles.length; i++) {
+//         var option = document.createElement('option');
+//         option.value = data.roles[i].name;
+//         option.innerHTML = data.roles[i].name;
+//         rolesSelect.appendChild(option);
+//         window.onclick = function (event) {
+//             if (event.target == modal) {
+//                 closeModal(modal)
+//             }
+//         }
+
+//     }
+//     modal.style.display = 'block';
+// }
+
+
+function editUser(e, id) {
+    selectedid = id;
+    onOpenModal = async (modal, trigger) => {
+        var form = document.getElementById('editForm');
+        setPlaceHolders(form, 'Loading...');
+        disableForm(form);
+        var res = await fetch("/accounts/api/get?id=" + id);
+        if (!res.ok) {
+            alert((await res.json()).message);
+            return;
+        }
+        var data = await res.json();
+        form.username.value = data.username;
+        form.email.value = data.email;
+        form.DateOfBirth.value = data.DateOfBirth;
+        enableForm(form);
+        setPlaceHolders(form, '');
+    }
+    onCloseModal = (modal, trigger) => {
+        selectedid = null;
+        onOpenModal = null;
+        onCloseModal = null;
+    }
+    openModal(e, "modal-window");
+    
 }
 
-async function editUser(id) {
-    selectedid = id;
-    modalArea.innerHTML = `<div id="id01" class="modal">
-        <form class="modal-content animate" id="editForm">
-        <div class="imgcontainer">
-            <span onclick="closeModal(document.getElementById('id01'))" class="close"
-                title="Close">&times;</span>
-        </div>
-        <div class="container">
-            <label for="name"><b>Name</b></label>
-            <input type="text" placeholder="User Name" id="username" name="name" required>
-            <label for="email"><b>Email</b></label>
-            <input type="email" placeholder="abc@email.com" name="email" id="email" required>
-            <label for="DateOfBirth"><b>Date of Birth</b></label>
-            <input type="date" id="DateOfBirth" name="DateOfBirth" required>
-            <div style="width:200">
-                <label for="department"><b>Department</b></label>
-                <br>
-                <select name="departments" class="selectedItem" id="departments" required>
-                </select>
-            </div>
-            <div style="width:200">
-                <label for="roles"><b>Roles</b></label>
-                <br>
-                <select name="roles" class="selectedItem" id="roles" required>
-                </select>
-            </div>
-        </div>
-        <div class="container" style="background-color:#f1f1f1">
-            <button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
-        </div>
-    </form>
-    </div>`;
-    var modal = document.getElementById('id01');
-    var res = await fetch("/accounts/api/get?id=" + id);
-    if (!res.ok) {
-        alert((await res.json()).message);
-        return;
-    }
-    var data = await res.json();
-    console.log(data);
-    document.getElementById('username').value = data.username;
-    document.getElementById('email').value = data.email;
-    document.getElementById('DateOfBirth').value = data.DateOfBirth;
-    document.getElementById('roles').value = data.roles;
-    var departmentSelect = document.getElementById('departments');
-    departmentSelect.innerHTML = "";
-    for (var i = 0; i < data.department.length; i++) {
-        var option = document.createElement('option');
-        option.value = data.department[i].name;
-        option.innerHTML = data.department[i].name;
-        departmentSelect.appendChild(option);
-    }
-    var rolesSelect = document.getElementById('roles');
-    rolesSelect.innerHTML = "";
-    for (var i = 0; i < data.roles.length; i++) {
-        var option = document.createElement('option');
-        option.value = data.roles[i].name;
-        option.innerHTML = data.roles[i].name;
-        rolesSelect.appendChild(option);
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                closeModal(modal)
-            }
+// check if form inputs has been filled, if not then disable input until data are loaded
+function disableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+            inputs[i].disabled = true;
         }
-
     }
-    modal.style.display = 'block';
+}
+
+// enable form inputs
+function enableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value !== "") {
+            inputs[i].disabled = false;
+        }
+    }
+}
+
+// set all form text field placeholder as loading
+function setPlaceHolders(form, text) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].placeholder = text;
+    }
 }
 
 async function updateAccounts() {
