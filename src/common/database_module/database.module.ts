@@ -3,6 +3,9 @@ import { Global, Module } from "@nestjs/common";
 import { AccountSchema } from "@src/modules/accounts/schema/account.schema";
 import { DefaultAccount } from "../util/default-account";
 import { TokenSchema } from "@src/modules/token/schema/token.schema";
+import { CategorySchema } from "@src/modules/category/schema/category.schema";
+import { TagSchema } from '../../modules/tag/schema/tag.schema';
+import { DepartmentSchema } from "@src/modules/department/schema/department.schema";
 
 @Global()
 @Module({
@@ -13,7 +16,17 @@ import { TokenSchema } from "@src/modules/token/schema/token.schema";
             },
             {
                 name: "Token", schema: TokenSchema
-            }
+            },
+            {
+                name: "Department", schema: DepartmentSchema
+            },
+            {
+                name: "Category", schema: CategorySchema
+            },
+            {
+                name: "Tag", schema: TagSchema
+            },
+
         ]),
         MongooseModule.forFeatureAsync([
             {
@@ -34,7 +47,16 @@ import { TokenSchema } from "@src/modules/token/schema/token.schema";
                 name: "Account", schema: AccountSchema
             }, {
                 name: "Token", schema: TokenSchema
-            }
+            },
+            {
+                name: "Department", schema: DepartmentSchema
+            },
+            {
+                name: "Category", schema: CategorySchema
+            },
+            {
+                name: "Tag", schema: TagSchema
+            },
         ])
     ]
 })

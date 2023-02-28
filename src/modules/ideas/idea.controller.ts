@@ -5,6 +5,6 @@ import { Response } from 'express';
 export class IdeaController {
     @Get('ideas')
     root(@Res() res: Response) {
-        return res.render('ideas/dashboard', { layout: 'main' });
+        return res.render('roles/staff/staff_index', { layout: 'main' });
     }
 }

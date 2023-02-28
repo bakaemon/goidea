@@ -27,17 +27,14 @@ export class AdminController {
     return res.render('roles/admin/CreateUsers_index', { layout: 'main' });
   }
 
-  @Get('organization')
+  @Get('departments')
   Organization(@Res() res: Response) {
-    return res.render('organizations/dashboard', { layout: 'auth' });
+    return res.render('departments/dashboard', { layout: 'main' });
   }
 
-  @Get('organization/create')
+  @Get('departments/create')
   createOrganization(@Res() res: Response) {
-    return res.render('organizations/organization_create', { layout: 'main' });
+    return res.render('departments/departments_create', { layout: 'main' });
   }
-  @Get('organization/id/departments')
-  departments(@Res() res: Response) {
-    return res.render('organizations/departments_create', { layout: 'main' });
-  }
+  
 }

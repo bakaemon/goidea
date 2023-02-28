@@ -13,7 +13,13 @@ const HttpRoleGuard = (role: Role): Type<CanActivate> => {
             const request = context.switchToHttp().getRequest();
             const account = request.account;
 
-            return account?.roles.includes(role);
+            if (account?.roles.includes(role)) {
+                return true;
+            }
+            else {
+                context.switchToHttp().getResponse().redirect('/login');
+                return false;
+            }
         }
     }
 

@@ -1,11 +1,11 @@
 <section>
     <h2>Users Page</h3>
-        <form class="btnPos">
+        <form>
             <input type="button" class="darkBlueBtn" value="Create User" onclick="location.href='/admin/users/create'">
         </form>
         <br>
         <br>
-        <div id="table-area">
+        <div id="table-area" style="width: 100%;">
             {{!-- <table class="information">
                 <tr>
                     <th>Username</th>
@@ -49,16 +49,40 @@
 </section>
 </section>
 
+<div id="id01" class="modal">
+    <form class="modal-content animate" id="editForm">
+        <div class="imgcontainer">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close"
+                title="Close">&times;</span>
+        </div>
+        <div class="container">
+            <label for="name"><b>Name</b></label>
+            <input type="text" placeholder="User Name" id="username" name="name" required>
+            <label for="email"><b>Email</b></label>
+            <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+            <label for="DateOfBirth"><b>Date of Birth</b></label>
+            <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+            <div style="width:200">
+                <label for="department"><b>Department</b></label>
+                <br>
+                <select name="department" class="selectedItem" id="roles" required>
+                    <option value="1">IT</option>
+                </select>
+            </div>
+            <div style="width:200">
+                <label for="roles"><b>Roles</b></label>
+                <br>
+                <select name="roles" class="selectedItem" id="roles" required>
+                    <option value="1">Staff</option>
+                    <option value="2">Quality Assurance Coordinator</option>
+                    <option value="3">Quality Assurance Manager</option>
+                </select>
+            </div>
+        </div>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
+        </div>
+    </form>
+</div>
+
 <script src="/assets/js/user_index.js"></script>
-
-<script>
-    // Get the modal
-    var modal = document.getElementById('id01');
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-</script>

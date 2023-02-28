@@ -123,15 +123,12 @@
                 </svg>
             </button>
             <ul class="admin-menu">
-                <li class="menu-heading">
-                    <h3>Admin</h3>
-                </li>
                 <li>
-                    <a href="/admin/organization">
+                    <a href="/admin/departments">
                         <svg>
                             <use xlink:href="#collection"></use>
                         </svg>
-                        <span>Organiztions</span>
+                        <span>Departments</span>
                     </a>
                 </li>
                 <li>
@@ -182,6 +179,13 @@
 
             </form>
             <div class="admin-profile">
+                <div class="dropdown">
+                    <button class="dropbtn icon fa fa-user"></button>
+                    <div class="dropdown-content">
+                        <a href="#">Logout</a>
+                        <a href="#">Account Info</a>
+                    </div>
+                </div>
                 <span class="greeting">Hello admin</span>
                 <div class="notifications">
                     <span class="badge">1</span>
@@ -259,6 +263,22 @@
                 localStorage.setItem("dark-mode", "true");
             }
         });
+
+        function logout() {
+            fetch("/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.href = "/login";
+                    }
+                });
+        }
     </script>
 </body>
 
