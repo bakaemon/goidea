@@ -69,9 +69,6 @@ svg {
   display: block;
 }
 
-body {
-  font: 16px/1.5 'Lato', sans-serif;
-}
 
 /* HEADER STYLES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -872,5 +869,4 @@ hr {
 .page-footer a {
   margin-left: 4px;
 }
-
 

@@ -101,73 +101,134 @@ async function loadTable() {
 }
 
 
-var inputid = document.createElement('input');
+var modalArea = document.getElementById('modal-area');
+
+function closeModal(e) {
+    e.style.display = "none";
+    selectedid = null;
+}
 
 async function editUser(id) {
     selectedid = id;
+    modalArea.innerHTML = `<div id="id01" class="modal">
+        <form class="modal-content animate" id="editForm">
+        <div class="imgcontainer">
+            <span onclick="closeModal(document.getElementById('id01'))" class="close"
+                title="Close">&times;</span>
+        </div>
+        <div class="container">
+            <label for="name"><b>Name</b></label>
+            <input type="text" placeholder="User Name" id="username" name="name" required>
+            <label for="email"><b>Email</b></label>
+            <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+            <label for="DateOfBirth"><b>Date of Birth</b></label>
+            <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+            <div style="width:200">
+                <label for="department"><b>Department</b></label>
+                <br>
+                <select name="departments" class="selectedItem" id="departments" required>
+                </select>
+            </div>
+            <div style="width:200">
+                <label for="roles"><b>Roles</b></label>
+                <br>
+                <select name="roles" class="selectedItem" id="roles" required>
+                </select>
+            </div>
+        </div>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
+        </div>
+    </form>
+    </div>`;
     var modal = document.getElementById('id01');
-    modal.style.display = 'block';
-
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-            selectedid = null;
-        }
+    var res = await fetch("/accounts/api/get?id=" + id);
+    if (!res.ok) {
+        alert((await res.json()).message);
+        return;
     }
+    var data = await res.json();
+    console.log(data);
+    document.getElementById('username').value = data.username;
+    document.getElementById('email').value = data.email;
+    document.getElementById('DateOfBirth').value = data.DateOfBirth;
+    document.getElementById('roles').value = data.roles;
+    var departmentSelect = document.getElementById('departments');
+    departmentSelect.innerHTML = "";
+    for (var i = 0; i < data.department.length; i++) {
+        var option = document.createElement('option');
+        option.value = data.department[i].name;
+        option.innerHTML = data.department[i].name;
+        departmentSelect.appendChild(option);
+    }
+    var rolesSelect = document.getElementById('roles');
+    rolesSelect.innerHTML = "";
+    for (var i = 0; i < data.roles.length; i++) {
+        var option = document.createElement('option');
+        option.value = data.roles[i].name;
+        option.innerHTML = data.roles[i].name;
+        rolesSelect.appendChild(option);
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal(modal)
+            }
+        }
 
+    }
+    modal.style.display = 'block';
 }
 
 async function updateAccounts() {
-        var id = selectedid;
-        var username = document.getElementById("username").value;
-        var email = document.getElementById("email").value;
-        var dateofbirth = document.getElementById("DateOfBirth").value;
-        var roles = document.getElementById("roles").value;
+    var id = selectedid;
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var dateofbirth = document.getElementById("DateOfBirth").value;
+    var roles = document.getElementById("roles").value;
 
-        if (username == "" || email == "" ||  dateofbirth == "") {
-            alert("Please fill all the fields");
+    if (username == "" || email == "" || dateofbirth == "") {
+        alert("Please fill all the fields");
+        return;
+    }
+    var data = {
+        _id: id,
+        username: username,
+        email: email,
+        DateOfBirth: dateofbirth,
+        roles: roles,
+
+    };
+    try {
+        var response = await fetch('/accounts/api/:id', {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getCookie("token")
+            },
+            body: JSON.stringify(data)
+
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/admin/users";
             return;
         }
-    var data = {
-            _id: id,
-            username: username,
-            email: email,
-            DateOfBirth: dateofbirth,
-            roles: roles,
-
-        };
-        try {
-            var response = await fetch('/accounts/api/:id', {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + getCookie("token")
-                },
-                body: JSON.stringify(data)
-
-            });
-            var data = await response.json();
-            if (data.success) {
-                alert(data.message);
-                window.location.href = "/admin/users";
-                return;
-            }
-            else {
-                alert(data.message);
-                return;
-            }
-        } catch (error) {
-            alert(error);
+        else {
+            alert(data.message);
+            return;
         }
-        return false;
+    } catch (error) {
+        alert(error);
     }
+    return false;
+}
 
 
 async function deleteAccount(id) {
     var x = confirm("Are you sure you want to delete this account?");
     if (x) {
         try {
-            var res = await fetch('/auth/api/admin_remove', {
+            var res = await fetch('/accounts/api/admin_remove', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

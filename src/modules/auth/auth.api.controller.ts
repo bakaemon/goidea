@@ -160,17 +160,5 @@ export class AuthAPIController {
         };
     }
 
-    @Delete("admin_remove")
-    @UseGuards(RoleGuard(Role.Admin))
-    async removeAccount(@Body() { accountId }: { accountId: string }, @AccountDecorator() account: AccountDocument) {
-        const id = account._id as ObjectId;
-        if (id.toString() == accountId) {
-            throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
-        }
-        await this.accountService.delete({ _id: accountId });
-        return {
-            message: "Remove account successfully",
-            success: true
-        };
-    }
+
 }
