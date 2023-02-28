@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Patch, Post, Query, UploadedFile, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Patch, Post, Query, Res, UploadedFile, UseGuards } from "@nestjs/common";
 import { AccountsService } from "./accounts.service";
 import Role from "@src/common/enums/role.enum";
 import { FindAccountFilterDto } from "@src/common/filters/find-account-filter.dto";
@@ -10,8 +10,10 @@ import { AccountDocument } from "./schema/account.schema";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { AuthService } from "../auth/auth.service";
 import { randomString } from "@src/common/util/random";
-import { Express } from "express";
+import { Express, Response } from "express";
 import { UpdateSelfAccountDto, UpdateAccountDto } from "./dto/update-self-account.dto";
+import { ObjectId } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 @Controller('api')
 export class AccountsAPIController {
@@ -74,6 +76,22 @@ export class AccountsAPIController {
         return this.accountsService.update({ _id: account._id }, updateAccountDto, { new: true });
     }
 
+    @Get('get')
+    async getById(@Query('id') id: string, @Res() res: Response) {
+        try {
+            const data = await this.accountsService.
+                findOne({ _id: new mongoose.Types.ObjectId(id) }, { select: 'username email roles department' });
+            return res.status(200)
+                .json(data);
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: error.message,
+            })
+        }
+
+    }
+
     @Patch(":id")
     @UseGuards(RoleGuard(Role.Admin))
     update(
@@ -81,6 +99,20 @@ export class AccountsAPIController {
         @Body() updateAccountDto: UpdateAccountDto
     ) {
         if (updateAccountDto.role) Object.assign(updateAccountDto, { $addToSet: { roles: updateAccountDto.role } });
-        return this.accountsService.update({ _id: id }, updateAccountDto, { new: true });
+        return this.accountsService.update({ _id: new mongoose.Types.ObjectId(id) }, updateAccountDto, { new: true });
+    }
+
+    @Delete("admin_remove")
+    @UseGuards(RoleGuard(Role.Admin))
+    async removeAccount(@Body() { accountId }: { accountId: string }, @AccountDecorator() account: AccountDocument) {
+        const id = account._id as ObjectId;
+        if (id.toString() == accountId) {
+            throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
+        }
+        await this.accountsService.delete({ _id: accountId });
+        return {
+            message: "Remove account successfully",
+            success: true
+        };
     }
 }
