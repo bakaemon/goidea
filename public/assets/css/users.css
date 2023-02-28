@@ -69,9 +69,6 @@ svg {
   display: block;
 }
 
-body {
-  font: 16px/1.5 'Lato', sans-serif;
-}
 
 /* HEADER STYLES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -1013,10 +1010,6 @@ ul {
 }
 
 /* UPLOAD FILE */
-body {
-  margin: 1rem;
-  font-family: "Arial", sans-serif;
-}
 
 :focus {
   outline: 0;
@@ -1168,14 +1161,6 @@ body {
 /* LIKE AND DISLIKE */
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700");
 @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-body {
-  font-family: "roboto";
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
 
 =======
 
