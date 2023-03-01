@@ -206,6 +206,22 @@ function editUser(e, id) {
     
 }
 
+function createUser(e) {
+    onOpenModal = async (modal, trigger) => {
+        var form = document.getElementById('createForm');
+        setPlaceHolders(form, 'Loading...');
+        disableForm(form);
+        enableForm(form);
+        setPlaceHolders(form, '');
+    }
+    onCloseModal = (modal, trigger) => {
+        onOpenModal = null;
+        onCloseModal = null;
+    }
+    openModal(e, "modal-window");
+    
+}
+
 // check if form inputs has been filled, if not then disable input until data are loaded
 function disableForm(form) {
     var inputs = form.getElementsByTagName('input');
@@ -310,6 +326,81 @@ async function deleteAccount(id) {
     else
         return false;
 }
+
+
+// create new user script
+ async function submit() {
+        var username = document.getElementById("username").value;
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+        var dateofbirth = document.getElementById("DateOfBirth").value;
+        var roles = document.getElementById("roles").value;
+
+        if (username == "" || email == "" || password == "" || confirmPassword == "" || dateofbirth == "") {
+            alert("Please fill all the fields");
+            return;
+        }
+        var data = {
+            username: username,
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+            DateOfBirth: dateofbirth,
+            roles: roles,
+
+        };
+        try {
+            var response = await fetch('/auth/api/register', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+
+            });
+            var data = await response.json();
+            if (data.success) {
+                alert(data.message);
+                window.location.href = "/admin/users";
+                return;
+            }
+            else {
+                alert(data.message);
+                return;
+            }
+        } catch (error) {
+            alert(error);
+        }
+        return false;
+    }
+    var form = document.getElementById("register")
+    form.addEventListener("click", (e) => {
+        alert("registered");
+        var username = document.getElementById("username");
+        var email = document.getElementById("email");
+        var password = document.getElementById("password");
+        var confirmPassword = document.getElementById("confirmPassword");
+        var dateofbirth = document.getElementById("DateOfBirth");
+        var roles = document.getElementById("roles");
+        var fields = [username, email, password, dateofbirth, roles]
+        var validity = true;
+
+        for (var e of fields) {
+            if (e.checkValidity() == false) {
+                validity = false;
+                e.reportValidity();
+            }
+        }
+        console.log(validity);
+        if (validity == true) {
+            submit();
+        }
+    });
+    // end create user script
+
+
+
 
 window.onload = async (e) => {
     loadTable();

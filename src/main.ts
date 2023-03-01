@@ -24,7 +24,7 @@ async function bootstrap() {
   app.engine('hbs', hbs.engine);
   app.set('view engine', 'hbs');
   app.enable('view cache');
-
+  
 
   // NOTE: body parser
   app.use(bodyParser.json({ limit: "50mb" }));
@@ -39,7 +39,7 @@ async function bootstrap() {
       parameterLimit: 50000
     })
   );
-
+  
   // NOTE: rateLimit
   app.use(
     rateLimit({
