@@ -14,9 +14,4 @@ export class QamController {
     root(@Res() res: Response) {
         return res.render('roles/qam/dashboard', { layout: 'main' });
     }
-
-    @Get('test')
-    test(@Res() res: Response) {
-        return res.render('roles/qam/test', { layout: 'main' });
-    }
 }
