@@ -181,45 +181,50 @@ var modalArea = document.getElementById('modal-area');
 
 function editUser(e, id) {
     selectedid = id;
-    onOpenModal = async (modal, trigger) => {
+    var modalArea = document.querySelector('.modal-area');
+    var modal = Modal(modalArea, {
+        title: 'Edit User',
+        get: {
+            url: '/assets/html/editUser.html',
+            overwrite: true,
+        },
+        footer: `<button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>`,
+    });
+    modal.on('open', async (modal) => {
         var form = document.getElementById('editForm');
         setPlaceHolders(form, 'Loading...');
         disableForm(form);
-        var res = await fetch("/accounts/api/get?id=" + id);
+        var res = await fetch("/accounts/api/get?id=" + selectedid);
         if (!res.ok) {
             alert((await res.json()).message);
+            setPlaceHolders(form, 'No data found');
             return;
         }
         var data = await res.json();
-        form.username.value = data.username;
-        form.email.value = data.email;
-        form.DateOfBirth.value = data.DateOfBirth;
+        document.getElementById('username').value = data.username;
+        document.getElementById('email').value = data.email;
         enableForm(form);
         setPlaceHolders(form, '');
-    }
-    onCloseModal = (modal, trigger) => {
+    });
+    modal.on('close', (modal) => {
         selectedid = null;
-        onOpenModal = null;
-        onCloseModal = null;
-    }
-    openModal(e, "modal-window");
-    
+    });
+
+    modal.open();
+
+
 }
 
 function createUser(e) {
-    onOpenModal = async (modal, trigger) => {
-        var form = document.getElementById('createForm');
-        setPlaceHolders(form, 'Loading...');
-        disableForm(form);
-        enableForm(form);
-        setPlaceHolders(form, '');
-    }
-    onCloseModal = (modal, trigger) => {
-        onOpenModal = null;
-        onCloseModal = null;
-    }
-    openModal(e, "modal-window");
-    
+    var modal = Modal('.modal-area', {
+        title: 'Create User',
+        get: {
+            url: '/assets/html/createUser.html',
+            overwrite: true,
+        },
+        footer: `<button type="button" onclick="createAccounts()" class="updateBtn">Create</button>`,
+    });
+    modal.open();
 }
 
 // check if form inputs has been filled, if not then disable input until data are loaded
@@ -329,75 +334,51 @@ async function deleteAccount(id) {
 
 
 // create new user script
- async function submit() {
-        var username = document.getElementById("username").value;
-        var email = document.getElementById("email").value;
-        var password = document.getElementById("password").value;
-        var confirmPassword = document.getElementById("confirmPassword").value;
-        var dateofbirth = document.getElementById("DateOfBirth").value;
-        var roles = document.getElementById("roles").value;
+async function submit() {
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    var dateofbirth = document.getElementById("DateOfBirth").value;
+    var roles = document.getElementById("roles").value;
 
-        if (username == "" || email == "" || password == "" || confirmPassword == "" || dateofbirth == "") {
-            alert("Please fill all the fields");
+    if (username == "" || email == "" || password == "" || confirmPassword == "" || dateofbirth == "") {
+        alert("Please fill all the fields");
+        return;
+    }
+    var data = {
+        username: username,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        DateOfBirth: dateofbirth,
+        roles: roles,
+
+    };
+    try {
+        var response = await fetch('/auth/api/register', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/admin/users";
             return;
         }
-        var data = {
-            username: username,
-            email: email,
-            password: password,
-            confirmPassword: confirmPassword,
-            DateOfBirth: dateofbirth,
-            roles: roles,
-
-        };
-        try {
-            var response = await fetch('/auth/api/register', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-
-            });
-            var data = await response.json();
-            if (data.success) {
-                alert(data.message);
-                window.location.href = "/admin/users";
-                return;
-            }
-            else {
-                alert(data.message);
-                return;
-            }
-        } catch (error) {
-            alert(error);
+        else {
+            alert(data.message);
+            return;
         }
-        return false;
+    } catch (error) {
+        alert(error);
     }
-    var form = document.getElementById("register")
-    form.addEventListener("click", (e) => {
-        alert("registered");
-        var username = document.getElementById("username");
-        var email = document.getElementById("email");
-        var password = document.getElementById("password");
-        var confirmPassword = document.getElementById("confirmPassword");
-        var dateofbirth = document.getElementById("DateOfBirth");
-        var roles = document.getElementById("roles");
-        var fields = [username, email, password, dateofbirth, roles]
-        var validity = true;
-
-        for (var e of fields) {
-            if (e.checkValidity() == false) {
-                validity = false;
-                e.reportValidity();
-            }
-        }
-        console.log(validity);
-        if (validity == true) {
-            submit();
-        }
-    });
-    // end create user script
+    return false;
+}
 
 
 

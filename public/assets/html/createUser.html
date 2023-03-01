@@ -1,0 +1,31 @@
+<form id="createForm">
+    <div class="container">
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="User Name" id="username" name="name" required>
+        <label for="email"><b>Email</b></label>
+        <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="User Password" name="password" id="password" required>
+        <label for="confirmPassword"><b>Confirm Password</b></label>
+        <input type="password" placeholder="Confirm Password" name="confirmPassword" id="confirmPassword" required>
+        <label for="DateOfBirth"><b>Date of Birth</b></label>
+        <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+        <div style="width:200">
+            <label for="department"><b>Department</b></label>
+            <br>
+            <select name="department" class="selectedItem" id="roles" required>
+                <option value="1">IT</option>
+            </select>
+        </div>
+        <div style="width:200">
+            <label for="roles"><b>Roles</b></label>
+            <br>
+            <select name="roles" class="selectedItem" id="roles" required>
+                <option value="1">Staff</option>
+                <option value="2">Quality Assurance Coordinator</option>
+                <option value="3">Quality Assurance Manager</option>
+            </select>
+        </div>
+        <hr>
+    </div>
+</form>
