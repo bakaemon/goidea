@@ -2,13 +2,15 @@
 '
 <link rel="stylesheet" href="/assets/css/staff.css">
 <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<link rel="stylesheet" href="https://richtexteditor.com/richtexteditor/rte_theme_default.css"/>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/rte.js"></script>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/plugins/all_plugins.js"></script>
 
 '
 }}
 
 {{setVar "scripts"
 '
-<script src="/assets/js/quill.js"></script>
 <script src="/assets/js/idea.js"></script>
 '
 }}
@@ -42,7 +44,10 @@
 
         </div>
     </div> --}}
-    <div id="editorjs"></div>
+    <div class="editor-container">
+        <div id="editorjs"></div>
+    </div>
+    
 </section>
 {{!-- UPLOAD --}}
 {{!--
