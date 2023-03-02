@@ -37,7 +37,7 @@ import { TagModule } from './modules/tag/tag.module';
     CategoryModule,
     TagModule
   ],
-  controllers: [AppController],
+  controllers: [AppController,],
   providers: [AppService],
 })
 export class AppModule {}
