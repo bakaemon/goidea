@@ -222,7 +222,7 @@ function createUser(e) {
             url: '/assets/html/createUser.html',
             overwrite: true,
         },
-        footer: `<button type="button" onclick="createAccounts()" class="updateBtn">Create</button>`,
+        footer: `<button type="button" onclick="createAccounts()" class="createBtn">Create</button>`,
     });
     modal.open();
 }
@@ -334,7 +334,7 @@ async function deleteAccount(id) {
 
 
 // create new user script
-async function submit() {
+async function createAccounts() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
