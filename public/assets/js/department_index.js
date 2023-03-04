@@ -53,7 +53,7 @@ async function deleteDepartment(id) {
     var x = confirm("Are you sure you want to delete this department?");
     if (x) {
         try {
-            var res = await fetch('/accounts/api/admin_remove', {
+            var res = await fetch('/department/api/:id/delete', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
