@@ -1,7 +1,56 @@
-const { async } = require("rxjs");
 
 var selectedid = null;
 var modalArea = document.getElementById('modal-area');
+
+async function loadTableDepartment() {
+    var tableArea = document.getElementById('table-area');
+    tableArea.innerHTML = "";
+    var table = document.createElement('table');
+    table.style.width = '100%';
+    table.id = 'information';
+    document.getElementById('table-area').appendChild(table);
+    // fetch("https://raw.githubusercontent.com/fiduswriter/simple-datatables/main/docs/demos/18-fetch-api/demo.json")
+    fetch('/department/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } })
+        .then(
+            response => response.json()
+        ).then(
+            resData => {
+                var data = resData.data;
+                if (!data.length) {
+                    return
+                }
+                var newHeaders = Object.keys(data[0]);
+                newHeaders[newHeaders.indexOf('_id')] = 'ID';
+                newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
+                newHeaders.push('Actions');
+                var newRows = [];
+                for (var row of data) {
+                    var newRow = [];
+                    for (var key in row) {
+                        if (key == 'roles') {
+                            newRow.push(row[key].join(', '));
+                        }
+                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt') {
+                            continue;
+                        } else newRow.push(row[key]);
+                    }
+                    newRow.push(`
+                        <a class="actionBtn modal-trigger"
+                                                onclick="editDepartmentForm(this, '${row._id}')" modal-param="${row._id}">Edit</a>
+                        <button class="actionBtn" onclick="deleteDepartment('${row._id}')">Delete</button>
+                `);
+                    newRows.push(newRow);
+                }
+                console.log(newRows);
+                new simpleDatatables.DataTable(table, {
+                    data: {
+                        headings: newHeaders,
+                        data: newRows
+                    }
+                })
+            }
+        )
+}
 
 async function createDepartmentForm(e) {
     var modal = Modal('.modal-area', {
@@ -144,3 +193,6 @@ async function createDepartments() {
     }
 }
 
+window.onload = async (e) => {
+    loadTableDepartment();
+}
