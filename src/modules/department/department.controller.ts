@@ -7,6 +7,6 @@ export class DepartmentController {
 
   @Get()
   root(@Res() res: Response) {
-    return res.render('organization_index', { layout: 'auth' });
+    return res.render('departments/dashboard', { layout: 'main' });
   }
 }

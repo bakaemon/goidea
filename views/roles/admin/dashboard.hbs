@@ -1,80 +1,195 @@
-<section class="grid">
-    <article></article>
-    <article></article>
-    <article></article>
-    <article></article>
+{{setVar "head"
+"
+<link href='/assets/css/staff.css' rel='stylesheet' type='text/css'>
+"
+}}
+{{setVar "title" "Admin Dashboard "}}
+<section>
+    <h2>{{title}}</h2>
 </section>
-<footer class="page-footer">
-    <span>made by </span>
-    <a>
-        <img src="/assets/Images/SkiTracking.png" alt="SkiTracking logo" width="20" height="20" />
-    </a>
-</footer>
-</section>
-<script>
-    const html = document.documentElement;
-    const body = document.body;
-    const menuLinks = document.querySelectorAll(".admin-menu a");
-    const collapseBtn = document.querySelector(".admin-menu .collapse-btn");
-    const toggleMobileMenu = document.querySelector(".toggle-mob-menu");
-    const switchInput = document.querySelector(".switch input");
-    const switchLabel = document.querySelector(".switch label");
-    const switchLabelText = switchLabel.querySelector("span:last-child");
-    const collapsedClass = "collapsed";
-    const lightModeClass = "light-mode";
-
-    /*TOGGLE HEADER STATE*/
-    collapseBtn.addEventListener("click", function () {
-        body.classList.toggle(collapsedClass);
-        this.getAttribute("aria-expanded") == "true"
-            ? this.setAttribute("aria-expanded", "false")
-            : this.setAttribute("aria-expanded", "true");
-        this.getAttribute("aria-label") == "collapse menu"
-            ? this.setAttribute("aria-label", "expand menu")
-            : this.setAttribute("aria-label", "collapse menu");
-    });
-
-    /*TOGGLE MOBILE MENU*/
-    toggleMobileMenu.addEventListener("click", function () {
-        body.classList.toggle("mob-menu-opened");
-        this.getAttribute("aria-expanded") == "true"
-            ? this.setAttribute("aria-expanded", "false")
-            : this.setAttribute("aria-expanded", "true");
-        this.getAttribute("aria-label") == "open menu"
-            ? this.setAttribute("aria-label", "close menu")
-            : this.setAttribute("aria-label", "open menu");
-    });
-
-    /*SHOW TOOLTIP ON MENU LINK HOVER*/
-    for (const link of menuLinks) {
-        link.addEventListener("mouseenter", function () {
-            if (
-                body.classList.contains(collapsedClass) &&
-                window.matchMedia("(min-width: 768px)").matches
-            ) {
-                const tooltip = this.querySelector("span").textContent;
-                this.setAttribute("title", tooltip);
-            } else {
-                this.removeAttribute("title");
-            }
-        });
-    }
-
-    /*TOGGLE LIGHT/DARK MODE*/
-    if (localStorage.getItem("dark-mode") === "false") {
-        html.classList.add(lightModeClass);
-        switchInput.checked = false;
-        switchLabelText.textContent = "Light";
-    }
-
-    switchInput.addEventListener("input", function () {
-        html.classList.toggle(lightModeClass);
-        if (html.classList.contains(lightModeClass)) {
-            switchLabelText.textContent = "Light";
-            localStorage.setItem("dark-mode", "false");
-        } else {
-            switchLabelText.textContent = "Dark";
-            localStorage.setItem("dark-mode", "true");
-        }
-    });
-</script>
+<br>
+<table class="site-content">
+    <div class="forum-index">
+        <section>
+            <a href="/ideas">
+                <h2 class="site-content__subtitle h2btn">Ideas</h2>
+            </a>
+            <div class="board-list">
+                <div class="board-list__item">
+                    <div class="board-list__icon">
+                        <i class="fa-regular fa-comments"></i>
+                    </div>
+                    <div class="board-list__info">
+                        <a class="board-list__info__name board-list__link" href="#">Lorem</a>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">205</div>
+                        <div class="board-list__stats__key">like</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">10</div>
+                        <div class="board-list__stats__key">dislike</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">23</div>
+                        <div class="board-list__stats__key">comment</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">1</div>
+                        <div class="board-list__stats__key">view</div>
+                    </div>
+                    <div class="board-list__lastpost board-list__item--last">
+                        <div class="board-list__icon">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="board-list__lastpost__topic">
+                                Posted
+                            </div>
+                            <div class="board-list__lastpost__user">
+                                By <a class="board-list__link" href="#">Lorem1</a>
+                            </div>
+                            <div class="board-list__lastpost__date">
+                                1 July, 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="board-list__item">
+                    <div class="board-list__icon">
+                        <i class="fa-regular fa-comments"></i>
+                    </div>
+                    <div class="board-list__info">
+                        <a class="board-list__info__name board-list__link" href="#">Ipsum</a>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">145</div>
+                        <div class="board-list__stats__key">like</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">10</div>
+                        <div class="board-list__stats__key">dislike</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">23</div>
+                        <div class="board-list__stats__key">comment</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">1</div>
+                        <div class="board-list__stats__key">view</div>
+                    </div>
+                    <div class="board-list__lastpost board-list__item--last">
+                        <div class="board-list__icon">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="board-list__lastpost__topic">
+                                Posted
+                            </div>
+                            <div class="board-list__lastpost__user">
+                                By <a class="board-list__link" href="#">Ipsum2</a>
+                            </div>
+                            <div class="board-list__lastpost__date">
+                                1 July, 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="board-list__item">
+                    <div class="board-list__icon">
+                        <i class="fa-regular fa-comments"></i>
+                    </div>
+                    <div class="board-list__info">
+                        <a class="board-list__info__name board-list__link" href="#">Lorem Ipsum</a>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">145</div>
+                        <div class="board-list__stats__key">like</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">10</div>
+                        <div class="board-list__stats__key">dislike</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">23</div>
+                        <div class="board-list__stats__key">comment</div>
+                    </div>
+                    <div class="board-list__stats">
+                        <div class="board-list__stats__value">1</div>
+                        <div class="board-list__stats__key">view</div>
+                    </div>
+                    <div class="board-list__lastpost board-list__item--last">
+                        <div class="board-list__icon">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="board-list__lastpost__topic">
+                                Posted
+                            </div>
+                            <div class="board-list__lastpost__user">
+                                By <a class="board-list__link" href="#">Lorem Ipsum blablabla</a>
+                            </div>
+                            <div class="board-list__lastpost__date">
+                                1 July, 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>            
+</table>
+<br>
+<table class="site-content">
+    <div class="forum-index">
+        <section>
+            <a href="/admin/users">
+                <h2 class="site-content__subtitle h2btn">Active Users</h2>
+            </a>
+            <div class="board-list">
+                <div class="board-list__item">
+                    <div class="board-list__icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="board-list__info">
+                        <a class="board-list__info__name board-list__link">Lorem</a>
+                    </div>
+                    <div class="board-list__lastpost board-list__item--last">
+                        <div class="board-list__icon">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="board-list__lastpost__topic">
+                                Created at
+                            </div>
+                            <div class="board-list__lastpost__date">
+                                1 July, 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="board-list__item">
+                    <div class="board-list__icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="board-list__info">
+                        <a class="board-list__info__name board-list__link">Lorem2</a>
+                    </div>
+                    <div class="board-list__lastpost board-list__item--last">
+                        <div class="board-list__icon">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="board-list__lastpost__topic">
+                                Created at
+                            </div>
+                            <div class="board-list__lastpost__date">
+                                1 July, 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</table>

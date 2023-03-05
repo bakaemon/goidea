@@ -185,7 +185,7 @@ function editUser(e, id) {
     var modal = Modal(modalArea, {
         title: 'Edit User',
         get: {
-            url: '/assets/html/editUser.html',
+            url: '/assets/html/user/editUser.html',
             overwrite: true,
         },
         footer: `<button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>`,
@@ -219,10 +219,10 @@ function createUser(e) {
     var modal = Modal('.modal-area', {
         title: 'Create User',
         get: {
-            url: '/assets/html/createUser.html',
+            url: '/assets/html/user/createUser.html',
             overwrite: true,
         },
-        footer: `<button type="button" onclick="createAccounts()" class="updateBtn">Create</button>`,
+        footer: `<button type="button" onclick="createAccounts()" class="createBtn">Create</button>`,
     });
     modal.open();
 }
@@ -334,7 +334,7 @@ async function deleteAccount(id) {
 
 
 // create new user script
-async function submit() {
+async function createAccounts() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;

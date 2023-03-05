@@ -1,8 +1,22 @@
-<head>
-    <link rel="stylesheet" href="/assets/css/staff.css">
-</head>
+{{setVar "head"
+'
+<link rel="stylesheet" href="/assets/css/staff.css">
+<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<link rel="stylesheet" href="https://richtexteditor.com/richtexteditor/rte_theme_default.css"/>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/rte.js"></script>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/plugins/all_plugins.js"></script>
+
+'
+}}
+
+{{setVar "scripts"
+'
+<script src="/assets/js/idea.js"></script>
+'
+}}
+
 <section>
-    <div class="container">
+    {{!-- <div class="container">
         <div class="upload_centered">
             <section class="upload-file">
                 <h1 class="heading">Upload files</h1>
@@ -21,14 +35,22 @@
                     <input type="text" placeholder="Title" id="name" name="name" required>
                     <label for="email"><b>Discription</b></label>
                     <input type="email" placeholder="Discription your idea" name="email" id="email" required>
-                    
+
                     <button class="button" name="continue" type="submit">Continue</button>
                 </form>
             </section>
+            
+
+
         </div>
+    </div> --}}
+    <div class="editor-container">
+        <div id="editorjs"></div>
     </div>
+    
 </section>
 {{!-- UPLOAD --}}
+{{!--
 <script>
     function isDragAndDropSupported() {
         return typeof document.createElement('div').ondrop != 'undefined';
@@ -191,4 +213,11 @@
     if (typeof Dropzone != 'undefined')
         new Dropzone(document.querySelector('[data-dropzone]'));
 
-</script>
+</script> --}}
+{{
+setVarIter 'scripts'
+"
+<script>
+    window.addEventListener('load', initEditor);
+</script>"
+}}
