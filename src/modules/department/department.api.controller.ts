@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch, Delete } from '@nestjs/common';
 import { DepartmentService } from "./department.service";
 import RoleGuard from '@common/guards/role.guard';
 import Role from '@src/common/enums/role.enum';
@@ -56,6 +56,24 @@ export class DepartmentAPIController {
             return {
                 success: true,
                 message: "Update department successfully"
+            }
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    @Delete(':id/delete')
+    @UseGuards(RoleGuard(Role.Admin))
+    async delete(@Param() id: String, @Res() res: Response) {
+        try {
+            await this.service.delete({ _id: id });
+            return {
+                success: true,
+                message: "Deleted department successfully"
             }
 
         } catch (error) {
