@@ -61,4 +61,5 @@ export class Idea {
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
 
 IdeaSchema.pre('save', function (next) {
+});
     
