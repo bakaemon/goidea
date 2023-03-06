@@ -75,7 +75,7 @@ AccountSchema.pre("save", async function (next) {
 
 AccountSchema.pre("findOneAndUpdate", async function (next) {
     const doc = this;
-    this.populate("organization");
+    this.populate("department");
 
     if (doc["_update"] && doc["_update"]["password"]) doc["_update"]["password"] =
         hashSync(doc["_update"]["password"], BCRYPT_SALT);

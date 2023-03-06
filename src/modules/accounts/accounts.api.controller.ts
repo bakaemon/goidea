@@ -109,6 +109,9 @@ export class AccountsAPIController {
         if (id.toString() == accountId) {
             throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
         }
+        if (account.roles.includes(Role.Admin)) {
+            throw new HttpException("You can not remove admin account.", HttpStatus.FORBIDDEN);
+        }
         await this.accountsService.delete({ _id: accountId });
         return {
             message: "Remove account successfully",

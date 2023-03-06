@@ -35,7 +35,8 @@ import { TagModule } from './modules/tag/tag.module';
     QamModule,
     DepartmentModule,
     CategoryModule,
-    TagModule
+    TagModule,
+    IdeaModule,
   ],
   controllers: [AppController,],
   providers: [AppService],

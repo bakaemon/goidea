@@ -15,10 +15,10 @@ export class DepartmentAPIController {
     async createDepartment(@Body() departmentDto: DepartmentDto, @Res() res: Response) {
         try {
             await this.service.create(departmentDto);
-            return {
+            return res.status(HttpStatus.CREATED).json({
                 success: true,
                 message: "Create department successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
