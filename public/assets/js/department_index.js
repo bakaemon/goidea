@@ -21,6 +21,7 @@ async function loadTableDepartment() {
                 }
                 var newHeaders = Object.keys(data[0]);
                 newHeaders[newHeaders.indexOf('_id')] = 'ID';
+                newHeaders.shift();
                 newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
                 newHeaders.push('Actions');
                 var newRows = [];
@@ -30,7 +31,7 @@ async function loadTableDepartment() {
                         if (key == 'roles') {
                             newRow.push(row[key].join(', '));
                         }
-                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt') {
+                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt' || key == '_id') {
                             continue;
                         } else newRow.push(row[key]);
                     }
@@ -78,7 +79,7 @@ function editDepartmentForm(e, id) {
         var form = document.getElementById('editDpForm');
         setPlaceHolders(form, 'Loading...');
         disableForm(form);
-        var res = await fetch("/department/api/get?id=" + selectedid);
+        var res = await fetch("/department/api/" + selectedid);
         if (!res.ok) {
             alert((await res.json()).message);
             setPlaceHolders(form, 'No data found');
@@ -102,7 +103,7 @@ async function deleteDepartment(id) {
     var x = confirm("Are you sure you want to delete this department?");
     if (x) {
         try {
-            var res = await fetch('/department/api/:id/delete', {
+            var res = await fetch('/department/api/' + id + '/delete' , {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ async function deleteDepartment(id) {
             var data = await res.json();
             if (data.success) {
                 alert(data.message);
-                loadTable();
+                loadTableDepartment();
             }
             else {
                 alert(data.message);
@@ -191,6 +192,32 @@ async function createDepartments() {
     }
     catch (error) {
         alert(error);
+    }
+}
+
+function setPlaceHolders(form, text) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].placeholder = text;
+    }
+}
+
+function disableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+            inputs[i].disabled = true;
+        }
+    }
+}
+
+// enable form inputs
+function enableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value !== "") {
+            inputs[i].disabled = false;
+        }
     }
 }
 
