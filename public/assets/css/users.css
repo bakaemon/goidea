@@ -58,9 +58,13 @@ input {
 }
 
 [type='checkbox'] {
-  position: absolute;
-  left: -9999px;
+  appearance: checkbox !important;
+  
 }
+.checkboxVisibility {
+  visibility: hidden;
+}
+
 
 label {
   cursor: pointer;

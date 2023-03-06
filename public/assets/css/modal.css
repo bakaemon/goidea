@@ -51,9 +51,9 @@
 .modal-container {
   position: relative;
   z-index: 22;
-  width: fit-content;
+  width: 70%;
   height: fit-content;
-  top: 50%;
+  top: 65%;
   transform: translateY(-50%);
   margin: 0 auto;
   background-color: #fff;
