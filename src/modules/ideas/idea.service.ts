@@ -1,9 +1,10 @@
 import { BaseService } from '../../common/service/base.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel } from 'mongoose';
+import { PaginateModel, FilterQuery, QueryOptions } from 'mongoose';
 import { IdeaDocument } from './schema/idea.schema';
 import { VotesDocument } from './schema/votes.schema';
+import { filter } from 'rxjs';
 export class IdeaService {
     constructor(
         @InjectModel('Idea') private ideaModel: PaginateModel<IdeaDocument>,
@@ -47,5 +48,37 @@ export class IdeaService {
             throw error;
         }
     }
+
+    async create(idea : any) {
+        try {
+            const newIdea = new this.ideaModel(idea);
+            return await newIdea.save();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findOne(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    }
+
+    async update(filter: FilterQuery<IdeaDocument>, update: any, options?: QueryOptions) {
+    }
+
+    async delete(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    }
+
+    async paginate(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    }
+
+    async findAll(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    }
+
+    async aggregate(filter: FilterQuery<IdeaDocument>, pipeline: any[], options?: QueryOptions) {
+    }
+
+    async count(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    }
+
+
 
 }

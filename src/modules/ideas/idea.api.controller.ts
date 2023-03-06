@@ -5,7 +5,7 @@ import { Response } from "express";
 import { IdeaService } from "./idea.service";
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
-import { AccountDocument } from '../../../dist/modules/accounts/schema/account.schema';
+import { AccountDocument } from '../accounts/schema/account.schema';
 
 @Controller('api')
 export class IdeaAPIController {
@@ -17,7 +17,9 @@ export class IdeaAPIController {
     @Post("create")
     async create(@Body() { name }: { name: String }, @Res() res: Response) {
         try {
-            await this.service.create({ name: name });
+            await this.service.create({
+                name: name
+            });
             return {
                 success: true,
                 message: "Created Idea successfully"
