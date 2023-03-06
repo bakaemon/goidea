@@ -26,6 +26,7 @@ import { DepartmentSchema } from "@src/modules/department/schema/department.sche
             {
                 name: "Tag", schema: TagSchema
             },
+            
 
         ]),
         MongooseModule.forFeatureAsync([
