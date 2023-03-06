@@ -47,6 +47,11 @@ ul {
     margin: 0;
 }
 
+.h2btn:hover {
+    text-decoration: none;
+    background-color: #89989c;
+}
+
 .post__avatar {
     position: absolute;
     top: 15px;

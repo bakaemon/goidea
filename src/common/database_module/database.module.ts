@@ -6,28 +6,35 @@ import { TokenSchema } from "@src/modules/token/schema/token.schema";
 import { CategorySchema } from "@src/modules/category/schema/category.schema";
 import { TagSchema } from '../../modules/tag/schema/tag.schema';
 import { DepartmentSchema } from "@src/modules/department/schema/department.schema";
-
+import { VotesSchema } from '../../modules/ideas/schema/votes.schema';
+import { IdeaSchema } from "@src/modules/ideas/schema/idea.schema";
+const schemas = [
+    {
+        name: "Account", schema: AccountSchema
+    },
+    {
+        name: "Token", schema: TokenSchema
+    },
+    {
+        name: "Department", schema: DepartmentSchema
+    },
+    {
+        name: "Category", schema: CategorySchema
+    },
+    {
+        name: "Tag", schema: TagSchema
+    },
+    {
+        name: "Votes", schema: VotesSchema
+    },
+    {
+        name: "Idea", schema: IdeaSchema
+    }
+];
 @Global()
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: "Account", schema: AccountSchema
-            },
-            {
-                name: "Token", schema: TokenSchema
-            },
-            {
-                name: "Department", schema: DepartmentSchema
-            },
-            {
-                name: "Category", schema: CategorySchema
-            },
-            {
-                name: "Tag", schema: TagSchema
-            },
-
-        ]),
+        MongooseModule.forFeature(schemas),
         MongooseModule.forFeatureAsync([
             {
                 name: "Account",
@@ -42,22 +49,7 @@ import { DepartmentSchema } from "@src/modules/department/schema/department.sche
     ],
 
     exports: [
-        MongooseModule.forFeature([
-            {
-                name: "Account", schema: AccountSchema
-            }, {
-                name: "Token", schema: TokenSchema
-            },
-            {
-                name: "Department", schema: DepartmentSchema
-            },
-            {
-                name: "Category", schema: CategorySchema
-            },
-            {
-                name: "Tag", schema: TagSchema
-            },
-        ])
+        MongooseModule.forFeature(schemas)
     ]
 })
 export class DatabaseModule {
