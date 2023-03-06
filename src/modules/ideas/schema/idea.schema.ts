@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
 import { VotesSchema, VotesDocument } from './votes.schema';
+import * as paginate from "mongoose-paginate-v2";
 
 export type IdeaDocument = Idea & Document;
 
@@ -60,6 +61,9 @@ export class Idea {
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
 
+
 IdeaSchema.pre('save', function (next) {
 });
+
+IdeaSchema.plugin(paginate);
     
