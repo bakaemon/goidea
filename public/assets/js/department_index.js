@@ -73,7 +73,7 @@ function editDepartmentForm(e, id) {
             url: '/assets/html/department/editDepartment.html',
             overwrite: true,
         },
-        footer: `<button type="button" onclick="editDepartments()" class="editBtn">Edit</button>`,
+        footer: `<button type="button" onclick="editDepartments()" class="createBtn">Edit</button>`,
     });
     modal.on('open', async (modal) => {
         var form = document.getElementById('editDpForm');

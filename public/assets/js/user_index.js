@@ -69,6 +69,7 @@ async function loadTable() {
                 }
                 var newHeaders = Object.keys(data[0]);
                 newHeaders[newHeaders.indexOf('_id')] = 'ID';
+                newHeaders.shift();
                 newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
                 newHeaders.push('Actions');
                 var newRows = [];
@@ -78,7 +79,7 @@ async function loadTable() {
                         if (key == 'roles') {
                             newRow.push(row[key].join(', '));
                         }
-                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt') {
+                        else if (key == '__v' || key == 'updatedAt' || key == 'createdAt' || key == '_id') {
                             continue;
                         } else newRow.push(row[key]);
                     }
