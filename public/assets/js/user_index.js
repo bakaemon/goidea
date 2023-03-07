@@ -1,4 +1,6 @@
 var selectedid = null;
+var departmentList;
+var roleList;
 
 // async function loadTable() {
 //     var table = new DataTable('#information');
@@ -90,7 +92,6 @@ async function loadTable() {
                 `);
                     newRows.push(newRow);
                 }
-                console.log(newRows);
                 new simpleDatatables.DataTable(table, {
                     data: {
                         headings: newHeaders,
@@ -103,82 +104,6 @@ async function loadTable() {
 
 
 var modalArea = document.getElementById('modal-area');
-
-// function closeModal(e) {
-//     e.style.display = "none";
-//     selectedid = null;
-// }
-
-// async function editUser(id) {
-//     selectedid = id;
-//     modalArea.innerHTML = `<div id="id01" class="modal">
-//         <form class="modal-content animate" id="editForm">
-//         <div class="imgcontainer">
-//             <span onclick="closeModal(document.getElementById('id01'))" class="close"
-//                 title="Close">&times;</span>
-//         </div>
-//         <div class="container">
-//             <label for="name"><b>Name</b></label>
-//             <input type="text" placeholder="User Name" id="username" name="name" required>
-//             <label for="email"><b>Email</b></label>
-//             <input type="email" placeholder="abc@email.com" name="email" id="email" required>
-//             <label for="DateOfBirth"><b>Date of Birth</b></label>
-//             <input type="date" id="DateOfBirth" name="DateOfBirth" required>
-//             <div style="width:200">
-//                 <label for="department"><b>Department</b></label>
-//                 <br>
-//                 <select name="departments" class="selectedItem" id="departments" required>
-//                 </select>
-//             </div>
-//             <div style="width:200">
-//                 <label for="roles"><b>Roles</b></label>
-//                 <br>
-//                 <select name="roles" class="selectedItem" id="roles" required>
-//                 </select>
-//             </div>
-//         </div>
-//         <div class="container" style="background-color:#f1f1f1">
-//             <button type="button" onclick="updateAccounts()" class="updateBtn">Update</button>
-//         </div>
-//     </form>
-//     </div>`;
-//     var modal = document.getElementById('id01');
-//     var res = await fetch("/accounts/api/get?id=" + id);
-//     if (!res.ok) {
-//         alert((await res.json()).message);
-//         return;
-//     }
-//     var data = await res.json();
-//     console.log(data);
-//     document.getElementById('username').value = data.username;
-//     document.getElementById('email').value = data.email;
-//     document.getElementById('DateOfBirth').value = data.DateOfBirth;
-//     document.getElementById('roles').value = data.roles;
-//     var departmentSelect = document.getElementById('departments');
-//     departmentSelect.innerHTML = "";
-//     for (var i = 0; i < data.department.length; i++) {
-//         var option = document.createElement('option');
-//         option.value = data.department[i].name;
-//         option.innerHTML = data.department[i].name;
-//         departmentSelect.appendChild(option);
-//     }
-//     var rolesSelect = document.getElementById('roles');
-//     rolesSelect.innerHTML = "";
-//     for (var i = 0; i < data.roles.length; i++) {
-//         var option = document.createElement('option');
-//         option.value = data.roles[i].name;
-//         option.innerHTML = data.roles[i].name;
-//         rolesSelect.appendChild(option);
-//         window.onclick = function (event) {
-//             if (event.target == modal) {
-//                 closeModal(modal)
-//             }
-//         }
-
-//     }
-//     modal.style.display = 'block';
-// }
-
 
 function editUser(e, id) {
     selectedid = id;
@@ -204,6 +129,13 @@ function editUser(e, id) {
         var data = await res.json();
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
+        populateData();
+        departmentList.forEach(department => {
+                var option = document.createElement('option');
+                option.value = department._id;
+                option.innerHTML = department.name;
+                document.getElementById('department').appendChild(option);
+            });
         enableForm(form);
         setPlaceHolders(form, '');
     });
@@ -212,8 +144,6 @@ function editUser(e, id) {
     });
 
     modal.open();
-
-
 }
 
 function createUser(e) {
@@ -224,6 +154,15 @@ function createUser(e) {
             overwrite: true,
         },
         footer: `<button type="button" onclick="createAccounts()" class="createBtn">Create</button>`,
+    });
+    modal.on('open', async (modal) => {
+        await populateData();
+        for(var d of departmentList) {
+            var option = document.createElement('option');
+            option.value = d._id;
+            option.innerHTML = d.name;
+            document.getElementById('departments').appendChild(option);
+        }
     });
     modal.open();
 }
@@ -393,8 +332,19 @@ async function createAccounts() {
     return false;
 }
 
-
-
+async function populateData() {
+    if (!departmentList) {
+        departmentList = [];
+        var data = await fetch('/department/api/all');
+        var departments = (await data.json()).data;
+        for (var d of departments) {
+            departmentList.push(d);
+        }
+        return departmentList;
+    }
+    
+    
+}
 
 window.onload = async (e) => {
     loadTable();
