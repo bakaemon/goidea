@@ -228,6 +228,18 @@ function createUser(e) {
     modal.open();
 }
 
+function userInforForm(e) {
+    var modal = Modal('.modal-area', {
+        title: 'User Information',
+        get: {
+            url: '/assets/html/user/userInfo.html',
+            overwrite: true,
+        },
+        footer: `<button type="button" onclick="#" class="createBtn">Change Password</button>`,
+    });
+    modal.open();
+}
+
 // check if form inputs has been filled, if not then disable input until data are loaded
 function disableForm(form) {
     var inputs = form.getElementsByTagName('input');
