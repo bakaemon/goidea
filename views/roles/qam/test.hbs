@@ -26,7 +26,7 @@
           <th class="px-4 py-2 text-left">
             <label for="SelectAll" class="h-5 w-5 rounded border-gray-300">Select All</label>
 
-            <input type="checkbox" class="h-5 w-5 rounded border-gray-300" id="SelectAll" onClick="toggle(this)" />
+            <input type="checkbox" class="h-5 w-5 rounded border-gray-300 checkboxVisibility" id="SelectAll" onClick="toggle(this)" />
           </th>
           <th class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
             Idea Title
@@ -43,7 +43,8 @@
       <tbody class="divide-y divide-gray-200">
         <tr>
           <td class="px-4 py-2">
-           
+            <label class="sr-only" for="Row1">Row 1</label>
+            <input class="h-5 w-5 rounded border-gray-300" type="checkbox" id="Row1" name="chooseRow" />
           </td>
           
           <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
