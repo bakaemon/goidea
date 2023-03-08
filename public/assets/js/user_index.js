@@ -2,56 +2,7 @@ var selectedid = null;
 var departmentList;
 var roleList;
 
-// async function loadTable() {
-//     var table = new DataTable('#information');
-//     var res = await fetch('/accounts/api/all', {headers: {'Authorization': 'Bearer ' + getCookie('token')}});
-//     if (!res.ok) {
-//         var resData = await res.json();
-//         console.log(resData);
-//         alert(resData.message);
-//         return;
-//     }
-//     var jsonData = (await res.json()).data;
-//     var tableData = [];
-//     for (var row of jsonData)
-//     {
-//         row.actions = `
-//         <button class="actionBtn fa fa-pencil-square-o"
-//                                 onclick="editUser('${row._id}')">Edit</button>
-//         <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
-//         `;
-//         tableData.push(row);
-//     }
-//     console.log(tableData);
-//     table.insert(tableData);
-// }
 
-// const { async } = require("rxjs");
-
-// async function loadTable() {
-//     var table = new simpleDatatables.DataTable('#information');
-//     var res = await fetch('/accounts/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } });
-//     var jsonData = await (await res.json()).data;
-//     var newData = [];
-//     for (var row of jsonData) {
-//         var roles = row.roles;
-//         delete row.roles;
-//         delete row.__v;
-//         var newRow = {
-//             ...row,
-//             roles: roles.join(', '),
-//             actions: `
-//         <button class="actionBtn fa fa-pencil-square-o"
-//                                 onclick="editUser('${row._id}')">Edit</button>
-//         <button class="actionBtn fa fa-trash-o" onclick="deleteAccount('${row._id}')">Delete</button>
-//         `,
-
-//         };
-//         newData.push(newRow);
-//     }
-//     console.log(newData);
-//     table.insert(newData);
-// }
 async function loadTable() {
     var tableArea = document.getElementById('table-area');
     tableArea.innerHTML = "";
