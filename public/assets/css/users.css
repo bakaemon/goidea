@@ -161,7 +161,7 @@ svg {
 }
 
 .page-header .admin-menu li:last-child {
-  margin-top: auto;
+  /* margin-top: auto; */
   margin-bottom: 20px;
 }
 
