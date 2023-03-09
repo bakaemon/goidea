@@ -510,26 +510,9 @@ INDEX .wrapper {
     outline: none;
 }
 
-.check:checked {
-    background-color: #0E9700;
-}
-
-.check:before {
-    content: "✖";
-}
-
-.check:checked:before {
-    content: "✔";
-}
-
-.check:hover {
-    cursor: pointer;
-    opacity: 0.8;
-}
-
 .check2 {
     position: relative;
-    top: 10px;
+    top: 5px;
     left: 15px;
     text-align: center;
     font-weight: 600;
