@@ -561,7 +561,7 @@ INDEX .wrapper {
     position: relative;
     margin: 0 10px 10px 0;
     text-decoration: none;
-    -webkit-transition: color 0.2s;
+    /* -webkit-transition: color 0.2s; */
 }
 
 .tag::before {
@@ -595,3 +595,12 @@ INDEX .wrapper {
 .tag:hover::after {
     border-left-color:  rgb(93, 208, 135);
 }
+
+/* backgr Homepage */
+/* .img-backgr{
+    background-image: url("https://duhocnamphong.vn/images/news/2020/05/original/dai-hoc-greenwich_1590138469.jpg");
+    background-size: cover;
+    background-position: center;
+    height:100%;
+    opacity: 0.4;
+} */
