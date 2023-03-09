@@ -835,7 +835,7 @@ hr {
   margin-left: 4px;
 }
 
-/* footer */
+/* footer Hg Minh */
 .dummy_page {
   height: 200px;
   width: 100%;
@@ -914,6 +914,7 @@ hr {
   .contain {
     width: 1200px;
     margin: 0 auto;
+    padding-left: 50px;
   }
 }
 
