@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
 import { Response } from "express";
@@ -6,6 +6,7 @@ import { IdeaService } from "./idea.service";
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import { AccountDocument } from '../accounts/schema/account.schema';
+import { IdeaDto } from './dto/idea.dto';
 
 @Controller('api')
 export class IdeaAPIController {
@@ -15,7 +16,7 @@ export class IdeaAPIController {
 
     // Basic CRUD
     @Post("create")
-    async create(@Body() ideaDto: any, @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @Res() res: Response) {
         try {
             await this.service.create(ideaDto);
             return {
@@ -52,14 +53,14 @@ export class IdeaAPIController {
     @UseGuards(AuthGuard)
     async update(
         @Param() id: String,
-        @Body() { name }: { name: String }, @Res() res: Response
+        @Body() ideaDto: IdeaDto, @Res() res: Response
     ) {
         try {
-            await this.service.update({ _id: id }, { name: name });
-            return {
+            await this.service.update({ _id: id }, ideaDto);
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update Idea successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -73,12 +74,13 @@ export class IdeaAPIController {
     @UseGuards(AuthGuard)
     async delete(@AccountDecorator() account: AccountDocument, @Param() id: String, @Res() res: Response) {
         try {
-            if (account._id != id) throw new Error("You can't delete other people's idea!");
+            if (account._id != id) throw new HttpException("You can't delete other people's idea!",
+                HttpStatus.FORBIDDEN);
             await this.service.delete({ _id: id });
-            return {
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Deleted Idea successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -88,22 +90,23 @@ export class IdeaAPIController {
         }
     }
 
-    @Post(':id/upvote')
+    @Post(':id/vote/:type')
     @UseGuards(AuthGuard)
-    async vote(@AccountDecorator() account: AccountDocument, @Param() id: string, @Query('type') type: string , @Res() res: Response) {
+    async vote(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
         try {
             if (type == 'upvote') {
                 await this.service.upvote(id, account._id);
             } else if (type == 'downvote') {
                 await this.service.downvote(id, account._id);
             } else {
-                throw new Error("Invalid type!");
+                throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
-            return {
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
                 message: "Voted Idea successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({

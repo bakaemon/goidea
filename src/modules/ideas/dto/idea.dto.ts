@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-class IdeaDto {
+export class IdeaDto {
     @IsString()
     title: string;
     
