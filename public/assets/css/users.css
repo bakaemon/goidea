@@ -55,14 +55,19 @@ button {
   cursor: pointer;
 }
 
+
 input {
   -webkit-appearance: none;
 }
 
 [type='checkbox'] {
-  position: absolute;
-  left: -9999px;
+  appearance: checkbox !important;
+  
 }
+.checkboxVisibility {
+  visibility: hidden;
+}
+
 
 label {
   cursor: pointer;
@@ -335,6 +340,14 @@ svg {
   top: 22%;
   left: 85%;
   transform: translate(-50%, -50%);
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
 }
 
 .whiteBtn {

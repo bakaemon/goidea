@@ -51,6 +51,12 @@ export class Account {
     roles: string;
 
     @Prop({
+        required: true,
+        type: mongoose.Schema.Types.Date,
+    })
+    birthday: Date;
+
+    @Prop({
         trim: true,
         default: "https://i.imgur.com/Uoeie1w.jpg"
     })

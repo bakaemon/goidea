@@ -157,7 +157,7 @@
                 </li>
                 <li>
                     <div class="switch">
-                        <input type="checkbox" id="mode" checked>
+                        <input type="checkbox" class="checkboxVisibility" id="mode" checked>
                         <label for="mode">
                             <span></span>
                             <span>Dark</span>
@@ -178,6 +178,7 @@
             <form>
 
             </form>
+
             <div class="admin-profile">
                 <div class="dropdown">
                     <a style="padding-right: 20px;">
@@ -185,7 +186,7 @@
                     </a>
                     <div class="dropdown-content">
                         <a href="#">Logout</a>
-                        <a href="#">Account Info</a>
+                        <a href="javascript:userInforForm()">Account Info</a>
                     </div>
                 </div>
                 <span class="greeting">Hello {{user}}</span>
@@ -198,6 +199,7 @@
             </div>
         </section>
         <section>{{{body}}}</section>
+        <div id="info-modal" style="top: 50%;"></div>
     </section>
     <footer>
         <div class="footer">
@@ -266,6 +268,20 @@
             </div>
         </div>
     </footer>
+    <script>
+        function userInforForm() {
+            var modal = Modal('#info-modal', {
+                title: 'User Information',
+                get: {
+                    url: '/assets/html/user/userInfo.html',
+                    overwrite: true,
+                },
+                footer: `<button type="button" onclick="#" class="createBtn">Change Password</button>`,
+            });
+            modal.open();
+        }       
+    </script>
+    <script src='/assets/js/modal.js' type='text/javascript'></script>
     <script>
         const html = document.documentElement;
         const body = document.body;

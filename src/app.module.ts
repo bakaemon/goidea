@@ -18,8 +18,10 @@ import { QamModule } from './modules/qam/qam.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configs]

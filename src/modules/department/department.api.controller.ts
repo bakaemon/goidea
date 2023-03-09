@@ -4,6 +4,7 @@ import RoleGuard from '@common/guards/role.guard';
 import Role from '@src/common/enums/role.enum';
 import { DepartmentDto } from './dto/department.dto';
 import { Response } from 'express';
+import mongoose, { ObjectId } from 'mongoose';
 
 @Controller('api')
 export class DepartmentAPIController {
@@ -29,14 +30,14 @@ export class DepartmentAPIController {
     }
 
     @Get("all")
-    async getAllDepartment() {
-        return await this.service.findAll({});
+    async getAllDepartment(@Res() res: Response) {
+        return res.json(await this.service.findAll({}));
     }
 
     @Get(":id")
-    async getDepartmentById(@Param() id: String, @Res() res: Response) {
+    async getDepartmentById(@Param() id: string, @Res() res: Response) {
         try {
-            return await this.service.findOne({ _id: id });
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) }));
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -48,15 +49,15 @@ export class DepartmentAPIController {
     @Patch(":id/update")
     @UseGuards(RoleGuard(Role.Admin))
     async updateDepartment(
-        @Param() id: String,
+        @Param() id: string,
         @Body() departmentDto: DepartmentDto, @Res() res: Response
     ) {
         try {
-            await this.service.update({ _id: id }, departmentDto);
-            return {
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, departmentDto);
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update department successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -68,13 +69,13 @@ export class DepartmentAPIController {
 
     @Delete(':id/delete')
     @UseGuards(RoleGuard(Role.Admin))
-    async delete(@Param() id: String, @Res() res: Response) {
+    async delete(@Param() id: string, @Res() res: Response) {
         try {
-            await this.service.delete({ _id: id });
-            return {
+            await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
+            return res.json({
                 success: true,
                 message: "Deleted department successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
