@@ -62,7 +62,7 @@ IdeaSchema.post('save', function (error, doc, next) {
     next();
 });
 IdeaSchema.post('findOneAndUpdate', function (error, doc, next) {
-    if (doc.flag.includes(Flag.Open)) {
+    if (doc.flag.includes(Flag.Open) && doc.closureDate === null) {
         // set closure date is 2 weeks from now
         doc.closureDate = new Date(Date.now() + 12096e5);
     }
