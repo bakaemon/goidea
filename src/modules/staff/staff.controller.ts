@@ -21,4 +21,20 @@ export class StaffController {
   idea(@Res() res: Response) {
     return res.render('roles/staff/pop_idea', { layout: 'main' });
   }
+  @Get('like')
+  like(@Res() res: Response) {
+    return res.render('roles/staff/like_idea', { layout: 'main' });
+  }
+  @Get('dislike')
+  dislike(@Res() res: Response) {
+    return res.render('roles/staff/dislike_idea', { layout: 'main' });
+  }
+  @Get('comment')
+  comment(@Res() res: Response) {
+    return res.render('roles/staff/comment_idea', { layout: 'main' });
+  }
+  @Get('view')
+  view(@Res() res: Response) {
+    return res.render('roles/staff/view_idea', { layout: 'main' });
+  }
 }
