@@ -1,3 +1,7 @@
+var selectedid = null;
+var modalArea = document.getElementById('modal-area');
+
+
 var initEditor = () => {
 
     var config = {
@@ -97,3 +101,46 @@ var initEditor = () => {
     
     var editor = new RichTextEditor("#editorjs", config);
 }
+
+function viewIdeaForm(e) {
+    var modal = Modal('.modal-area', {
+        title: 'Idea Information',
+        get: {
+            url: '/assets/html/ideas/editIdeas.html',
+            overwrite: true,
+        },
+        footer: `<button type="button" onclick="#" class="createBtn">Update</button>`,
+    });
+    modal.open();
+}
+
+
+window.onload = async (e) => {
+    loadTableDepartment();
+}
+
+function setPlaceHolders(form, text) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].placeholder = text;
+    }
+}
+
+function disableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+            inputs[i].disabled = true;
+        }
+    }
+}
+
+// enable form inputs
+function enableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value !== "") {
+            inputs[i].disabled = false;
+        }
+    }
+} 
