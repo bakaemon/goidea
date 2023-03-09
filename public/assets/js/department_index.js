@@ -139,7 +139,7 @@ async function editDepartments() {
         description: description,
     };
     try {
-        var response = await fetch('/department/api/:id/update', {
+        var response = await fetch('/department/api/' + selectedid +'/update', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

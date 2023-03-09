@@ -96,10 +96,17 @@ export class AccountsAPIController {
     @UseGuards(RoleGuard(Role.Admin))
     update(
         @Param("id") id: string,
-        @Body() updateAccountDto: UpdateAccountDto
+        @Body() updateAccountDto: UpdateAccountDto,
+        @Res() res: Response
     ) {
+        console.log(updateAccountDto);
+        console.log(id);
         if (updateAccountDto.role) Object.assign(updateAccountDto, { $addToSet: { roles: updateAccountDto.role } });
-        return this.accountsService.update({ _id: new mongoose.Types.ObjectId(id) }, updateAccountDto, { new: true });
+        this.accountsService.update({ _id: new mongoose.Types.ObjectId(id) }, updateAccountDto, { new: true });
+        return res.status(200).json({
+            message: "Update account successfully",
+            success: true
+            });
     }
 
     @Delete("admin_remove")

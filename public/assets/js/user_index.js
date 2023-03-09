@@ -80,6 +80,7 @@ function editUser(e, id) {
         var data = await res.json();
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
+        document.getElementById('DateOfBirth').value = data.dateofbirth;
         populateData();
         departmentList.forEach(department => {
                 var option = document.createElement('option');
@@ -134,7 +135,7 @@ function userInforForm(e) {
 function disableForm(form) {
     var inputs = form.getElementsByTagName('input');
     for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i].value == "") {
+        if (inputs[i].value == "" && inputs[i].id != "DateOfBirth") {
             inputs[i].disabled = true;
         }
     }
@@ -173,12 +174,12 @@ async function updateAccounts() {
         _id: id,
         username: username,
         email: email,
-        DateOfBirth: dateofbirth,
+        birthday: dateofbirth,
         roles: roles,
 
     };
     try {
-        var response = await fetch('/accounts/api/:id', {
+        var response = await fetch('/accounts/api/' + id, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

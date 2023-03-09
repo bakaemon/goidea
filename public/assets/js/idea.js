@@ -115,9 +115,9 @@ function viewIdeaForm(e) {
 }
 
 
-window.onload = async (e) => {
-    loadTableDepartment();
-}
+// window.onload = async (e) => {
+//     loadTableDepartment();
+// }
 
 function setPlaceHolders(form, text) {
     var inputs = form.getElementsByTagName('input');
