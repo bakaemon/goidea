@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
 import { VotesSchema, VotesDocument } from './votes.schema';
 import * as paginate from "mongoose-paginate-v2";
+import { ConflictException } from "@nestjs/common";
 
 export type IdeaDocument = Idea & Document;
 
@@ -27,23 +28,6 @@ export class Idea {
     })
     author: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account"
-    })
-    assignee: string;
-
-    @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account"
-    })
-    approver: string;
-
-    @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account"
-    })
-    reviewer: string;
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
@@ -57,12 +41,32 @@ export class Idea {
     })
     closureDate: Date;
 
+    @Prop({
+        type: [mongoose.Schema.Types.String],
+    })
+    flag: string[];
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
 
 
 IdeaSchema.pre('save', function (next) {
+    this.flag = [Flag.Queue];
+    next();
+});
+
+IdeaSchema.post('save', function (error, doc, next) {
+    if (error.name === 'MongoError' && error.code === 11000) {
+        next(new ConflictException('Idea already exists'));
+    } 
+    next();
+});
+IdeaSchema.post('findOneAndUpdate', function (error, doc, next) {
+    if (doc.flag.includes(Flag.Open)) {
+        // set closure date is 2 weeks from now
+        doc.closureDate = new Date(Date.now() + 12096e5);
+    }
+    next();
 });
 
 IdeaSchema.plugin(paginate);

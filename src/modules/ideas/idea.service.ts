@@ -1,15 +1,27 @@
 import { BaseService } from '../../common/service/base.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel, FilterQuery, QueryOptions } from 'mongoose';
-import { IdeaDocument } from './schema/idea.schema';
+import { PaginateModel, FilterQuery, QueryOptions, Document, Types } from 'mongoose';
+import { Idea, IdeaDocument } from './schema/idea.schema';
 import { VotesDocument } from './schema/votes.schema';
 import { filter } from 'rxjs';
-export class IdeaService {
+import { Cron, CronExpression } from '@nestjs/schedule';
+export class IdeaService extends BaseService<IdeaDocument> {
     constructor(
         @InjectModel('Idea') private ideaModel: PaginateModel<IdeaDocument>,
         @InjectModel('Votes') private votesModel: PaginateModel<VotesDocument>,
     ) {
+        super(ideaModel);
+    }
+
+    async create(idea: Partial<IdeaDocument>) {
+        try {
+            const ideaDoc = await this.ideaModel.create(idea);
+            await this.votesModel.create({ idea: ideaDoc._id });
+            return ideaDoc;
+        } catch (error) {
+            throw error;
+        }
     }
 
     async upvote(ideaId: string, voter: string) {
@@ -49,34 +61,49 @@ export class IdeaService {
         }
     }
 
-    async create(idea : any) {
+    async deleteOne(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
         try {
-            const newIdea = new this.ideaModel(idea);
-            return await newIdea.save();
+            const idea = await this.ideaModel.findOne(filter, options);
+            if (!idea) throw new HttpException("Idea not found", 404);
+            idea.flag = [Flag.Deleted];
+            return idea;
         } catch (error) {
             throw error;
         }
     }
 
-    async findOne(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    // event that runs every 24 hours
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+    async dailyEvent() {
+        await this.checkCloseDate();
+    }
+    // event that runs every month
+    @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+    async monthlyEvent() {
+        await this.cleanDeletedIdeas();
     }
 
-    async update(filter: FilterQuery<IdeaDocument>, update: any, options?: QueryOptions) {
+    // clean deleted ideas
+    async cleanDeletedIdeas() {
+        const ideas = await this.ideaModel.find({ flag: Flag.Deleted });
+        if (!ideas) return;
+        ideas.forEach(async (idea) => {
+            if (idea.flag.includes(Flag.Deleted)) {
+                await this.ideaModel.deleteOne({ _id: idea._id });
+                await this.votesModel.deleteOne({ idea: idea._id });
+            }
+        });
     }
-
-    async delete(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
-    }
-
-    async paginate(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
-    }
-
-    async findAll(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
-    }
-
-    async aggregate(filter: FilterQuery<IdeaDocument>, pipeline: any[], options?: QueryOptions) {
-    }
-
-    async count(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
+    // check if close date is passed
+    async checkCloseDate() {
+        const ideas = await this.ideaModel.find({ closureDate: { $lt: new Date() } });
+        if (!ideas) return;
+        ideas.forEach(async (idea) => {
+            if (idea.flag.includes(Flag.Open)) {
+                idea.flag[idea.flag.indexOf(Flag.Open)] = Flag.Closed;
+                await idea.save();
+            }
+        });
     }
 
 

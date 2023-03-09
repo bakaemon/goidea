@@ -15,11 +15,9 @@ export class IdeaAPIController {
 
     // Basic CRUD
     @Post("create")
-    async create(@Body() { name }: { name: String }, @Res() res: Response) {
+    async create(@Body() ideaDto: any, @Res() res: Response) {
         try {
-            await this.service.create({
-                name: name
-            });
+            await this.service.create(ideaDto);
             return {
                 success: true,
                 message: "Created Idea successfully"
