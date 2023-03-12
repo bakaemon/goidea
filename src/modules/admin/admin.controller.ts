@@ -36,5 +36,10 @@ export class AdminController {
   createOrganization(@Res() res: Response) {
     return res.render('departments/departments_create', { layout: 'main' });
   }
+
+  @Get('events')
+  events(@Res() res: Response) {
+    return res.render('events/dashboard', { layout: 'main' });
+  }
   
 }
