@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { DepartmentDto } from '../department/dto/department.dto';
 import { CategoryService } from './category.service';
 import RoleGuard from '@src/common/guards/role.guard';
+import mongoose, { ObjectId } from 'mongoose';
 
 @Controller('api')
 export class CategoryAPIController {
@@ -48,15 +49,15 @@ export class CategoryAPIController {
     @Patch(":id/update")
     @UseGuards(RoleGuard(Role.Admin))
     async update(
-        @Param() id: String,
+        @Param() id: string,
         @Body() { name }: { name: String }, @Res() res: Response
     ) {
         try {
-            await this.service.update({ _id: id }, {name: name});
-            return {
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, {name: name});
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update category successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -68,13 +69,13 @@ export class CategoryAPIController {
 
     @Delete(':id/delete')
     @UseGuards(RoleGuard(Role.Admin))
-    async delete(@Param() id: String, @Res() res: Response) {
+    async delete(@Param() id: string, @Res() res: Response) {
         try {
-            await this.service.delete({ _id: id });
-            return {
+            await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
+            return res.json({
                 success: true,
                 message: "Deleted category successfully"
-            }
+            })
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({

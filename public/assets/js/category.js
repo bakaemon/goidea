@@ -1,3 +1,7 @@
+var selectedid = null;
+var modalArea = document.getElementById('modal-area');
+
+
 async function loadTable() {
     var tableArea = document.getElementById('table-area');
     tableArea.innerHTML = "";
@@ -53,37 +57,98 @@ function openCreateForm(){
     });
     modal.open()
 }
-function createCategory(){
-    var form = document.getElementById("createForm"); 
-    var name = form.name.value;
-    fetch("/category/api/create", {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + getCookie("token")
-        },
-        body: JSON.stringify({
-            name : name
-        })
-    }).then((res)=>{
-        if(!res.ok){
-            alert(res.data.json().message)
+
+async function createCategory() {
+    var name = document.getElementById('name').value;
+    var data = {
+        name: name,
+    };
+    try {
+        var response = await fetch('/category/api/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getCookie("token")
+            },
+            body: JSON.stringify(data),
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/category";
             return;
         }
-        alert(res.data.json().message)
-        loadTable()
-    })
+        else {
+            alert(data.message);
+            return;
+        }
+    }
+    catch (error) {
+        alert(error);
+    }
 }
+
+
+function disableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+            inputs[i].disabled = true;
+        }
+    }
+}
+
+// enable form inputs
+function enableForm(form) {
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].value !== "") {
+            inputs[i].disabled = false;
+        }
+    }
+} 
+
+// function createCategory(){
+//     var form = document.getElementById("createForm"); 
+//     var name = form.name.value;
+//     try {
+//         fetch("/category/api/create", {
+//         method:"POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Authorization": "Bearer " + getCookie("token")
+//         },
+//         body: JSON.stringify({
+//             name : name
+//         })
+//     }).then((res)=>{
+//         if(!res.ok){
+//             alert(res.data.json().message)
+//             return;
+//         }
+//         alert(res.data.json().message)
+//         loadTable()
+//     })
+//     }
+//     catch(err){
+//         alert(err)
+//     }
+// }
+
+
 async function deleteCategory(id) {
     var x = confirm("Are you sure you want to delete this category?");
     if (x) {
         try {
-            var res = await fetch('/category/api/'+id+"/detele", {
+            var res = await fetch('/category/api/' + id + '/delete', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + getCookie('token')
                 },
+                body: JSON.stringify({
+                    accountId: id
+                })
             });
             var data = await res.json();
             if (data.success) {
@@ -101,6 +166,8 @@ async function deleteCategory(id) {
     else
         return false;
 }
+
+
 window.addEventListener("load", (e)=>{
     loadTable()
 })
