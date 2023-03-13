@@ -1,25 +1,26 @@
 import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch, Delete } from '@nestjs/common';
 import Role from '@src/common/enums/role.enum';
 import { Response } from 'express';
-import { DepartmentDto } from '../department/dto/department.dto';
-import { CategoryService } from './category.service';
 import RoleGuard from '@src/common/guards/role.guard';
 import mongoose, { ObjectId } from 'mongoose';
+import { EventDto } from './dto/event.dto';
+import { EventService } from './event.service';
+
 
 @Controller('api')
-export class CategoryAPIController {
+export class EventAPIController {
     constructor(
-        private readonly service: CategoryService,
+        private readonly service: EventService,
     ) { }
     @Post("create")
     @UseGuards(RoleGuard(Role.Admin))
-    async create(@Body() {name} : {name: String}, @Res() res: Response) {
+    async createEvent(@Body() eventDto: EventDto, @Res() res: Response) {
         try {
-            await this.service.create({name: name});
-            return {
+            await this.service.create(eventDto);
+            return res.status(HttpStatus.CREATED).json({
                 success: true,
-                message: "Created category successfully"
-            }
+                message: "Create event successfully"
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -30,14 +31,14 @@ export class CategoryAPIController {
     }
 
     @Get("all")
-    async getAll() {
-        return await this.service.findAll({});
+    async getAllEvents(@Res() res: Response) {
+        return res.json(await this.service.findAll({}));
     }
 
     @Get(":id")
-    async getById(@Param() id: String, @Res() res: Response) {
+    async getEventById(@Param() id: string, @Res() res: Response) {
         try {
-            return await this.service.findOne({ _id: id });
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) }));
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -48,17 +49,16 @@ export class CategoryAPIController {
 
     @Patch(":id/update")
     @UseGuards(RoleGuard(Role.Admin))
-    async update(
+    async updateEvent(
         @Param() id: string,
-        @Body() { name }: { name: String }, @Res() res: Response
+        @Body() eventDto: EventDto, @Res() res: Response
     ) {
         try {
-            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, {name: name});
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, eventDto);
             return res.status(HttpStatus.OK).json({
                 success: true,
-                message: "Update category successfully"
+                message: "Update event successfully"
             });
-
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
@@ -67,16 +67,15 @@ export class CategoryAPIController {
         }
     }
 
-    @Delete(':id/delete')
+    @Delete(":id/delete")
     @UseGuards(RoleGuard(Role.Admin))
-    async delete(@Param() id: string, @Res() res: Response) {
+    async deleteEvent(@Param() id: string, @Res() res: Response) {
         try {
             await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
-            return res.json({
+            return res.status(HttpStatus.OK).json({
                 success: true,
-                message: "Deleted category successfully"
-            })
-
+                message: "Delete event successfully"
+            });
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
@@ -84,8 +83,4 @@ export class CategoryAPIController {
             });
         }
     }
-
-
-
-
 }

@@ -17,29 +17,22 @@ export class Idea {
     @Prop({
         required: true,
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Department"
-    })
-    category: string;
-
-    @Prop({
-        required: true,
-        type: mongoose.Schema.Types.ObjectId,
         ref: "Account"
     })
     author: string;
 
+    @Prop({ 
+        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event"
+    })
+    event: string;
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag"
     })
     tags: string[];
-
-    // closure date
-    @Prop({
-        type: mongoose.Schema.Types.Date,
-    })
-    closureDate: Date;
 
     @Prop({
         type: [mongoose.Schema.Types.String],
@@ -62,10 +55,6 @@ IdeaSchema.post('save', function (error, doc, next) {
     next();
 });
 IdeaSchema.post('findOneAndUpdate', function (error, doc, next) {
-    if (doc.flag.includes(Flag.Open) && doc.closureDate === null) {
-        // set closure date is 2 weeks from now
-        doc.closureDate = new Date(Date.now() + 12096e5);
-    }
     next();
 });
 

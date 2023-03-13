@@ -3,10 +3,10 @@ import { Response } from 'express';
 
 @Controller()
 export class DepartmentController {
-  constructor() {}
+  constructor() { }
 
   @Get()
   root(@Res() res: Response) {
-    return res.render('departments/dashboard', { layout: 'main' });
+    return res.render('dashboard/departments/dashboard', { layout: 'main' });
   }
 }

@@ -180,21 +180,17 @@
 
             </form>
 
-            <div class="admin-profile">
-                <div class="dropdown">
-                    <a style="padding-right: 20px;">
-                        <button class=" userBtn icon fa fa-user"></button>
-                    </a>
-                    <div class="dropdown-content">
-                        <a href="#">Logout</a>
-                        <a href="javascript:userInforForm()">Account Info</a>
-                    </div>
-                </div>
+            <div class="admin-profile" style="padding-right: 120px;">
                 <span class="greeting">Hello {{user}}</span>
-                <div class="notifications">
+                <div class="dropdown">
                     <span class="badge">1</span>
                     <svg>
-                        <use xlink:href="#users"></use>
+                        <use xlink:href="#users">
+                            <div class="dropdown-content">
+                                <a href="#">Logout</a>
+                                <a href="javascript:userInforForm()">Account Info</a>
+                            </div>
+                        </use>
                     </svg>
                 </div>
             </div>
@@ -260,9 +256,12 @@
                 <div class="col social">
                     <h1>Social</h1>
                     <ul>
-                        <li><img src="https://cdn-icons-png.flaticon.com/512/2504/2504903.png" width="32" style="width: 32px;"></li>
-                        <li><img src="https://cdn-icons-png.flaticon.com/512/2504/2504947.png" width="32" style="width: 32px;"></li>
-                        <li><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="32" style="width: 32px;"></li>
+                        <li><img src="https://cdn-icons-png.flaticon.com/512/2504/2504903.png" width="32"
+                                style="width: 32px;"></li>
+                        <li><img src="https://cdn-icons-png.flaticon.com/512/2504/2504947.png" width="32"
+                                style="width: 32px;"></li>
+                        <li><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="32"
+                                style="width: 32px;"></li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>

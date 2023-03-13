@@ -18,7 +18,13 @@ export class AppController {
   }
   @Get()
   root(@Res() res: Response) {
-    return res.render('index', { layout: 'main' });
+    return res.render('main/index', { layout: 'home' });
+  }
+
+  @Get("/admin")
+  // @UseGuards(RoleGuard(Role.Admin))
+  admin(@Res() res: Response) {
+    return res.render('dashboard/index', { layout: 'main' });
   }
   @Get("/testmail")
   @UseGuards(RoleGuard(Role.Admin, Role.User))

@@ -12,11 +12,11 @@ export class QamController {
     
     @Get()
     root(@Res() res: Response) {
-        return res.render('roles/qam/dashboard', { layout: 'main' });
+        return res.render('dashboard/roles/qam/dashboard', { layout: 'main' });
     }
 
     @Get('test')
     test(@Res() res: Response) {
-        return res.render('roles/qam/test', { layout: 'main' });
+        return res.render('dashboard/roles/qam/test', { layout: 'main' });
     }
 }
