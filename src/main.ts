@@ -9,15 +9,17 @@ import { RATE_LIMIT_MAX, PORT } from './configs/env';
 import * as cookieParser from 'cookie-parser';
 import { hbsHelper } from './common/hbs_helpers/hbs_func';
 
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const hbs = create({
+  const hbsConfig = {
     extname: 'hbs',
     partialsDir: join(__dirname, '..', 'views/partials'),
     layoutsDir: join(__dirname, '..', 'views/layouts'),
     defaultLayout: 'main.hbs',
     helpers: hbsHelper,
-  });
+  }
+  const hbs = create(hbsConfig);
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
