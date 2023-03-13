@@ -19,10 +19,10 @@ export class IdeaAPIController {
     async create(@Body() ideaDto: IdeaDto, @Res() res: Response) {
         try {
             await this.service.create(ideaDto);
-            return {
+            return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Created Idea successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
