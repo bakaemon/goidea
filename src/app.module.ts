@@ -19,9 +19,12 @@ import { DepartmentModule } from './modules/department/department.module';
 import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import nodemailer from 'nodemailer';
+import { EmailTransporter } from './common/email/email-transporter';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configs]
@@ -41,6 +44,9 @@ import { ScheduleModule } from '@nestjs/schedule';
     IdeaModule,
   ],
   controllers: [AppController,],
-  providers: [AppService],
+  providers: [
+    AppService,
+    EmailTransporter,
+  ],
 })
 export class AppModule {}
