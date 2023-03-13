@@ -7,6 +7,6 @@ export class CategoryController {
 
   @Get()
   root(@Res() res: Response) {
-    return res.render('category/index', { layout: 'main' });
+    return res.render('dashboard/category/index', { layout: 'main' });
   }
 }

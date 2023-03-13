@@ -6,7 +6,7 @@ import RoleGuard from './common/guards/role.guard';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Get("/login")
   login(@Res() res: Response) {
@@ -18,7 +18,7 @@ export class AppController {
   }
 
   @Get("/admin")
-  @UseGuards(RoleGuard(Role.Admin))
+  // @UseGuards(RoleGuard(Role.Admin))
   admin(@Res() res: Response) {
     return res.render('dashboard/index', { layout: 'main' });
   }
