@@ -14,32 +14,32 @@ export class AdminController {
 
   @Get()
   root(@Res() res: Response) {
-    return res.render('roles/admin/dashboard', { layout: 'main' });
+    return res.render('dashboard/roles/admin/dashboard', { layout: 'main' });
   }
 
   @Get('users')
   users(@Res() res: Response) {
-    return res.render('roles/admin/user_index', { layout: 'main' });
+    return res.render('dashboard/roles/admin/user_index', { layout: 'main' });
   }
 
   @Get('users/create')
   createUsers(@Res() res: Response) {
-    return res.render('roles/admin/CreateUsers_index', { layout: 'main' });
+    return res.render('dashboard/roles/admin/CreateUsers_index', { layout: 'main' });
   }
 
   @Get('departments')
   Organization(@Res() res: Response) {
-    return res.render('departments/dashboard', { layout: 'main' });
+    return res.render('dashboard/departments/dashboard', { layout: 'main' });
   }
 
   @Get('departments/create')
   createOrganization(@Res() res: Response) {
-    return res.render('departments/departments_create', { layout: 'main' });
+    return res.render('dashboard/departments/departments_create', { layout: 'main' });
   }
 
   @Get('events')
   events(@Res() res: Response) {
-    return res.render('events/dashboard', { layout: 'main' });
+    return res.render('dashboard/events/dashboard', { layout: 'main' });
   }
   
 }
