@@ -1,7 +1,8 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Res } from "@nestjs/common";
 import { AuthService } from "@modules/auth/auth.service";
 import { getTokenFromRequest } from "@util/get-token-from-request";
 import { getTokenFromCookies } from '../util/get-token-from-request';
+import { TokensService } from "@src/modules/token/token.service";
 
 
 @Injectable()
@@ -18,13 +19,21 @@ export class HttpAuthGuard implements CanActivate {
 
         const ctx = context.switchToHttp();
         const req = ctx.getRequest();
-        const token = getTokenFromCookies(req);
+        const res = ctx.getResponse();
+        // eslint-disable-next-line prefer-const
+        let {token, refreshToken} = getTokenFromCookies(req);
 
-        if (!token) {
+        if (!refreshToken) {
             // redirect to login page
             ctx.getResponse().redirect('/login');
         }
-
+        if (!token && refreshToken) {
+            // send refresh token to server
+            token = (await this.authService.refreshToken(refreshToken)).access_token;
+            res.cookie('token', token);
+            // redirect to current page
+            res.redirect(req.originalUrl);
+        }
         const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
 
         req.account = tokenRes;
