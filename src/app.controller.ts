@@ -26,6 +26,8 @@ export class AppController {
   admin(@Res() res: Response) {
     return res.render('dashboard/index', { layout: 'dashboard/main' });
   }
+
+  
   @Get("/testmail")
   @UseGuards(RoleGuard(Role.Admin, Role.User))
   async testMail() {

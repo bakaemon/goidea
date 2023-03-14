@@ -13,7 +13,10 @@ export class Event {
     @Prop({ required: true })
     description: string;
     
-    @Prop({ required: true })
+    @Prop({
+        required: true,
+        type: mongoose.Schema.Types.Date,
+    })
     closureDate: Date;
     
     @Prop({

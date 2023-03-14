@@ -8,6 +8,7 @@ import { TagSchema } from '../../modules/tag/schema/tag.schema';
 import { DepartmentSchema } from "@src/modules/department/schema/department.schema";
 import { VotesSchema } from '../../modules/ideas/schema/votes.schema';
 import { IdeaSchema } from "@src/modules/ideas/schema/idea.schema";
+import { EventSchema } from "@src/modules/events/schema/event.schema";
 const schemas = [
     {
         name: "Account", schema: AccountSchema
@@ -29,6 +30,9 @@ const schemas = [
     },
     {
         name: "Idea", schema: IdeaSchema
+    },
+    {
+        name: "Event", schema: EventSchema
     }
 ];
 @Global()

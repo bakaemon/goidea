@@ -8,13 +8,28 @@
 
 }}
 
+{{setVarIter "scripts" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+
 
 {{setVarIter "scripts" '
 <script src="/assets/js/idea.js"></script>'}}
 
+{{setVarIter "scripts" '
+<script src="/assets/js/event_index.js"></script>'}}
+
 {{setVar "title" "View Ideas Data Page "}}
 
 
+<br>
+<br>
+<form>
+    <input type="button" class="darkBlueBtn" value="Create New Events" onclick='createEventForm(this)'>
+</form>
 <table id="information">
     <thead>
         <tr>
@@ -34,5 +49,10 @@
         </tr>
     </thead>
 </table>
+<br>
+<br>
+<div id="table-area-event" style="width: 100%;">
+</div>
+
 <div class="modal-area"></div>
 

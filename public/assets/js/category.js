@@ -168,6 +168,6 @@ async function deleteCategory(id) {
 }
 
 
-window.addEventListener("load", (e)=>{
-    loadTable()
-})
+window.onload = async (e) => {
+    loadTable();
+}

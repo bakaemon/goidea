@@ -80,8 +80,8 @@ function editUser(e, id) {
         var data = await res.json();
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
-        document.getElementById('DateOfBirth').value = data.dateofbirth;
-        populateData();
+        document.getElementById('DateOfBirth').value = data.birthday.split('T')[0];
+        await populateData();
         departmentList.forEach(department => {
                 var option = document.createElement('option');
                 option.value = department._id;
@@ -294,7 +294,6 @@ async function populateData() {
         }
         return departmentList;
     }
-    
     
 }
 

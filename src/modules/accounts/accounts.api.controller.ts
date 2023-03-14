@@ -80,7 +80,7 @@ export class AccountsAPIController {
     async getById(@Query('id') id: string, @Res() res: Response) {
         try {
             const data = await this.accountsService.
-                findOne({ _id: new mongoose.Types.ObjectId(id) }, { select: 'username email roles department' });
+                findOne({ _id: new mongoose.Types.ObjectId(id) }, { select: 'username email birthday roles department' });
             return res.status(200)
                 .json(data);
         }
