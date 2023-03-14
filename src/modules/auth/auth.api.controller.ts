@@ -16,6 +16,7 @@ import Role from '@src/common/enums/role.enum';
 import RoleGuard from '@src/common/guards/role.guard';
 import { Request } from 'express';
 import { ObjectId } from 'mongoose';
+import { Response } from 'express';
 
 
 @Controller('api')
@@ -87,7 +88,7 @@ export class AuthAPIController {
     // }
 
     @Post("login")
-    async login(@Body() loginDto: LoginDto, @Res({passthrough: true}) res) {
+    async login(@Body() loginDto: LoginDto, @Res({passthrough: true}) res: Response) {
         try {
 
             const account = await this.authService.authenticate(loginDto.loginField, loginDto.password);
@@ -111,13 +112,14 @@ export class AuthAPIController {
                 account,
                 success: true
             };
-            res.cookie("token", access_token);
-            res.cookie("refresh_token", refresh_token);
+            res.cookie("token", access_token, { maxAge: 1000 * 60 * 30 });
+            res.cookie("refresh_token", refresh_token, { maxAge: 1000 * 60 * 60 * 24 * 14});
             return response;
         } catch (e) {
             console.log(e);
-            if (e.message === "verifyAccount") throw new HttpException("Please verify your email to continue", HttpStatus.INTERNAL_SERVER_ERROR);
-            else throw new HttpException("Login failed", HttpStatus.UNAUTHORIZED);
+            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            //if (e.message === "verifyAccount") throw new HttpException("Please verify your email to continue", HttpStatus.INTERNAL_SERVER_ERROR);
+            //else throw new HttpException("Login failed", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -132,22 +134,18 @@ export class AuthAPIController {
             if (!token) {
                 throw new HttpException("Can't find token", HttpStatus.NOT_ACCEPTABLE);
             }
-            const payload = await this.authService.verifyToken(token.token, "jwt.refreshTokenPrivateKey");
-            const access_token = this.authService.generateToken({ accountId: payload.accountId }, "jwt.accessTokenPrivateKey", { expiresIn: this.configService.get("jwt.expiresTime.access") });
-            //const new_refresh_token = this.authService.generateToken({ accountId: payload.accountId }, "jwt.accessTokenPrivateKey", { expiresIn: this.configService.get("jwt.expiresTime.refresh") });
-            const { accessTokenExpiresAt } = await this.authService.generateTokenExpiresTimes();
-            const account = await this.accountService.findOne({ _id: payload.accountId });
-            if (!account) {
-                throw new HttpException("Account does not exist", HttpStatus.NOT_FOUND);
-            }
+            const { access_token,
+                access_token_expires_at,
+                account } = await this.authService.refreshToken(token.token);
             // await token.updateOne({ token: new_refresh_token });
             res.cookie("token", access_token);
             //res.cookie("refresh_token", new_refresh_token);
             return res.status(HttpStatus.OK).json({
                 access_token,
-                access_token_expires_at: accessTokenExpiresAt,
+                access_token_expires_at,
                 // refresh_token: new_refresh_token,
-                account, success: true
+                account,
+                success: true
             });
         }
         catch (e) {
