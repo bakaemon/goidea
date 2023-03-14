@@ -11,6 +11,11 @@
 </head>
 
 <body> --}}
+  {{setVar "var1" "Haha"}}
+
+  {{#ne var1 "Login"}}
+    {{var1}}
+  {{/ne}}
   <form class="box" action="index.html" method="post">
     <h1>Login</h1>
     <input type="text" name="loginField" placeholder="Username">
@@ -40,11 +45,11 @@
     <div class="line"></div>
   </div>
   <script>
-    tokenListener.valueListener = function (val) {
-      if (val) {
-        window.location.href = "/admin";
-      }
-    }
+    //tokenListener.valueListener = function (val) {
+    //  if (val) {
+     //   window.location.href = "/admin";
+      //}
+    //}
     async function submitlogin() {
       var loginField = document.getElementsByName("loginField")[0].value;
       var password = document.getElementsByName("password")[0].value;
