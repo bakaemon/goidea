@@ -4,7 +4,7 @@ import HttpRoleGuard from '@src/common/guards/http-role.guard';
 import Role from '@src/common/enums/role.enum';
 import { QamService } from './qam.service';
 import { get } from 'http';
-
+const mainLayout = "dashboard/main"
 @Controller()
 // @UseGuards(HttpRoleGuard(Role.QAM))
 export class QamController {
@@ -12,11 +12,11 @@ export class QamController {
     
     @Get()
     root(@Res() res: Response) {
-        return res.render('dashboard/roles/qam/dashboard', { layout: 'main' });
+        return res.render('dashboard/roles/qam/dashboard', { layout: mainLayout });
     }
 
     @Get('test')
     test(@Res() res: Response) {
-        return res.render('dashboard/roles/qam/test', { layout: 'main' });
+        return res.render('dashboard/roles/qam/test', { layout: mainLayout });
     }
 }
