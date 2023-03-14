@@ -19,11 +19,11 @@ export const getTokenFromRequest = (req) => {
 }
 
 export const getTokenFromCookies = (req) => {
-    let token;
 
-    const tokenQuery = req.cookies['token'];
-    if (tokenQuery) {
-        token = tokenQuery;
-    }
-    return token;
+    const token = req.cookies['token'];
+    const refreshToken = req.cookies['refresh_token'];
+    return {
+        token,
+        refreshToken
+    };
 }
