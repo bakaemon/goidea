@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards, HttpStatus, Put, Get, Param, Patch, Delete, Query } from '@nestjs/common';
 import Role from '@src/common/enums/role.enum';
 import { Response } from 'express';
 import { DepartmentDto } from '../department/dto/department.dto';
@@ -30,8 +30,9 @@ export class CategoryAPIController {
     }
 
     @Get("all")
-    async getAll() {
-        return await this.service.findAll({});
+    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit: number, sort?: string, sortMode?: any }) {
+        if (!page) page = 1;
+        return await this.service.findAll({ page, limit, sort: { [sort]: sortMode }});
     }
 
     @Get(":id")
