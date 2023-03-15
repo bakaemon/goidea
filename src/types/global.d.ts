@@ -24,8 +24,10 @@ type ReactionResponse = {
 type VoteTypes = "none" | "upvote" | "downvote";
 
 interface PaginatedDocumentsResponse<T> {
-    data: T[];
-    paginationOptions: Partial<import("mongoose").PaginateResult<T>>;
+    // data: T[];
+    //paginationOptions: Partial<import("mongoose").PaginateResult<T>>;
+    data: any;
+    paginationOptions: any;
 }
 
 interface ResponseBody {
