@@ -9,6 +9,7 @@ import { DepartmentSchema } from "@src/modules/department/schema/department.sche
 import { VotesSchema } from '../../modules/ideas/schema/votes.schema';
 import { IdeaSchema } from "@src/modules/ideas/schema/idea.schema";
 import { EventSchema } from "@src/modules/events/schema/event.schema";
+import { CommentSchema } from "@src/modules/ideas/schema/comment.schema";
 const schemas = [
     {
         name: "Account", schema: AccountSchema
@@ -33,6 +34,9 @@ const schemas = [
     },
     {
         name: "Event", schema: EventSchema
+    }, 
+    {
+        name: "Comment", schema: CommentSchema
     }
 ];
 @Global()
