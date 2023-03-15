@@ -3,6 +3,7 @@ import mongoose, { Document } from "mongoose";
 import { VotesSchema, VotesDocument } from './votes.schema';
 import * as paginate from "mongoose-paginate-v2";
 import { ConflictException } from "@nestjs/common";
+import { Flag, FlagNames } from "@src/common/enums/flag.enum";
 
 export type IdeaDocument = Idea & Document;
 
@@ -34,19 +35,20 @@ export class Idea {
     })
     tags: string[];
 
+    // is anonymous
+    @Prop({ default: false })
+    anonymous: boolean;
+
     @Prop({
         type: [mongoose.Schema.Types.String],
+        enum: FlagNames,
+        default: [Flag.Queue]
     })
     flag: string[];
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
 
-
-IdeaSchema.pre('save', function (next) {
-    this.flag = [Flag.Queue];
-    next();
-});
 
 IdeaSchema.post('save', function (error, doc, next) {
     if (error.name === 'MongoError' && error.code === 11000) {

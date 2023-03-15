@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString , IsBoolean, IsArray} from 'class-validator';
 export class IdeaDto {
     @IsString()
     title: string;
@@ -7,16 +7,20 @@ export class IdeaDto {
     description: string;
 
     @IsString()
-    category: string;
-
-    @IsString()
     author: string;
 
     @IsString()
-    assignee: string;
+    event: string;
 
-    @IsString()
-    approver: string;
+    @IsBoolean()
+    anonymous: boolean;
+
+    @IsArray()
+    tags: string[];
+
+    @IsArray()
+    flag: string[];
+
 
     
 }
