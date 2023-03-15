@@ -33,8 +33,9 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll() {
-        return await this.service.findAll();
+    async getAll(@Query() { page, limit }: { page?: number, limit: number }) {
+        if (!page) page = 1;
+        return await this.service.findAll({ page, limit });
     }
 
     @Get(":id")

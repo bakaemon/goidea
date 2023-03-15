@@ -64,13 +64,14 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
-    async findAll() {
+    async findAll(paginateOptions?: any) {
         try {
             const paginateResults = await this.ideaModel.paginate({}, {
                 populate: [
                     { path: 'author' },
                     { path: 'author.department' }
-                ]
+                ],
+                ...paginateOptions,
             });
             let ideas = paginateResults.docs;
             delete paginateResults.docs;
