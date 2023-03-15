@@ -21,7 +21,7 @@ export class AppController {
     return res.render('main/index', { layout: 'main/home' });
   }
 
-  @Get("/admin")
+  @Get("/admin/test")
   // @UseGuards(RoleGuard(Role.Admin))
   admin(@Res() res: Response) {
     return res.render('dashboard/index', { layout: 'dashboard/main' });

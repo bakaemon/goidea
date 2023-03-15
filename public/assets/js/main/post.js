@@ -56,7 +56,7 @@ const ideaData = [
     {
         avatar: 'assets/images/avatar.jpg',
         title: 'Title Test',
-        description: '123123123123123123123123123123123123123123123123123123123123123123123123123123123',
+        description: '123123123123123123123123123123123123123123123',
         vote: 12,
         isUpVote: false,
         isDownVote: false,
@@ -67,7 +67,7 @@ const ideaData = [
     {
         avatar: 'assets/images/avatar.jpg',
         title: 'Title Test',
-        description: '123123123123123123123123123123123123123123123123123123123123123123123123123123123',
+        description: '12312312312312312312312312312312312312312312312',
         vote: 12,
         isUpVote: false,
         isDownVote: false,

@@ -4,8 +4,21 @@
 "
 }}
 
+{{setVarIter 'scripts' '
+<script src="assets/js/main/post.js"></script>
+'}}
+
 {{setVarIter "head" "
 <link href='/assets/css/modal.css' rel='stylesheet' type='text/css'>"}}
+
+{{setVarIter "head" "
+<link href='/assets/css/style.css' rel='stylesheet' type='text/css'>
+<link href='/assets/css/custom.css' rel='stylesheet' type='text/css'>
+<link rel='stylesheet' href='assets/upvotejs/upvotejs.css'>
+"}}
+
+
+
 
 {{setVar "title" "Admin Dashboard "}}
 
@@ -14,7 +27,54 @@
     <h2>{{title}}</h2>
 </section>
 <br>
-<table class="site-content">
+
+<section class="content">
+
+    <div class=".containerBS">
+        <div class="row">
+            <div class="col-lg-8 col-md-8" id="posts">
+                <!-- POST -->
+
+                <!-- POST -->
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- <table class="site-content">
     <div class="forum-index">
         <section>
             <a href="/ideas">
@@ -198,4 +258,4 @@
             </div>
         </section>
     </div>
-</table>
+</table> --}}
