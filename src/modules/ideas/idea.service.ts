@@ -6,10 +6,14 @@ import { Idea, IdeaDocument } from './schema/idea.schema';
 import { VotesDocument } from './schema/votes.schema';
 import { filter } from 'rxjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Flag } from '@src/common/enums/flag.enum';
+import { CommentDocument } from './schema/comment.schema';
+import * as paginate from 'mongoose-paginate-v2';
 export class IdeaService extends BaseService<IdeaDocument> {
     constructor(
         @InjectModel('Idea') private ideaModel: PaginateModel<IdeaDocument>,
         @InjectModel('Votes') private votesModel: PaginateModel<VotesDocument>,
+        @InjectModel('Comment') private commentModel: PaginateModel<CommentDocument>,
     ) {
         super(ideaModel);
     }
@@ -43,7 +47,6 @@ export class IdeaService extends BaseService<IdeaDocument> {
             await vote.save();
         }
     }
-    // removeVote(id: string, voter: string) {
     async removeVote(ideaId: string, voter: string, voteType: string) {
         try {
             const vote = await this.votesModel.findOne({ idea: ideaId });
@@ -61,13 +64,53 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
+    async findAll() {
+        try {
+            const paginateResults = await this.ideaModel.paginate({}, {
+                populate: [
+                    { path: 'author' },
+                    { path: 'author.department' }
+                ]
+            });
+            let ideas = paginateResults.docs;
+            delete paginateResults.docs;
+            return { data: ideas, paginationOptions: paginateResults };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async deleteOne(filter: FilterQuery<IdeaDocument>, options?: QueryOptions) {
         try {
             const idea = await this.ideaModel.findOne(filter, options);
             if (!idea) throw new HttpException("Idea not found", 404);
-            idea.flag = [Flag.Deleted];
+            if (idea.flag.includes(Flag.Deleted)) throw new HttpException("Idea already deleted", 400);
+            idea.flag.push(Flag.Deleted);
             return idea;
         } catch (error) {
+            throw error;
+        }
+    }
+
+    async findALlComment(options?: QueryOptions) {
+        try {
+            const paginateResults = await this.commentModel.paginate({}, options);
+            const comments = paginateResults.docs;
+            delete paginateResults.docs;
+            return { data: comments, paginationOptions: paginateResults };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findCommentsByIdeaId(ideaId: string, options?: QueryOptions) {
+        try {
+            const paginateResults = await this.commentModel.paginate({ idea: ideaId}, options);
+            const comments = paginateResults.docs;
+            delete paginateResults.docs;
+            return { data: comments, paginationOptions: paginateResults };
+        }
+        catch (error) {
             throw error;
         }
     }
@@ -91,6 +134,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
             if (idea.flag.includes(Flag.Deleted)) {
                 await this.ideaModel.deleteOne({ _id: idea._id });
                 await this.votesModel.deleteOne({ idea: idea._id });
+                await this.commentModel.deleteMany({ idea: idea._id });
             }
         });
     }

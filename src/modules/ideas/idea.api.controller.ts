@@ -34,7 +34,7 @@ export class IdeaAPIController {
 
     @Get("all")
     async getAll() {
-        return await this.service.findAll({});
+        return await this.service.findAll();
     }
 
     @Get(":id")
@@ -89,6 +89,25 @@ export class IdeaAPIController {
             });
         }
     }
+
+    // Advanced CRUD
+    @Get('comments/all')
+    async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
+        try {
+            let comments;
+            if (ideaId) {
+                comments = res.json(await this.service.findCommentsByIdeaId(ideaId));
+            } else comments = res.json(await this.service.findALlComment({}));
+            return comments;
+        } catch (error) {   
+            console.log(error);
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
 
     @Post(':id/vote/:type')
     @UseGuards(AuthGuard)

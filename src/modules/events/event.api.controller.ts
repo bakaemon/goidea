@@ -16,13 +16,23 @@ export class EventAPIController {
     @UseGuards(RoleGuard(Role.Admin))
     async createEvent(@Body() eventDto: EventDto, @Res() res: Response) {
         try {
-            await this.service.create(eventDto);
+            console.log(eventDto);
+            var department = new mongoose.Types.ObjectId(eventDto.department);
+            var category = new mongoose.Types.ObjectId(eventDto.category);
+            delete eventDto.department;
+            delete eventDto.category;
+            await this.service.create({
+                ...eventDto,
+                department,
+                category
+            });
             return res.status(HttpStatus.CREATED).json({
                 success: true,
                 message: "Create event successfully"
             });
 
         } catch (error) {
+            console.log(error);
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: error.message
@@ -32,7 +42,7 @@ export class EventAPIController {
 
     @Get("all")
     async getAllEvents(@Res() res: Response) {
-        return res.json(await this.service.findAll({}));
+        return res.json(await this.service.find({}));
     }
 
     @Get(":id")
