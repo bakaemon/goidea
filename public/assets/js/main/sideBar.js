@@ -33,3 +33,19 @@ var loadTop5Ideas = function () {
     });
 }
 
+var loadDepartments = function () {
+    $.ajax({
+        url: '/api/department/get',
+        type: 'GET',
+        success: function (data) {
+            var html = '';
+            $.each(data, function (index, item) {
+                var name = item.name;
+                var id = item._id;
+                html += `<li><a href="/department/${id}">${name}</a></li>`;
+            });
+            $('#departments').html(html);
+        }
+    });
+}
+
