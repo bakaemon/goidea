@@ -9,7 +9,7 @@ import { Response } from "express";
 import configs from "@src/configs";
 
 
-const HttpRoleGuard = (role: Role): Type<CanActivate> => {
+const HttpRoleGuard = (...role: Role[]): Type<CanActivate> => {
     class RoleGuardMixin extends HttpAuthGuard {
         
         constructor(private auth: AuthService) { super(auth); }
@@ -20,7 +20,9 @@ const HttpRoleGuard = (role: Role): Type<CanActivate> => {
             const res = context.switchToHttp().getResponse() as Response;
             const ctx = context.switchToHttp();
             const account = request.account;
-            if (account?.roles.includes(role)) {
+            // check if account has at least one correct role
+            
+            if (account?.roles.some(r => role.includes(r))) {
                 return true;
             }
             // eslint-disable-next-line prefer-const
