@@ -28,8 +28,9 @@ export class HttpAuthGuard implements CanActivate {
             // redirect to intended page
             res.redirect(req.originalUrl);
         }
-        
-        const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
+        let tokenRes;
+        try {
+            tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
 
         if (!tokenRes) {
             token = (await this.authService.refreshToken(refreshToken)).access_token;
@@ -37,6 +38,11 @@ export class HttpAuthGuard implements CanActivate {
             // redirect to intended page
             res.redirect(req.originalUrl);
         }
+        } catch(e) {
+            console.log(e.message);
+            token = (await this.authService.refreshToken(refreshToken)).access_token;
+        }
+
 
         if (!refreshToken) {
             res.redirect("/login");

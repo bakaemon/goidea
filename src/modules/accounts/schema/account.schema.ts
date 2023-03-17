@@ -51,8 +51,9 @@ export class Account {
     roles: string;
 
     @Prop({
-        required: true,
+        required: false,
         type: mongoose.Schema.Types.Date,
+        default: new Date().toDateString()
     })
     birthday: Date;
 

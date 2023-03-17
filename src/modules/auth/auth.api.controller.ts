@@ -1,4 +1,4 @@
-import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller, Delete } from '@nestjs/common';
+import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller, Delete, Get, Query } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import TokenEnum from "@src/common/enums/token.enum";
@@ -86,6 +86,15 @@ export class AuthAPIController {
     //         message: "A confirmation email was sent, please check your inbox to reset your password."
     //     };
     // }
+
+    @Get("verify_token")
+    async verifyToken(
+        @Query("token") token: string,
+        @Res() res: Response
+    ) {
+        res.json(await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey"));
+    }
+
 
     @Post("login")
     async login(@Body() loginDto: LoginDto, @Res({passthrough: true}) res: Response) {

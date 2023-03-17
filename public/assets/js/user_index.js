@@ -243,10 +243,17 @@ async function createAccounts() {
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirmPassword").value;
-    var dateofbirth = document.getElementById("DateOfBirth").value;
-    var roles = document.getElementById("roles").value;
+    var dateofbirth = document.getElementById("dob").value;
+    var dob = new Date(dateofbirth);
+    var roleCheckboxes = document.getElementsByName("role");
+    var roles = [];
+    for (var i = 0; i < roleCheckboxes.length; i++) {
+        if (roleCheckboxes[i].checked) {
+            roles.push(roleCheckboxes[i].value);
+        }
+    }
 
-    if (username == "" || email == "" || password == "" || confirmPassword == "" || dateofbirth == "") {
+    if (username == "" || email == "" || password == "" || confirmPassword == "" ) {
         alert("Please fill all the fields");
         return;
     }
@@ -255,7 +262,7 @@ async function createAccounts() {
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        DateOfBirth: dateofbirth,
+        birthday: dob,
         roles: roles,
 
     };

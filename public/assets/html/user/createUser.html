@@ -9,14 +9,14 @@
         <label for="confirmPassword"><b>Confirm Password</b></label>
         <input type="password" placeholder="Confirm Password" name="confirmPassword" id="confirmPassword" required>
         <label for="DateOfBirth"><b>Date of Birth</b></label>
-        <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+        <input type="date" id="dob" name="DateOfBirth">
         <div style="width:200">
             <label for="department"><b>Department</b></label>
             <br>
             <select name="department" class="selectedItem" id="departments" required>
             </select>
         </div>
-        <div style="width:200">
+        <!-- <div style="width:200">
             <label for="roles"><b>Roles</b></label>
             <br>
             <select name="roles" class="selectedItem" id="roles" required>
@@ -24,6 +24,21 @@
                 <option value="2">Quality Assurance Coordinator</option>
                 <option value="3">Quality Assurance Manager</option>
             </select>
+        </div> -->
+        <div>
+            <label for="roles">Roles</label>
+            <br>
+                <input type="checkbox" name="role" value="staff">
+                <label for="role">Staff</label>
+                <br>
+                <input type="checkbox" name="role" value="qac">
+                <label for="role">Quality Assurance Coordinator</label>
+                <br>
+                <input type="checkbox" name="role" value="qam">
+                <label for="role">Quality Assurance Manager</label>
+                <br>
+                <input type="checkbox" name="role" value="admin">
+                <label for="role">Admin</label>
         </div>
     </div>
 </form>

@@ -40,12 +40,8 @@
 
                 <!-- POST -->
             </div>
-
-            <div class="col-lg-4 col-md-4" id="departments">
-                <div class="sidebarblock">
-                    <h3>Popular Ideas</h3>
-
-                </div>
+            <div class="col-lg-4 col-md-4">
+                {{> main/sidebar}}
             </div>
         </div>
     </div>
@@ -86,4 +82,6 @@
 {{setVarIter 'scripts' '
 <script src="assets/upvotejs/upvotejs.vanilla.js"></script>
 <script src="assets/js/main/post.js"></script>
+<script src="assets/js/main/auth.js"></script>
+<script src="assets/js/main/global_events.js"></script>
 '}}

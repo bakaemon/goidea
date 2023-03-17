@@ -1,7 +1,7 @@
 import Role from "@common/enums/role.enum";
 
 import { AuthGuard } from "@common/guards/auth.guard";
-import { CanActivate, ExecutionContext, Res, Type, mixin } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Res, Type, mixin } from "@nestjs/common";
 import { HttpAuthGuard } from "./http-auth.guard";
 import { getTokenFromCookies } from "../util/get-token-from-request";
 import { AuthService } from "@src/modules/auth/auth.service";
@@ -17,31 +17,20 @@ const HttpRoleGuard = (...role: Role[]): Type<CanActivate> => {
             await super.canActivate(context);
 
             const request = context.switchToHttp().getRequest();
-            const res = context.switchToHttp().getResponse() as Response;
-            const ctx = context.switchToHttp();
+            const response = context.switchToHttp().getResponse<Response>();
             const account = request.account;
+            if (!account) {
+                response.redirect("/login");
+                return false;
+            }
             // check if account has at least one correct role
-            
-            if (account?.roles.some(r => role.includes(r))) {
-                return true;
-            }
-            // eslint-disable-next-line prefer-const
-            let { token, refreshToken } = getTokenFromCookies(request);
-
-            if (!refreshToken) {
-                // redirect to login page
-                res.redirect('/login');
-                return false;
-            }
-            if (!token && refreshToken) {
-                // send refresh token to server
-                token = (await this.auth.refreshToken(refreshToken)).access_token;
-                res.cookie('token', token, { httpOnly: false, maxAge:  1000 * 60 * 30});
-                // redirect to intended page
-                res.redirect(request.originalUrl);
-                return false;
-            }
-            return true;
+            if (role.length == 0) return true;
+            const roles = account.roles ?? [];
+            if (roles.includes(Role.Admin)) return true;
+            if (!roles) throw new HttpException("The account has no role!", HttpStatus.FORBIDDEN);
+            if (role.length > 1) {
+                return role.some(r => roles.includes(r));
+            } else return roles.includes(role[0]);
 
         }
     }
