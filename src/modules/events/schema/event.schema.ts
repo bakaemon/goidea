@@ -33,6 +33,13 @@ export class Event {
     })
     category: string;
     
+    @Prop({
+        required: true,
+        ref: "User",
+        type: mongoose.Schema.Types.ObjectId
+    })
+    author: string;
+    
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
