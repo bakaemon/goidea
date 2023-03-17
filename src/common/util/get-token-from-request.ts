@@ -1,7 +1,8 @@
 export const getTokenFromRequest = (req) => {
-    let token;
+    let token, refreshToken;
 
     const tokenQuery = req.query.token;
+    
     if (tokenQuery) {
         token = tokenQuery;
     }
@@ -12,10 +13,11 @@ export const getTokenFromRequest = (req) => {
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
-    if (req.cookies['token']) {
+    if (req.cookies) {
         token = req.cookies['token'];
     }
-    return token;
+    refreshToken = req.cookies['refresh_token'];
+    return{ token, refreshToken};
 }
 
 export const getTokenFromCookies = (req) => {

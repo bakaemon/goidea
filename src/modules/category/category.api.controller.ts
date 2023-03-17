@@ -16,10 +16,10 @@ export class CategoryAPIController {
     async create(@Body() {name} : {name: String}, @Res() res: Response) {
         try {
             await this.service.create({name: name});
-            return {
+            return res.json({
                 success: true,
                 message: "Created category successfully"
-            }
+            });
 
         } catch (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -30,15 +30,16 @@ export class CategoryAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit: number, sort?: string, sortMode?: any }) {
+    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any }) {
         if (!page) page = 1;
-        return await this.service.findAll({ page, limit, sort: sort? { [sort]: sortMode } : null});
+        if (!limit) limit=100;
+        return await this.service.findAll({}, { page, limit, sort: sort? { [sort]: sortMode } : null});
     }
 
     @Get(":id")
     async getById(@Param() id: String, @Res() res: Response) {
         try {
-            return await this.service.findOne({ _id: id });
+            return res.json(await this.service.findOne({ _id: id }));
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,

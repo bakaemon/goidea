@@ -20,25 +20,36 @@ export class HttpAuthGuard implements CanActivate {
         const ctx = context.switchToHttp();
         const req = ctx.getRequest();
         const res = ctx.getResponse();
-        // eslint-disable-next-line prefer-const
-        let {token, refreshToken} = getTokenFromCookies(req);
+        let {token, refreshToken} = getTokenFromRequest(req);
 
-        if (!refreshToken) {
-            // redirect to login page
-            ctx.getResponse().redirect('/login');
-            return false;
-        }
-        if (!token && refreshToken) {
-            // send refresh token to server
+        if (!token) {
             token = (await this.authService.refreshToken(refreshToken)).access_token;
-            await res.cookie('token', token, { httpOnly: false, maxAge: 1000 * 60 * 30 });
-            // redirect to current page
+            res.cookie('token', token, { httpOnly: false, maxAge:  1000 * 60 * 30});
+            // redirect to intended page
             res.redirect(req.originalUrl);
-            return true;
         }
+        
         const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
 
+        if (!tokenRes) {
+            token = (await this.authService.refreshToken(refreshToken)).access_token;
+            res.cookie('token', token, { httpOnly: false, maxAge:  1000 * 60 * 30});
+            // redirect to intended page
+            res.redirect(req.originalUrl);
+        }
+
+        if (!refreshToken) {
+            res.redirect("/login");
+            return false;
+        }
+
+        if (!(await this.authService.verifyToken(refreshToken, "jwt.refreshTokenPrivateKey"))) {
+            res.redirect("/login");
+            return false;
+        }
+
         req.account = tokenRes;
+
         return true;
     }
 }

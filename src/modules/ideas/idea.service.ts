@@ -64,9 +64,9 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
-    async findAll(paginateOptions?: any) {
+    async findAll(filter:QueryOptions,paginateOptions?: any) {
         try {
-            const paginateResults = await this.ideaModel.paginate({}, {
+            const paginateResults = await this.ideaModel.paginate(filter, {
                 populate: [
                     { path: 'author' },
                     { path: 'author.department' }

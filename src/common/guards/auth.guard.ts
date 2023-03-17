@@ -17,13 +17,25 @@ export class AuthGuard implements CanActivate {
 
         const ctx = context.switchToHttp();
         const req = ctx.getRequest();
-        const token = getTokenFromRequest(req);
+        const {token, refreshToken} = getTokenFromRequest(req);
 
         if (!token) {
-            throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+            throw new HttpException("Unauthorized: Empty token.", HttpStatus.UNAUTHORIZED);
         }
         
         const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
+
+        if (!tokenRes) {
+            throw new HttpException("Unauthorized: Invalid token.", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!refreshToken) {
+            throw new HttpException("Unauthorized: Empty refresh token.", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!(await this.authService.verifyToken(refreshToken, "jwt.refreshTokenPrivateKey"))) {
+            throw new HttpException("Unauthorized: Invalid refresh token.", HttpStatus.UNAUTHORIZED);
+        }
 
         req.account = tokenRes;
 

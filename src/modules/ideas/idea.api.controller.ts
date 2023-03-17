@@ -33,9 +33,9 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit: number, sort?: string, sortMode?: any }) {
+    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any }) {
         if (!page) page = 1;
-        return await this.service.findAll({ page, limit, sort: { [sort]: sortMode }});
+        return await this.service.findAll({}, { page, limit, sort: sort? { [sort]: sortMode } : null});
     }
 
     @Get(":id")
