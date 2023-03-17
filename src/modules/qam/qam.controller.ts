@@ -5,12 +5,13 @@ import Role from '@src/common/enums/role.enum';
 import { QamService } from './qam.service';
 import { get } from 'http';
 const mainLayout = "dashboard/main"
+const homeLayout = "main/home"
 @Controller()
 // @UseGuards(HttpRoleGuard(Role.QAM))
 export class QamController {
     constructor(private readonly appService: QamService) {}
     
-    @Get()
+    @Get('dashboard')
     root(@Res() res: Response) {
         return res.render('dashboard/roles/qam/dashboard', { layout: mainLayout });
     }
@@ -18,5 +19,10 @@ export class QamController {
     @Get('test')
     test(@Res() res: Response) {
         return res.render('dashboard/roles/qam/test', { layout: mainLayout });
+    }
+
+    @Get('')
+    index(@Res() res: Response) {
+        return res.render('dashboard/roles/qam/home', { layout: homeLayout });
     }
 }
