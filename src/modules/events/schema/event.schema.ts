@@ -35,7 +35,7 @@ export class Event {
     
     @Prop({
         required: true,
-        ref: "User",
+        ref: "Account",
         type: mongoose.Schema.Types.ObjectId
     })
     author: string;

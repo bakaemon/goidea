@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
         if (!token) {
             throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
-
+        
         const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
 
         req.account = tokenRes;

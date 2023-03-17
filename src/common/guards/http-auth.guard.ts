@@ -26,13 +26,15 @@ export class HttpAuthGuard implements CanActivate {
         if (!refreshToken) {
             // redirect to login page
             ctx.getResponse().redirect('/login');
+            return false;
         }
         if (!token && refreshToken) {
             // send refresh token to server
             token = (await this.authService.refreshToken(refreshToken)).access_token;
-            res.cookie('token', token, { httpOnly: false, maxAge: 1000 * 60 * 30 });
+            await res.cookie('token', token, { httpOnly: false, maxAge: 1000 * 60 * 30 });
             // redirect to current page
             res.redirect(req.originalUrl);
+            return true;
         }
         const tokenRes = await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey");
 

@@ -80,6 +80,6 @@ export const hbsHelper: FunctionObject = {
         }
         return options.inverse(this);
     }
-
+    
     
 };
