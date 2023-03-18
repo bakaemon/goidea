@@ -5,6 +5,8 @@ import RoleGuard from '@src/common/guards/role.guard';
 import mongoose, { ObjectId } from 'mongoose';
 import { EventDto } from './dto/event.dto';
 import { EventService } from './event.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import { AccountDecorator } from '../../common/decorators/account.decorator';
 
 
 @Controller('api')
@@ -13,10 +15,9 @@ export class EventAPIController {
         private readonly service: EventService,
     ) { }
     @Post("create")
-    @UseGuards(RoleGuard(Role.Admin))
-    async createEvent(@Body() eventDto: EventDto, @Res() res: Response) {
+    @UseGuards(AuthGuard)
+    async createEvent(@Body() eventDto: EventDto, @AccountDecorator() account,@Res() res: Response) {
         try {
-            console.log(eventDto);
             var department = new mongoose.Types.ObjectId(eventDto.department);
             var category = new mongoose.Types.ObjectId(eventDto.category);
             delete eventDto.department;
@@ -24,7 +25,8 @@ export class EventAPIController {
             await this.service.create({
                 ...eventDto,
                 department,
-                category
+                category,
+                author: account._id
             });
             return res.status(HttpStatus.CREATED).json({
                 success: true,

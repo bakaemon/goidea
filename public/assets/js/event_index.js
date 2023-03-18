@@ -29,9 +29,10 @@ async function loadEventTable() {
                 for (var row of data) {
                     var newRow = [];
                     for (var key in row) {
-                        if (key == 'roles') {
-                            newRow.push(row[key].join(', '));
+                        if (key == 'department' || key == 'category') {
+                            newRow.push(row[key].name);
                         }
+                        else if (key=="author") newRow.push(row[key].username);
                         else if (key == '__v' || key == 'updatedAt' || key == 'createdAt' || key == '_id') {
                             continue;
                         } else newRow.push(row[key]);
@@ -95,7 +96,7 @@ async function editEventForm(e, id) {
     modal.on('open', async (modal) => {
         var form = document.getElementById('editEventForm');
         setPlaceHolders(form, 'Loading...');
-        disableForm(form);
+        
         var res = await fetch("/event/api/" + selectedid);
         if (!res.ok) {
             alert((await res.json()).message);
@@ -121,7 +122,7 @@ async function editEventForm(e, id) {
             option.innerHTML = category.name;
             document.getElementById('category').appendChild(option);
         });
-        enableForm(form);
+        
         setPlaceHolders(form, '');
     });
     modal.on('close', (modal) => {
