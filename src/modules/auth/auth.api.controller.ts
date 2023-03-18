@@ -63,7 +63,6 @@ export class AuthAPIController {
     @Post("register")
     async register(@Body() registerAccountDto: RegisterAccountDto) {
         try {
-            console.log(registerAccountDto);
             await this.authService.register(registerAccountDto);
             return {
                 message: "Register account successfully, you can login now.",
@@ -166,13 +165,12 @@ export class AuthAPIController {
         }
     }
 
-    @Post("logout")
+    @Get("logout")
     @UseGuards(AuthGuard)
-    async logout(@Body() logoutDto: LogoutDto, @AccountDecorator() account: AccountDocument) {
+    async logout(@AccountDecorator() account: AccountDocument) {
 
         await this.tokenService.deleteOne({
             author: account._id,
-            token: logoutDto.refreshToken
         });
 
         return {

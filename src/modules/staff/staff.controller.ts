@@ -3,6 +3,7 @@ import { StaffService } from './staff.service';
 import { Response } from 'express';
 import HttpRoleGuard from '@src/common/guards/http-role.guard';
 import Role from '@src/common/enums/role.enum';
+import RoleGuard from '@src/common/guards/role.guard';
 const mainLayout = "dashboard/main"
 @Controller()
 // @UseGuards(HttpRoleGuard(Role.Staff))
@@ -11,6 +12,7 @@ export class StaffController {
   
 
   @Get()
+  @UseGuards(HttpRoleGuard(Role.Admin))
   root(@Res() res: Response) {
     return res.render('dashboard/roles/staff/staff_index', { layout: mainLayout });
   }
@@ -19,6 +21,7 @@ export class StaffController {
     return res.render('dashboard/roles/staff/upload_index', { layout: mainLayout });
   }
   @Get('listidea')
+  @UseGuards(RoleGuard(Role.Admin))
   idea(@Res() res: Response) {
     return res.render('dashboard/roles/staff/pop_idea', { layout: mainLayout });
   }

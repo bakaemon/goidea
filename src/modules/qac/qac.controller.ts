@@ -4,6 +4,7 @@ import HttpRoleGuard from '@src/common/guards/http-role.guard';
 import Role from '@src/common/enums/role.enum';
 import { get } from 'http';
 import { QacService } from './qac.service';
+import RoleGuard from '@src/common/guards/role.guard';
 const mainLayout = "dashboard/main"
 const homeLayout = "main/home"
 
@@ -12,6 +13,7 @@ const homeLayout = "main/home"
 export class QacController {
     constructor(private readonly appService: QacService) {}
     @Get('')
+    @UseGuards(HttpRoleGuard(Role.Admin))
     index(@Res() res: Response) {
         return res.render('dashboard/roles/qac/home', { layout: homeLayout });
     }

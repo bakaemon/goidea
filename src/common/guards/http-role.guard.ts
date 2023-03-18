@@ -11,7 +11,7 @@ import configs from "@src/configs";
 
 const HttpRoleGuard = (...role: Role[]): Type<CanActivate> => {
     class RoleGuardMixin extends HttpAuthGuard {
-        
+
         constructor(private auth: AuthService) { super(auth); }
         async canActivate(context: ExecutionContext) {
             await super.canActivate(context);
@@ -29,9 +29,19 @@ const HttpRoleGuard = (...role: Role[]): Type<CanActivate> => {
             if (roles.includes(Role.Admin)) return true;
             if (!roles) throw new HttpException("The account has no role!", HttpStatus.FORBIDDEN);
             if (role.length > 1) {
-                return role.some(r => roles.includes(r));
-            } else return roles.includes(role[0]);
-
+                if (role.some(r => roles.includes(r))) {
+                    response.redirect("/");
+                    return false;
+                }
+                return true;
+            }
+            else {
+                if (!roles.includes(role[0])) {
+                    response.redirect("/");
+                    return false;
+                }
+                return true;
+            }
         }
     }
 

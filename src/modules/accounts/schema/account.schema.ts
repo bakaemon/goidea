@@ -48,7 +48,7 @@ export class Account {
         default: [Role.Staff],
         type: [{ type: mongoose.Schema.Types.String}],
     })
-    roles: string;
+    roles: string[];
 
     @Prop({
         required: true,

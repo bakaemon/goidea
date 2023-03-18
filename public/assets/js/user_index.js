@@ -81,10 +81,10 @@ function editUser(e, id) {
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
         document.getElementById('DateOfBirth').value = data.birthday.split('T')[0];
-        var roleCheckboxes = document.getElementsByName('roles');
+        var roleCheckboxes = document.getElementsByName('role');
         for (var i = 0; i < roleCheckboxes.length; i++) {
             if (data.roles.includes(roleCheckboxes[i].value)) {
-                console.log(data.roles.includes(roleCheckboxes[i].value));
+                
                 roleCheckboxes[i].checked = true;
             }
         }
@@ -124,6 +124,8 @@ function createUser(e) {
             document.getElementById('departments').appendChild(option);
         }
     });
+
+    
     modal.open();
 }
 
@@ -172,7 +174,13 @@ async function updateAccounts() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
     var dateofbirth = document.getElementById("DateOfBirth").value;
-    var roles = document.getElementById("roles").value;
+    var roleCheckboxes = document.getElementsByName('role');
+    var roles = [];
+    for (var i = 0; i < roleCheckboxes.length; i++) {
+        if (roleCheckboxes[i].checked) {
+            roles.push(roleCheckboxes[i].value);
+        }
+    }
 
     if (username == "" || email == "" || dateofbirth == "") {
         alert("Please fill all the fields");

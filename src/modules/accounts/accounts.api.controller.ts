@@ -100,13 +100,25 @@ export class AccountsAPIController {
 
     @Patch(":id")
     @UseGuards(RoleGuard(Role.Admin))
-    update(
+    async update(
         @Param("id") id: string,
         @Body() updateAccountDto: UpdateAccountDto,
         @Res() res: Response
     ) {
-        if (updateAccountDto.roles) Object.assign(updateAccountDto, { $addToSet: { roles: updateAccountDto.roles } });
-        this.accountsService.update({ _id: new mongoose.Types.ObjectId(id) }, updateAccountDto, { new: true });
+
+        var account = await this.accountsService.findOne({ _id: id });
+        if (!account) {
+            return res.status(400).json({
+                message: "Account not found",
+                success: false
+            });
+        }
+        account.displayName = updateAccountDto.displayName;
+        account.email = updateAccountDto.email;
+        account.birthday = updateAccountDto.birthday;
+        account.roles = updateAccountDto.roles;
+        account.department = updateAccountDto.department;
+        await account.save();
         return res.status(200).json({
             message: "Update account successfully",
             success: true
