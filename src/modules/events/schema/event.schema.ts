@@ -18,6 +18,12 @@ export class Event {
         type: mongoose.Schema.Types.Date,
     })
     closureDate: Date;
+
+    @Prop({
+        required: true,
+        type: mongoose.Schema.Types.Date,
+    })
+    finalClosureDate: Date;
     
     @Prop({
         required: true,

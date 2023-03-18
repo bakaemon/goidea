@@ -106,6 +106,7 @@ async function editEventForm(e, id) {
         document.getElementById('name').value = data.name;
         document.getElementById('description').value = data.description;
         document.getElementById('closureDate').value = data.closureDate.split('T')[0];
+        document.getElementById('finalClosureDate').value = data.finalClosureDate.split('T')[0];
         await populateDepartmentData();
         departmentList.forEach(department => {
                 var option = document.createElement('option');
@@ -133,12 +134,14 @@ async function createEvents() {
     var name = document.getElementById('name').value;
     var description = document.getElementById('description').value;
     var closureDate = document.getElementById('closureDate').value;
+    var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
     var category = document.getElementById('category').value;
     var data = {
         name: name,
         description: description,
         closureDate: closureDate,
+        finalClosureDate: finalClosureDate,
         department: department,
         category: category,
     }
@@ -172,6 +175,7 @@ async function editEvents() {
     var name = document.getElementById('name').value;
     var description = document.getElementById('description').value;
     var closureDate = document.getElementById('closureDate').value;
+    var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
     var category = document.getElementById('category').value;
     var data = {
@@ -179,6 +183,7 @@ async function editEvents() {
         name: name,
         description: description,
         closureDate: closureDate,
+        finalClosureDate: finalClosureDate,
         department: department,
         category: category,
     }

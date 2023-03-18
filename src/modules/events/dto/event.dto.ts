@@ -15,6 +15,10 @@ export class EventDto {
 
     @IsString()
     @IsNotEmpty()
+    finalClosureDate: Date;
+
+    @IsString()
+    @IsNotEmpty()
     department: string;
 
     @IsString()
