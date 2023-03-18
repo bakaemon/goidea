@@ -21,6 +21,7 @@ export class DefaultAccount {
                     email: DEFAULT_ACCOUNT_EMAIL,
                     password: DEFAULT_ACCOUNT_PASSWORD,
                     roles: ["admin"],
+                    department: null,
                     isActivated: true
                 });
             } catch (e) {

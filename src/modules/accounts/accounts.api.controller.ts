@@ -30,7 +30,13 @@ export class AccountsAPIController {
         @Query() options: PaginationParamsDto
     ) {
         try {
-            return this.accountsService.findAll(filter, options);
+            return this.accountsService.findAll(filter,{
+                populate: {
+                    path: "department",
+                },
+                select: "username email birthday roles department",
+                ...options
+            });
         } catch (error) {
             return {
                 message: error.message
@@ -99,9 +105,7 @@ export class AccountsAPIController {
         @Body() updateAccountDto: UpdateAccountDto,
         @Res() res: Response
     ) {
-        console.log(updateAccountDto);
-        console.log(id);
-        if (updateAccountDto.role) Object.assign(updateAccountDto, { $addToSet: { roles: updateAccountDto.role } });
+        if (updateAccountDto.roles) Object.assign(updateAccountDto, { $addToSet: { roles: updateAccountDto.roles } });
         this.accountsService.update({ _id: new mongoose.Types.ObjectId(id) }, updateAccountDto, { new: true });
         return res.status(200).json({
             message: "Update account successfully",
@@ -116,7 +120,8 @@ export class AccountsAPIController {
         if (id.toString() == accountId) {
             throw new HttpException("You can not remove yourself.", HttpStatus.BAD_REQUEST);
         }
-        if (account.roles.includes(Role.Admin)) {
+        const target = await this.accountsService.findOne({ _id: accountId }, { select: "roles" })
+        if (target.roles.includes(Role.Admin)) {
             throw new HttpException("You can not remove admin account.", HttpStatus.FORBIDDEN);
         }
         await this.accountsService.delete({ _id: accountId });

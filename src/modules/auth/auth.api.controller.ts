@@ -63,6 +63,7 @@ export class AuthAPIController {
     @Post("register")
     async register(@Body() registerAccountDto: RegisterAccountDto) {
         try {
+            console.log(registerAccountDto);
             await this.authService.register(registerAccountDto);
             return {
                 message: "Register account successfully, you can login now.",

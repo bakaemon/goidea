@@ -21,7 +21,7 @@ async function loadTable() {
                     return
                 }
                 var newHeaders = Object.keys(data[0]);
-                newHeaders[newHeaders.indexOf('_id')] = 'ID';
+                // newHeaders[newHeaders.indexOf('_id')] = 'ID';
                 newHeaders.shift();
                 newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
                 newHeaders.push('Actions');
@@ -81,6 +81,14 @@ function editUser(e, id) {
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
         document.getElementById('DateOfBirth').value = data.birthday.split('T')[0];
+        var roleCheckboxes = document.getElementsByName('roles');
+        for (var i = 0; i < roleCheckboxes.length; i++) {
+            if (data.roles.includes(roleCheckboxes[i].value)) {
+                console.log(data.roles.includes(roleCheckboxes[i].value));
+                roleCheckboxes[i].checked = true;
+            }
+        }
+
         await populateData();
         departmentList.forEach(department => {
                 var option = document.createElement('option');

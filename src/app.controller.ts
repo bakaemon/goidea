@@ -29,7 +29,7 @@ export class AppController {
 
   
   @Get("/testmail")
-  @UseGuards(RoleGuard(Role.Admin, Role.User))
+  @UseGuards(RoleGuard(Role.Admin, Role.Staff))
   async testMail() {
     try {
       await this.emailTransporter.sendMail({

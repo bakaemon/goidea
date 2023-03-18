@@ -12,15 +12,20 @@
             <select name="departments" class="selectedItem" id="department" required>
             </select>
         </div>
-        <div style="width:200">
-            <label for="roles"><b>Roles</b></label>
-            <select name="roles" class="selectedItem" id="roles" required>
-                <option value="admin">Admin</option>
-                <option value="staff">Staff</option>
-                <option value="qac">Quality Assurance Coordinator</option>
-                <option value="qam">Quality Assurance Manager</option>
-            </select>
+        <div>
+            <label for="roles">Roles</label>
             <br>
+                <input type="checkbox" name="role" value="staff">
+                <label for="role">Staff</label>
+                <br>
+                <input type="checkbox" name="role" value="qac">
+                <label for="role">Quality Assurance Coordinator</label>
+                <br>
+                <input type="checkbox" name="role" value="qam">
+                <label for="role">Quality Assurance Manager</label>
+                <br>
+                <input type="checkbox" name="role" value="admin">
+                <label for="role">Admin</label>
         </div>
         
     </div>

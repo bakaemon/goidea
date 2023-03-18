@@ -45,15 +45,14 @@ export class Account {
 
     @Prop({
         enum: RoleNames,
-        default: [Role.User],
+        default: [Role.Staff],
         type: [{ type: mongoose.Schema.Types.String}],
     })
     roles: string;
 
     @Prop({
-        required: false,
+        required: true,
         type: mongoose.Schema.Types.Date,
-        default: new Date().toDateString()
     })
     birthday: Date;
 
