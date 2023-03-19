@@ -1,7 +1,7 @@
 import { BaseService } from '../../common/service/base.service';
 import { Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel, FilterQuery, QueryOptions, Document, Types } from 'mongoose';
+import { PaginateModel, FilterQuery, QueryOptions, Document, Types, PaginateOptions } from 'mongoose';
 import { Idea, IdeaDocument } from './schema/idea.schema';
 import { VotesDocument } from './schema/votes.schema';
 import { filter } from 'rxjs';
@@ -69,15 +69,9 @@ export class IdeaService extends BaseService<IdeaDocument> {
         return vote.upvoter.length - vote.downvoter.length;
     }
 
-    async findAll(filter:QueryOptions,paginateOptions?: any) {
+    async findAll(filter:QueryOptions,paginateOptions?: PaginateOptions) {
         try {
-            const paginateResults = await this.ideaModel.paginate(filter, {
-                populate: [
-                    { path: 'author' },
-                    { path: 'author.department' }
-                ],
-                ...paginateOptions,
-            });
+            const paginateResults = await this.ideaModel.paginate(filter, paginateOptions);
             let ideas = paginateResults.docs;
             delete paginateResults.docs;
             return { data: ideas, paginationOptions: paginateResults };

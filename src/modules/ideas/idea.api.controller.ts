@@ -43,7 +43,8 @@ export class IdeaAPIController {
             limit: limit || 10, 
             sort: sort? { [sort]: sortMode } : null,
             populate: [
-                { path: "author", select: "name" },
+                { path: "author"},
+                { path: "event"}
             ]
         });
         let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
