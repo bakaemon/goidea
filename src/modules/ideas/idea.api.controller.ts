@@ -35,11 +35,12 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any }) {
+    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any },
+    @Res() res: Response) {
         if (!page) page = 1;
         var ideas = await this.service.findAll({}, { 
-            page, 
-            limit, 
+            page: page || 1, 
+            limit: limit || 10, 
             sort: sort? { [sort]: sortMode } : null,
             populate: [
                 { path: "author", select: "name" },
@@ -54,7 +55,7 @@ export class IdeaAPIController {
             data: promisedIdeas,
             paginationOptions: ideas.paginationOptions
         }
-        return results;
+        return res.json(results);
     }
 
     @Get(":id")
