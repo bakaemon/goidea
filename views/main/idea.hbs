@@ -1,3 +1,10 @@
+<script>
+
+    var ideaId = '{{ideaId}}';
+
+</script>
+
+
 <div class="container">
     <div class="row">
         <div class="col-lg-8 breadcrumbf">
@@ -12,26 +19,23 @@
         <div class="col-lg-8 col-md-8">
 
             <!-- POST -->
-            <div class="post beforepagination">
+            <div class="post beforepagination" id="idea">
                 <div class="topwrap">
                     <div class="userinfo pull-left">
                         <div class="avatar">
-                            <img src="/assets//images/avatar.jpg" alt="" />
+                            <img height="50" widht="50" src="https://i.imgur.com/Uoeie1w.jpg" alt="" />
                             <div class="status green">&nbsp;</div>
                         </div>
 
                         <div class="icons">
-                            <img src="/assets/images/icon1.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" /><img
-                                src="/assets/images/icon5.jpg" alt="" /><img src="/assets/images/icon6.jpg" alt="" />
+                            <img src="/assets/images/icon1.jpg" alt="" /><img src="/assets/images/icon4.jpg"
+                                alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
+                                src="/assets/images/icon6.jpg" alt="" />
                         </div>
                     </div>
                     <div class="posttext pull-left">
-                        <h2>10 Kids Unaware of Their Halloween Costume</h2>
-                        <p>Today, we're looking at three particularly interesting stories. Pinterest added a new
-                            location-based feature on Wednesday that uses Place Pins as a way to map out vacations and
-                            favorite areas. Southwest Airlines is providing Wi-Fi access from gate to gate for $8 per
-                            day through an onboard hotspot. And in an effort to ramp up its user base, Google Wallet is
-                            offering a debit card that can take out cash from.</p>
+                        <h2>Loading...</h2>
+                        <p>Loading...</p>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -46,7 +50,7 @@
                         <a href="#"><i class="fa fa-reply"></i></a>
                     </div>
 
-                    <div class="posted pull-left"><i class="fa fa-clock-o"></i> Posted on : 20 Nov @ 9:30am</div>
+                    <div class="posted pull-left"><i class="fa fa-clock-o"></i> Posted on : Loading...</div>
 
                     <div class="next pull-right">
                         <a href="#"><i class="fa fa-share"></i></a>
@@ -56,7 +60,9 @@
 
                     <div class="clearfix"></div>
                 </div>
-            </div><!-- POST -->
+            </div>
+
+            <!-- POST -->
 
             <div class="paginationf">
                 <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>
@@ -218,3 +224,7 @@
         </div>
     </div>
 </div>
+
+{{setVarIter 'scripts' '
+<script src="/assets/js/main/idea_detail.js"></script>
+'}}

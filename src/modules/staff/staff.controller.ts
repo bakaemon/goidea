@@ -19,10 +19,10 @@ export class StaffController {
   root(@Res() res: Response) {
     return res.render('dashboard/roles/staff/staff_index', { layout: mainLayout });
   }
-  @Get('upload')
-  upload(@Res() res: Response) {
-    return res.render('dashboard/roles/staff/upload_index', { layout: homeLayout });
-  }
+  // @Get('upload')
+  // upload(@Res() res: Response) {
+  //   return res.render('dashboard/roles/staff/upload_index', { layout: homeLayout });
+  // }
   @Get('listidea')
   @UseGuards(RoleGuard(Role.Admin))
   idea(@Res() res: Response) {

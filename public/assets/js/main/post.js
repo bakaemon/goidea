@@ -20,7 +20,7 @@ var postModel = (idea) => {
             </div>
         </div>-->
         <div class="posttext pull-left">
-            <h2><a href="/home/idea/">${idea.title}</a></h2>
+            <h2><a href="/home/idea/${idea._id}">${idea.title}</a></h2>
             <p>${idea.description}</p>
         </div>
         <div class="clearfix"></div>
@@ -37,7 +37,7 @@ var postModel = (idea) => {
         <div class="time"><i class="fa fa-clock-o"></i>${idea.time}</div>                                    
     </div>
     <div class="clearfix"></div>
-    </div>
+
     `
 }
 

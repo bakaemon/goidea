@@ -8,12 +8,12 @@ export class MainController {
     root(@Res() res: Response) {
         return res.render('main/index', { layout: homeLayout });
     }
-    @Get('idea')
-    ideaDetail(@Param() id : string, @Res() res: Response) {
-    return res.render('main/idea', { layout: homeLayout });
+    @Get('idea/:id')
+    ideaDetail(@Param('id') id : string, @Res() res: Response) {
+    return res.render('main/idea', { ideaId: id.toString(), layout: homeLayout });
     }
-    @Get('upload')
-    upload(@Param() @Res() res: Response) {
-    return res.render('dashboard/roles/staff/upload_index', { layout: homeLayout });
+    @Get('idea/upload')
+    upload(@Res() res: Response) {
+    return res.render('main/idea_upload', {layout: homeLayout });
   }
 }
