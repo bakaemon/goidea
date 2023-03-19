@@ -63,7 +63,7 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)});
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)});)
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -117,11 +117,9 @@ export class IdeaAPIController {
     @Get('comments/all')
     async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
         try {
-            let comments;
             if (ideaId) {
-                comments = res.json(await this.service.findCommentsByIdeaId(ideaId));
-            } else comments = res.json(await this.service.findALlComment({}));
-            return comments;
+                return res.json(await this.service.findCommentsByIdeaId(ideaId));
+            } else return res.json(await this.service.findALlComment({}));
         } catch (error) {   
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
