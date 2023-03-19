@@ -52,5 +52,7 @@ var loadDepartments = function () {
     });
 }
 
-
+window.addEventListener('load', async function () {
+    await loadTop5Category();
+});
 

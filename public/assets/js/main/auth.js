@@ -51,3 +51,5 @@ const generateGuestMenu = () => {
     `;
     loginOptions.innerHTML = html;
 }
+
+window.addEventListener('load', loadOptions);
