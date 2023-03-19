@@ -63,7 +63,7 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)});)
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)}))
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
