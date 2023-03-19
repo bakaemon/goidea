@@ -8,7 +8,6 @@ import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import { AccountDocument } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
 import { Idea } from './schema/idea.schema';
-
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -17,7 +16,8 @@ export class IdeaAPIController {
 
     // Basic CRUD
     @Post("create")
-    async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account,@Res() res: Response) {
+    @UseGuards(AuthGuard)
+    async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
         try {
             ideaDto.author = account._id;
             await this.service.create(ideaDto);
