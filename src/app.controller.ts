@@ -18,7 +18,7 @@ export class AppController {
   }
   @Get()
   root(@Res() res: Response) {
-    return res.render('main/index', { layout: 'main/home' });
+    return res.redirect('/home')
   }
 
   @Get("/admin/test")

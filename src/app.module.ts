@@ -21,6 +21,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventModule } from './modules/events/event.module';
+import { MainModule } from './modules/main/main.module';
 import nodemailer from 'nodemailer';
 import { EmailTransporter } from './common/email/email-transporter';
 @Module({
@@ -46,6 +47,7 @@ import { EmailTransporter } from './common/email/email-transporter';
     TagModule,
     IdeaModule,
     EventModule,
+    MainModule
   ],
   controllers: [AppController,],
   providers: [
