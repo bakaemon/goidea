@@ -8,6 +8,7 @@ import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import { AccountDocument } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
 import { Idea } from './schema/idea.schema';
+import * as mongoose from 'mongoose';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -60,9 +61,9 @@ export class IdeaAPIController {
     }
 
     @Get(":id")
-    async getById(@Param() id: String, @Res() res: Response) {
+    async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return await this.service.findOne({ _id: id });
+            return await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)});
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
