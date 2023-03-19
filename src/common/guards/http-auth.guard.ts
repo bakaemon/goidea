@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Res } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from "@modules/auth/auth.service";
 import { getTokenFromRequest } from "@util/get-token-from-request";
 import { getTokenFromCookies } from '../util/get-token-from-request';
@@ -22,11 +22,15 @@ export class HttpAuthGuard implements CanActivate {
         const res = ctx.getResponse();
         let {token, refreshToken} = getTokenFromRequest(req);
 
+        if(!refreshToken) {
+            throw new UnauthorizedException("Refresh token not found");
+        }
         if (!token) {
-            token = (await this.authService.refreshToken(refreshToken)).access_token;
+            token = (await this. authService.refreshToken(refreshToken)).access_token;
             res.cookie('token', token, { httpOnly: false, maxAge:  1000 * 60 * 30});
             // redirect to intended page
             res.redirect(req.originalUrl);
+            return false;
         }
         let tokenRes;
         try {
@@ -36,22 +40,21 @@ export class HttpAuthGuard implements CanActivate {
             token = (await this.authService.refreshToken(refreshToken)).access_token;
             res.cookie('token', token, { httpOnly: false, maxAge:  1000 * 60 * 30});
             // redirect to intended page
-            res.redirect(req.originalUrl);
+            throw new UnauthorizedException("Refresh token not found");
         }
         } catch(e) {
             console.log(e.message);
             token = (await this.authService.refreshToken(refreshToken)).access_token;
+            throw new UnauthorizedException("Refresh token not found");
         }
 
 
         if (!refreshToken) {
-            res.redirect("/login");
-            return false;
+            throw new UnauthorizedException("Refresh token not found");
         }
 
         if (!(await this.authService.verifyToken(refreshToken, "jwt.refreshTokenPrivateKey"))) {
-            res.redirect("/login");
-            return false;
+            throw new UnauthorizedException("Refresh token not found");
         }
 
         req.account = tokenRes;

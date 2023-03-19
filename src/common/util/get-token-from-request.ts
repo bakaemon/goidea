@@ -1,3 +1,4 @@
+import { HttpException } from '@nestjs/common';
 export const getTokenFromRequest = (req) => {
     let token, refreshToken;
 

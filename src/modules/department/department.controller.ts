@@ -1,11 +1,12 @@
-import { Controller, Get, Render, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 import Role from '@src/common/enums/role.enum';
+import { HttpAuthFilter } from '@src/common/filters/http-unauthorize-filter';
 import HttpRoleGuard from '@src/common/guards/http-role.guard';
 import RoleGuard from '@src/common/guards/role.guard';
 import { Response } from 'express';
 const mainLayout = "dashboard/main"
 @Controller()
-
+@UseFilters(HttpAuthFilter)
 export class DepartmentController {
   constructor() { }
 

@@ -1,11 +1,13 @@
-import { Controller, Get, Render, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { Response } from 'express';
 import HttpRoleGuard from '@src/common/guards/http-role.guard';
 import Role from '@src/common/enums/role.enum';
 import RoleGuard from '@src/common/guards/role.guard';
+import { HttpAuthFilter } from '@src/common/filters/http-unauthorize-filter';
 const mainLayout = "dashboard/main"
 @Controller()
+@UseFilters(HttpAuthFilter)
 // @UseGuards(HttpRoleGuard(Role.Staff))
 export class StaffController {
   constructor(private readonly appService: StaffService) { }
