@@ -7,6 +7,7 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import { AccountDocument } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
+import { Idea } from './schema/idea.schema';
 
 @Controller('api')
 export class IdeaAPIController {
@@ -16,8 +17,9 @@ export class IdeaAPIController {
 
     // Basic CRUD
     @Post("create")
-    async create(@Body() ideaDto: IdeaDto, @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account,@Res() res: Response) {
         try {
+            ideaDto.author = account._id;
             await this.service.create(ideaDto);
             return res.status(HttpStatus.OK).json({
                 success: true,
@@ -35,7 +37,24 @@ export class IdeaAPIController {
     @Get("all")
     async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any }) {
         if (!page) page = 1;
-        return await this.service.findAll({}, { page, limit, sort: sort? { [sort]: sortMode } : null});
+        var ideas = await this.service.findAll({}, { 
+            page, 
+            limit, 
+            sort: sort? { [sort]: sortMode } : null,
+            populate: [
+                { path: "author", select: "name" },
+            ]
+        });
+        let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
+            let newIdea = idea.toObject();
+            newIdea.votes = await this.service.countVote(idea._id);
+            return newIdea;
+        }));
+        var results = {
+            data: promisedIdeas,
+            paginationOptions: ideas.paginationOptions
+        }
+        return results;
     }
 
     @Get(":id")

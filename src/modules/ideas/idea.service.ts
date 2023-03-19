@@ -64,6 +64,11 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
+    async countVote(ideaId: string){
+        const vote = await this.votesModel.findOne({ idea: ideaId });
+        return vote.upvoter.length - vote.downvoter.length;
+    }
+
     async findAll(filter:QueryOptions,paginateOptions?: any) {
         try {
             const paginateResults = await this.ideaModel.paginate(filter, {
