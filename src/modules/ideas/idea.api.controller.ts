@@ -67,6 +67,7 @@ export class IdeaAPIController {
             {
                 populate: [
                     { path: "author"},
+                ]
             }))
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
