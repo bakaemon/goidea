@@ -5,13 +5,13 @@ var postModel = (idea) => {
         <div class="wrap-ut pull-left">
             <div id="the-id" class="upvotejs pull-left">
                 <a class="upvote"></a>
-                <span class="count">${idea.vote}</span>
+                <span class="count">${idea.vote || 0}</span>
                 <a class="downvote"></a>
                 <a class="star"></a>
             </div>
         <!--<div class="userinfo pull-left">
             <div class="avatar">
-                <img src="${idea.avatar}" alt="" />
+                <img src="${idea.author.avatar}" alt="" />
                 <div class="status green">&nbsp;</div>
             </div>
     
@@ -41,50 +41,27 @@ var postModel = (idea) => {
     `
 }
 
-const ideaData = [
-    {
-        avatar: 'assets/images/avatar.jpg',
-        title: 'Title Test',
-        description: `Today, we're looking at three particularly interesting stories. Pinterest added a new location-based feature on Wednesday that uses Place Pins as a way to map out vacations and favorite areas. Southwest Airlines is providing Wi-Fi access from gate to gate for $8 per day through an onboard hotspot. And in an effort to ramp up its user base, Google Wallet is offering a debit card that can take out cash from.`,
-        vote: 12,
-        isUpVote: false,
-        isDownVote: false,
-        commentCount: 22,
-        createDate: '2023-1-1T00:00:00Z',
-        id: '2123123'
-    },
-    {
-        avatar: 'assets/images/avatar.jpg',
-        title: 'Title Test',
-        description: '123123123123123123123123123123123123123123123',
-        vote: 12,
-        isUpVote: false,
-        isDownVote: false,
-        commentCount: 22,
-        createDate: '2023-1-1T00:00:00Z',
-        id: '2123123'
-    },
-    {
-        avatar: 'assets/images/avatar.jpg',
-        title: 'Title Test',
-        description: '12312312312312312312312312312312312312312312312',
-        vote: 12,
-        isUpVote: false,
-        isDownVote: false,
-        commentCount: 22,
-        createDate: '2023-1-1T00:00:00Z',
-        id: '2123123'
+const getIdeaData = async () => {
+    var response = await fetch('/ideas/api/all');
+    if(!response.ok) {
+        alert('Faile to get idea from server!')
+        return;
     }
-]
+    var ideas = ( await response.json()).data;
+    return ideas;
+}
 
-const loadPost = () => {
-    var posts = document.getElementById('posts');
+
+
+const loadPost = async () => {
+    var posts =  document.getElementById('posts');
+    var ideaData = await getIdeaData()
+    console.log(ideaData)
     ideaData.forEach(post => {
-        post.time = '2h'
         posts.innerHTML += postModel(post)
     })
 }
 
-window.onload = () => {
-    loadPost()
+window.onload = async () => {
+    await loadPost()
 } 
