@@ -6,6 +6,7 @@ import Role from '@src/common/enums/role.enum';
 import RoleGuard from '@src/common/guards/role.guard';
 import { HttpAuthFilter } from '@src/common/filters/http-unauthorize-filter';
 const mainLayout = "dashboard/main"
+const homeLayout = "main/home"
 @Controller()
 @UseFilters(HttpAuthFilter)
 // @UseGuards(HttpRoleGuard(Role.Staff))
@@ -20,7 +21,7 @@ export class StaffController {
   }
   @Get('upload')
   upload(@Res() res: Response) {
-    return res.render('dashboard/roles/staff/upload_index', { layout: mainLayout });
+    return res.render('dashboard/roles/staff/upload_index', { layout: homeLayout });
   }
   @Get('listidea')
   @UseGuards(RoleGuard(Role.Admin))
