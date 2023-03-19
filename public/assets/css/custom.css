@@ -448,6 +448,10 @@ td.chbox {
     line-height: 25px;
 }
 
+.post .posttext .editor-area {
+    
+}
+
 .post .postinfo {
     width: 15%;
     border-left: solid 1px #f1f1f1;
