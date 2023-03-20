@@ -11,7 +11,7 @@ export class CategoryController {
   constructor() {}
 
   @Get()
-  @UseGuards(HttpRoleGuard(Role.Admin))
+  @UseGuards(HttpRoleGuard(Role.QAM))
   root(@Res() res: Response) {
     return res.render('dashboard/category/index', { layout: mainLayout });
   }

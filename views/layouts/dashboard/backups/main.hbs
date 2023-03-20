@@ -8,8 +8,6 @@
     <title>{{title}}</title>
     <link rel="stylesheet" href="/assets/css/users.css">
     <script src="/assets/js/util/getCookie.js"></script>
-    <script src="/assets/js/dashboard/navbarAuth.js"></script>
-  
     {{!--
     <script src="/assets/js/auth.js"></script> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
@@ -126,10 +124,39 @@
                     <use xlink:href="#down"></use>
                 </svg>
             </button>
-            <ul class="admin-menu" id="loginOptions">
-
-            </ul>
             <ul class="admin-menu">
+                <li>
+                    <a href="/admin/departments" class="a">
+                        <svg>
+                            <use xlink:href="#collection"></use>
+                        </svg>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users" class="a">
+                        <svg>
+                            <use xlink:href="#users"></use>
+                        </svg>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/ideas" class="a">
+                        <svg>
+                            <use xlink:href="#comments"></use>
+                        </svg>
+                        <span>Ideas</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="location.href='/admin'">
+                        <svg aria-hidden="true">
+                            <use xlink:href="#collapse"></use>
+                        </svg>
+                        <span>Return</span>
+                    </button>
+                </li>
                 <li>
                     <div class="switch">
                         <input type="checkbox" class="checkboxVisibility" id="mode" checked>
@@ -143,12 +170,6 @@
                             <use xlink:href="#collapse"></use>
                         </svg>
                         <span>Collapse</span>
-                    </button>
-                    <button onclick="location.href='/home'">
-                        <svg aria-hidden="true">
-                            <use xlink:href="#collapse"></use>
-                        </svg>
-                        <span>Return</span>
                     </button>
                 </li>
             </ul>
