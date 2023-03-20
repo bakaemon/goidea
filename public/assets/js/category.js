@@ -1,3 +1,5 @@
+
+
 var selectedid = null;
 var modalArea = document.getElementById('modal-area');
 
@@ -55,9 +57,51 @@ function openCreateForm(){
         },
         footer:`<button type="button" onclick="createCategory()" class="createBtn">Create</button>`
     });
+
+    modal.on("close" , (_) => {
+        document.querySelector(".modal-area").innerHTML = '';
+    });
     modal.open()
+
 }
 
+async function editCategory(button, id){
+    //var response = await fetch('/category/api' + id);
+   // var data = await response.json();
+   var modal = Modal(".modal-area", {
+        title:"Edit Category",
+        get:{url: ""},
+        body:`
+        <form id="editForm">
+            <div class="container">
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Category Name" id="name" name="name" required>
+            </div>
+        </form>`,
+        footer:`<button type="button" onclick="updateCategory()" class="editBtn">Edit</button>`
+   });
+
+   modal.on("open", async (modal) => {
+        var response = await fetch('/category/api/' + id);
+        console.log('loading...')
+        if(!response.ok) {
+            alert("Something went wrong!!!")
+            return;
+        }
+        var data = await response.json();
+        var name = document.getElementById('name');
+        name.value = data.name;
+        console.log('close')
+   });
+
+   modal.on("close", (modal) => {
+        return confirm("Do you want to exit without save???") ? alert("Closing") : null;
+   })
+
+   modal.open();
+
+   
+}
 async function createCategory() {
     var name = document.getElementById('name').value;
     var data = {
