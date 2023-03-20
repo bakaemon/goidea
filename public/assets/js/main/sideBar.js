@@ -19,7 +19,7 @@ var loadTop5Category = function () {
 
 var loadTop5Ideas = function () {
     $.ajax({
-        url: '/ideas/api/all',
+        url: '/ideas/api/all?limit=5&sort=createdAt&sortMode=-1',
         type: 'GET',
         success: function (json) {
             var html = '';
