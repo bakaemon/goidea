@@ -19,11 +19,12 @@ var loadTop5Category = function () {
 
 var loadTop5Ideas = function () {
     $.ajax({
-        url: '/api/idea/get?top=5',
+        url: '/ideas/api/all',
         type: 'GET',
-        success: function (data) {
+        success: function (json) {
             var html = '';
-            $.each(data, function (index, item) {
+            var data = json.data;
+            data.forEach(function (item) {
                 var title = item.title;
                 var id = item._id;
                 html += `<div class="divline"></div>
@@ -38,11 +39,12 @@ var loadTop5Ideas = function () {
 
 var loadDepartments = function () {
     $.ajax({
-        url: '/api/department/get',
+        url: '/department/api/all?limit=5&sort=createdAt&sortMode=-1',
         type: 'GET',
-        success: function (data) {
+        success: function (json) {
             var html = '';
-            $.each(data, function (index, item) {
+            var data = json.data;
+            data.forEach(function (item) {
                 var name = item.name;
                 var id = item._id;
                 html += `<li><a href="/department/${id}">${name}</a></li>`;
@@ -54,5 +56,7 @@ var loadDepartments = function () {
 
 window.addEventListener('load', async function () {
     await loadTop5Category();
+    await loadTop5Ideas();
+    await loadDepartments();
 });
 
