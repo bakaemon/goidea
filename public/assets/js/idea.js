@@ -102,7 +102,7 @@ var initEditor = () => {
     var editor = new RichTextEditor("#editorjs", config);
 }
 
-function viewIdeaForm(e) {
+function viewIdeaForm(e, id) {
     var modal = Modal('.modal-area', {
         title: 'Idea Information',
         get: {
@@ -113,6 +113,9 @@ function viewIdeaForm(e) {
     });
     modal.open();
 }
+
+
+
 
 
 // window.onload = async (e) => {
@@ -143,4 +146,5 @@ function enableForm(form) {
             inputs[i].disabled = false;
         }
     }
-} 
+}
+
