@@ -21,16 +21,15 @@ async function loadEventTable() {
                     return
                 }
                 var newHeaders = Object.keys(data[0]);
-                newHeaders[newHeaders.indexOf('_id')] = 'ID';
-                newHeaders.shift();
-                newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt');
+                newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt' && item != '_id');
                 newHeaders.push('Actions');
                 var newRows = [];
                 for (var row of data) {
                     var newRow = [];
                     for (var key in row) {
+                        if (!row || !row.hasOwnProperty(key)) continue;
                         if (key == 'department' || key == 'category') {
-                            newRow.push(row[key].name);
+                            newRow.push(row[key].name ?? "no data!");
                         }
                         else if (key=="author") newRow.push(row[key].username);
                         else if (key == '__v' || key == 'updatedAt' || key == 'createdAt' || key == '_id') {
@@ -41,6 +40,7 @@ async function loadEventTable() {
                         <a class="actionBtn modal-trigger"
                                                 onclick="editEventForm(this, '${row._id}')" modal-param="${row._id}">Edit</a>
                         <button class="actionBtn" onclick="deleteEvent('${row._id}')">Delete</button>
+                        <a class="fa fa-eye actionBtn" href="/event/ideas/${row._id}"></a>
                 `);
                     newRows.push(newRow);
                 }
