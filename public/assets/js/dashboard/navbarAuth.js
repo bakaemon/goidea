@@ -13,7 +13,7 @@ const loadOptions = async () => {
         return;
     };
     const token = getCookie('token');
-    const response = await fetch('auth/api/verify_token?token=' + token);
+    const response = await fetch('/auth/api/verify_token?token=' + token);
     const data = await response.json();
     if (data.roles.includes('admin')) {
         generateAdminMenu();
