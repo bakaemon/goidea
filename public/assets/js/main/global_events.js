@@ -1,8 +1,8 @@
-window.addEventListener('load', async function () {
-    await loadOptions();
+// window.addEventListener('load', async function () {
+//     await loadOptions();
     
-    // loadTop5Ideas();
-    // loadDepartments();
+//     // loadTop5Ideas();
+//     // loadDepartments();
 
 
-});
+// });
