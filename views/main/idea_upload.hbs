@@ -42,17 +42,23 @@
                             <div class="posttext pull-left">
 
                                 <div>
-                                    <input type="text" placeholder="Enter Topic Title" class="form-control" />
+                                    <input type="text" placeholder="Enter Topic Title" class="form-control"
+                                        id="topicName" />
                                 </div>
 
                                 <input name='tags' id="tags" value='tag1, tag2'>
 
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6">
-                                        <select name="subcategory" id="subcategory" class="form-control">
-                                            <option value="" disabled selected>Select Event</option>
-                                            <option value="op1">Option1</option>
+                                        <select name="events" id="events" class="form-control">
                                             <option value="op2">Option2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6">
+                                        <select name="category" id="category" class="form-control">
+                                            
                                         </select>
                                     </div>
                                 </div>
@@ -99,7 +105,9 @@
 
                             <div class="pull-right postreply">
                                 <div class="pull-left smile"><a href="#"><i class="fa fa-smile-o"></i></a></div>
-                                <div class="pull-left"><button type="submit" class="btn btn-primary">Post</button></div>
+                                <div class="pull-left">
+                                    <a class="btn btn-primary" href="javascript:uploadIdeas()">Post</a>
+                                </div>
                                 <div class="clearfix"></div>
                             </div>
 

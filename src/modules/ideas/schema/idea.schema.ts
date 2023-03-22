@@ -9,10 +9,10 @@ export type IdeaDocument = Idea & Document;
 
 @Schema({ timestamps: true })
 export class Idea {
-    @Prop({ required: true })
+    @Prop({  })
     title: string;
 
-    @Prop({ required: true })
+    @Prop({  })
     description: string;
 
     @Prop({

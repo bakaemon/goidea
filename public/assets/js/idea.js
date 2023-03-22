@@ -1,5 +1,9 @@
+
+var eventList;
+var categoryList;
 var selectedid = null;
 var modalArea = document.getElementById('modal-area');
+var textarea = document.getElementById('desc');
 
 
 var initEditor = () => {
@@ -115,9 +119,99 @@ function viewIdeaForm(e, id) {
 }
 
 
+async function uploadIdeas() {
+    var topicName = document.getElementById('topicName').value;
+    var tags = document.getElementById('tags').value;
+    var events = document.getElementById('events').value;
+    var description = textarea.value;
+    var identify = document.getElementById('friends').checked;
+    var category = document.getElementById('category').value;
+
+    var term = document.getElementById('note').checked;
+    if (!term) {
+        alert("Please accept the terms and conditions")
+        return;
+    }
+    if (topicName == "" || tags == "" || events == "" || description == "" || category == "") {
+        alert("Please fill all the fields");
+        return;
+    }
+
+    var data = {
+        title: topicName,
+        event: events,
+        description: description,
+        anonymous: identify,
+    }
+    try {
+        var response = await fetch('/ideas/api/create', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/home";
+            return;
+        }
+        else {
+            alert(data.message);
+            return;
+        }
+    } catch (error) {
+        alert(error);
+    }
+    return false;
+}
 
 
+async function populateCategoryData() {
+    if (!categoryList) {
+        categoryList = [];
+        var data = await fetch('/category/api/all');
+        var category = (await data.json()).data;
+        for (var c of category) {
+            categoryList.push(c);
+        }
+        return categoryList;
+    }
+}
 
+async function populateEventData() {
+    if (!eventList) {
+        eventList = [];
+        var data = await fetch('/event/api/all');
+        var event = (await data.json()).data;
+        for (var e of event) {
+            eventList.push(e);
+        }
+        return eventList;
+    }
+}
+
+const loadCategory = async () => {
+    var category = await populateCategoryData();
+    category.forEach(category => {
+        var option = document.createElement('option');
+        option.value = category._id;
+        option.innerHTML = category.name;
+        document.getElementById('category').appendChild(option);
+    });
+}
+
+const loadEvent = async () => {
+    var event = await populateEventData();
+    event.forEach(event => {
+        var option = document.createElement('option');
+        option.value = event._id;
+        option.innerHTML = event.name;
+        document.getElementById('events').appendChild(option);
+    });
+}
 // window.onload = async (e) => {
 //     loadTableDepartment();
 // }
@@ -148,3 +242,8 @@ function enableForm(form) {
     }
 }
 
+window.onload = async (e) => {
+    await loadCategory();
+    await loadEvent();
+
+}
