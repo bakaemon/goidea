@@ -5,16 +5,20 @@ const homeLayout = "main/home"
 
 @Controller()
 export class MainController {
-    @Get()
-    root(@Res() res: Response) {
-        return res.render('main/index', { layout: homeLayout });
-    }
-    @Get('idea/:id')
-    ideaDetail(@Param('id') id : string, @Res() res: Response) {
+  @Get()
+  root(@Res() res: Response) {
+    return res.render('main/index', { layout: homeLayout });
+  }
+  @Get('idea/:id')
+  ideaDetail(@Param('id') id: string, @Res() res: Response) {
     return res.render('main/idea', { ideaId: id.toString(), layout: homeLayout });
-    }
-    @Get('ideas/upload')
-    upload(@Res() res: Response) {
-    return res.render('main/idea_upload', {layout: homeLayout });
+  }
+  @Get('ideas/upload')
+  upload(@Res() res: Response) {
+    return res.render('main/idea_upload', { layout: homeLayout });
+  }
+  @Get('event')
+  event(@Res() res: Response) {
+    return res.render('main/event_upload', { layout: homeLayout });
   }
 }
