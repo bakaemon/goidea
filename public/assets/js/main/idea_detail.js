@@ -3,7 +3,7 @@ const detailModel = (idea) => `
                 <div class="topwrap">
                     <div class="userinfo pull-left">
                         <div class="avatar">
-                            <img height="50" widht="50"  src="${idea.author.avatar}" alt="" />
+                            <img height="50" width="50"  src="${idea.author.avatar}" alt="" />
                             <div class="status green">&nbsp;</div>
                         </div>
 
