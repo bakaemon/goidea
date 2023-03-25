@@ -50,8 +50,13 @@ const commentDetail = async (comment) => {
         </div>
         <div class="postinfobot">
             <div class="likeblock pull-left">
-                <a href="#" class="up"><i class="fa fa-thumbs-o-up"></i>10</a>
-                <a href="#" class="down"><i class="fa fa-thumbs-o-down"></i>1</a>
+                <div id="the-id" class="upvotejs pull-left">
+                <a class="upvote"></a>
+                <span class="count">${idea.vote || 0}</span>
+                <a class="downvote"></a>
+                <a class="star"></a>
+                </div>
+            </div>
             </div>
             <div class="prev pull-left">
                  <a href="#"><i class="fa fa-reply"></i></a>
