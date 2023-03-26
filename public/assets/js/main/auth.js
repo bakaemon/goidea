@@ -82,7 +82,7 @@ const generateExtraOptions = async () => {
     }
     var data = await res.json();
     if (data.roles.includes('staff')) {
-        const html = `<a href="/home/ideas/upload"><button class="btn btn-primary">Start New Topic</button></a>`;
+        const html = `<a href="/home/ideas/upload"><button class="btn btn-primary">Upload New Idea</button></a>`;
         extraOptions.innerHTML = html;
     }
 }
