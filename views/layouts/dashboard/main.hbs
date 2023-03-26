@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/assets/css/users.css">
     <script src="/assets/js/util/getCookie.js"></script>
     <script src="/assets/js/dashboard/navbarAuth.js"></script>
-  
+
     {{!--
     <script src="/assets/js/auth.js"></script> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
@@ -261,6 +261,26 @@
             modal.open();
         }       
     </script>
+    {{!-- Check date event --}}
+    <script>
+        function checkDate() {
+            var selectedclosureDate = document.getElementById('closureDate').value;
+            var selectedfinalClosureDate = document.getElementById('finalClosureDate').value;
+            var dateNow = new Date()
+            var yesterdayDate = dateNow.setDate(dateNow.getDate()- 1);
+            var date1 = new Date(selectedclosureDate);
+            var date2 = new Date(selectedfinalClosureDate)
+            if (date2 < date1) {
+                alert("Final Closure Date must be greater than Closure Date!!");
+                document.getElementById("finalClosureDate").value = 'dd/mm/yyyy';
+            }
+            if (date1 < yesterdayDate) {
+                alert("Closure Date can not past!!");
+                document.getElementById("closureDate").value = 'dd/mm/yyyy';
+            }
+        }
+    </script>
+    {{!-- --}}
     <script src='/assets/js/modal.js' type='text/javascript'></script>
     <script>
         const html = document.documentElement;
@@ -345,6 +365,8 @@
                 });
         }
     </script>
+
+
     {{{ scripts }}}
 </body>
 
