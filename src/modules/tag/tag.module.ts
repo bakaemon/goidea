@@ -7,7 +7,7 @@ import { TagService } from "./tag.service";
 @Module({
     controllers: [TagAPIController],
     providers: [TagService],
-    exports: [],
+    exports: [TagService],
     imports: [DatabaseModule,
         RouterModule.register([
             {

@@ -4,6 +4,7 @@ import { IdeaAPIController } from './idea.api.controller';
 import { IdeaService } from './idea.service';
 import { DatabaseModule } from "@src/common/database_module/database.module";
 import { RouterModule } from "@nestjs/core";
+import { TagService } from '../tag/tag.service';
 
 
 @Module({
@@ -15,7 +16,7 @@ import { RouterModule } from "@nestjs/core";
     ]),
     ],
     controllers: [IdeaController, IdeaAPIController],
-    providers: [IdeaService],
+    providers: [IdeaService, TagService],
     exports: []
 })
 export class IdeaModule { }

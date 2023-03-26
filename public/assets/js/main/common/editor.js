@@ -4,7 +4,7 @@ window.addEventListener('load', () => {
         menubar: false,
     });
     tinymce.init({
-        selector: 'textarea#idea',
+        selector: 'textarea.uploadFile',
         image_title: true,
         automatic_uploads: true,
         file_picker_callback:uploadCallback

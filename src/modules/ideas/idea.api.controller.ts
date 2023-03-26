@@ -9,10 +9,12 @@ import { AccountDocument } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
 import { Idea } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
+import { TagService } from '../tag/tag.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
+        private readonly tagService: TagService,
     ) { }
 
     // Basic CRUD
@@ -21,7 +23,26 @@ export class IdeaAPIController {
     async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
         try {
             ideaDto.author = account._id;
-            await this.service.create(ideaDto);
+            var tagNames = ideaDto.tags;
+            delete ideaDto.tags;
+            var newTags = [];
+            for (var tagName of tagNames) {
+                try {
+                    var tagCheck = await this.tagService.findOne({ name: tagName });
+                    newTags.push(tagCheck._id);
+                }
+                catch (e) {
+                    var newTag = await this.tagService.create({ name: tagName });
+                    newTags.push(newTag._id);
+                } 
+                    
+                
+            }
+            var ideaData = {
+                ...ideaDto,
+                tags: newTags
+            }
+            await this.service.create(ideaData);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Created Idea successfully"
@@ -37,15 +58,15 @@ export class IdeaAPIController {
 
     @Get("all")
     async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any },
-    @Res() res: Response) {
+        @Res() res: Response) {
         if (!page) page = 1;
-        var ideas = await this.service.findAll({}, { 
-            page: page || 1, 
-            limit: limit || 10, 
-            sort: sort? { [sort]: sortMode } : null,
+        var ideas = await this.service.findAll({}, {
+            page: page || 1,
+            limit: limit || 10,
+            sort: sort ? { [sort]: sortMode } : null,
             populate: [
-                { path: "author"},
-                { path: "event"}
+                { path: "author" },
+                { path: "event" }
             ]
         });
         let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
@@ -63,12 +84,12 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id)}, 
-            {
-                populate: [
-                    { path: "author"},
-                ]
-            }))
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
+                {
+                    populate: [
+                        { path: "author" },
+                    ]
+                }))
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -125,7 +146,7 @@ export class IdeaAPIController {
             if (ideaId) {
                 return res.json(await this.service.findCommentsByIdeaId(ideaId));
             } else return res.json(await this.service.findALlComment({}));
-        } catch (error) {   
+        } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
