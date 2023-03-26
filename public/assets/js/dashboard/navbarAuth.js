@@ -45,7 +45,7 @@ const generateAdminMenu = () => {
                         <svg>
                             <use xlink:href="#collection"></use>
                         </svg>
-                        <span>Dashboard</span>
+                        <span>Management</span>
                     </a>
                 </li>
                 <li>
