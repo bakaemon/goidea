@@ -30,24 +30,24 @@
 
                             <div>
                                 <label for="titleEvent">Title</label>
-                                <input name="titleEvent" type="text" placeholder="Event Title"
-                                    class="form-control" />
+                                <input name="titleEvent" type="text" placeholder="Event Title" class="form-control" />
                             </div>
 
                             <div>
                                 <label for="titleEvent">Description</label>
-                                <input name="desEvent" type="text" placeholder="Description"
-                                    class="form-control" />
+                                <input name="desEvent" type="text" placeholder="Description" class="form-control" />
                             </div>
 
                             <div>
-                                <label for="dead1"><b>1st Deadline</b></label>
-                                <input type="date" name="dead1" class="form-control">
+                                <label for="1stdead"><b>1st Deadline</b></label>
+                                <input id="1stdead" onchange="checkDate()" required class="datepicker-input" type="date"
+                                    data-date-format="yyyy-mm-dd">
                             </div>
 
                             <div>
-                                <label for="dead2"><b>2nd Deadline</b></label>
-                                <input type="date" name="dead2" class="form-control">
+                                <label for="2nddead"><b>2nd Deadline</b></label>
+                                <input id="2nddead" onchange="checkDate()" required class="datepicker-input" type="date"
+                                    data-date-format="yyyy-mm-dd">
                             </div>
 
                         </div>
@@ -55,13 +55,13 @@
                     </div>
                     <div class="postinfobot">
 
-                        <div class="notechbox pull-left">
+                        {{!-- <div class="notechbox pull-left">
                             <input type="checkbox" name="note" id="note" class="form-control" />
-                        </div>
+                        </div> --}}
 
-                        <div class="pull-left">
+                        {{!-- <div class="pull-left">
                             <label for="note"> I agree to terms & conditions</label>
-                        </div>
+                        </div> --}}
 
                         <div class="pull-right postreply">
                             <div class="pull-left smile"><a href="#"><i class="fa fa-smile-o"></i></a></div>
@@ -80,3 +80,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function checkDate() {
+        var selectedclosureDate = document.getElementById('1stdead').value;
+        var selectedfinalClosureDate = document.getElementById('2nddead').value;
+        var dateNow = new Date()
+        var yesterdayDate = dateNow.setDate(dateNow.getDate() - 1);
+        var date1 = new Date(selectedclosureDate);
+        var date2 = new Date(selectedfinalClosureDate)
+        if (date2 < date1) {
+            alert("Final Closure Date must be greater than Closure Date!!");
+            document.getElementById("2nddead").value = 'dd/mm/yyyy';
+        }
+        if (date1 < yesterdayDate) {
+            alert("Closure Date can not past!!");
+            document.getElementById("1stdead").value = 'dd/mm/yyyy';
+        }
+    }
+</script>
