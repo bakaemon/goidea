@@ -29,57 +29,66 @@
     <div class="row">
         <div class="col-lg-8 col-md-8">
 
+
+
             <!-- POST -->
             <div class="post">
                 <form action="#" class="form newtopic" method="post">
                     <div class="topwrap">
                         <div class="userinfo pull-left">
                             <div class="avatar">
-                                <img src="images/avatar4.jpg" alt="" />
+                                <img src="/assets/images/avatar4.jpg" alt="" />
                                 <div class="status red">&nbsp;</div>
                             </div>
 
                             <div class="icons">
-                                <img src="images/icon3.jpg" alt="" /><img src="images/icon4.jpg" alt="" /><img
-                                    src="images/icon5.jpg" alt="" /><img src="images/icon6.jpg" alt="" />
+                                <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" /><img
+                                    src="/assets/images/icon5.jpg" alt="" /><img src="/assets/images/icon6.jpg" alt="" />
                             </div>
                         </div>
                         <div class="posttext pull-left">
 
-                                <div>
-                                    <input type="text" placeholder="Enter Topic Title" class="form-control"
-                                        id="topicName" />
-                                </div>
-
-                            <input name='tags' id="tags" value='tag1, tag2'>
-
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6">
-                                        <select name="events" id="events" class="form-control">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6">
-                                        <select name="category" id="category" class="form-control">
-                                            
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div>
-                                <textarea name="desc" id="desc" placeholder="Description"
-                                    class="form-control uploadFile"></textarea>
+                                <label for="topicName"><b>Topic</b></label>
+                                <input id="topicName" type="text" placeholder="Enter Topic Title"
+                                    class="form-control" />
                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="events"><b>Event</b></label>
+                                    <select name="category" id="events" class="form-control">
+                                        <option value="" disabled selected>Select Event</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="category"><b>Category</b></label>
+                                    <select name="subcategory" id="category" class="form-control">
+                                        <option value="" disabled selected>Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="tags"><b>Tag</b></label>
+                                    <input name='tags' id="tags" value='tag1, tag2'>
+                                </div>
+                            </div><br>
+
+                            <div class="row">
+                                <div>
+                                    <textarea name="desc" id="desc" placeholder="Description"
+                                        class="form-control uploadFile"></textarea>
+                                </div>
+                            </div>
+
                             <div class="row newtopcheckbox">
                                 <div class="col-lg-6 col-md-6">
                                     <div>
-                                        <p>Anonymous?</p>
+                                        <p>Who can see this?</p>
                                     </div>
                                     <div class="row">
-                                        <div class="col-lg-6 col-md-6">
-                                        </div>
                                         <div class="col-lg-6 col-md-6">
                                             <div class="checkbox">
                                                 <label>
@@ -98,7 +107,7 @@
                     <div class="postinfobot">
 
                         <div class="notechbox pull-left">
-                            <input type="checkbox" name="note" id="note" class="form-control" onclick="if(!this.form.checkbox.checked){alert('You must agree to the terms first.');return false}" />
+                            <input type="checkbox" name="note" id="note" class="form-control" />
                         </div>
 
                         <div class="pull-left">
@@ -132,18 +141,18 @@
                 <div class="wrap-ut pull-left">
                     <div class="userinfo pull-left">
                         <div class="avatar">
-                            <img src="images/avatar.jpg" alt="" />
+                            <img src="/assets/images/avatar.jpg" alt="" />
                             <div class="status green">&nbsp;</div>
                         </div>
 
                         <div class="icons">
-                            <img src="images/icon1.jpg" alt="" /><img src="images/icon4.jpg" alt="" />
+                            <img src="/assets/images/icon1.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
                         </div>
                     </div>
                     <div class="posttext pull-left">
                         <h2>10 Kids Unaware of Their Halloween Costume</h2>
-                        <p>It's one thing to subject yourself to a Halloween costume mishap because, hey, that's
-                            your prerogative.</p>
+                        <p>It's one thing to subject yourself to a Halloween costume mishap because, hey,
+                            that's your prerogative.</p>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -167,19 +176,19 @@
                 <div class="wrap-ut pull-left">
                     <div class="userinfo pull-left">
                         <div class="avatar">
-                            <img src="images/avatar2.jpg" alt="" />
+                            <img src="/assets/images/avatar2.jpg" alt="" />
                             <div class="status red">&nbsp;</div>
                         </div>
 
                         <div class="icons">
-                            <img src="images/icon3.jpg" alt="" /><img src="images/icon4.jpg" alt="" /><img
-                                src="images/icon5.jpg" alt="" /><img src="images/icon6.jpg" alt="" />
+                            <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" /><img
+                                src="/assets/images/icon5.jpg" alt="" /><img src="/assets/images/icon6.jpg" alt="" />
                         </div>
                     </div>
                     <div class="posttext pull-left">
                         <h2>What Instagram Ads Will Look Like</h2>
-                        <p>Instagram offered a first glimpse at what its ads will look like in a blog post Thursday.
-                            The sample ad, which you can see below.</p>
+                        <p>Instagram offered a first glimpse at what its ads will look like in a blog post
+                            Thursday. The sample ad, which you can see below.</p>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -203,18 +212,18 @@
                 <div class="wrap-ut pull-left">
                     <div class="userinfo pull-left">
                         <div class="avatar">
-                            <img src="images/avatar3.jpg" alt="" />
+                            <img src="/assets/images/avatar3.jpg" alt="" />
                             <div class="status red">&nbsp;</div>
                         </div>
 
                         <div class="icons">
-                            <img src="images/icon2.jpg" alt="" /><img src="images/icon4.jpg" alt="" />
+                            <img src="/assets/images/icon2.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
                         </div>
                     </div>
                     <div class="posttext pull-left">
                         <h2>The Future of Magazines Is on Tablets</h2>
-                        <p>Eric Schmidt has seen the future of magazines, and it's on the tablet. At a Magazine
-                            Publishers Association.</p>
+                        <p>Eric Schmidt has seen the future of magazines, and it's on the tablet. At a
+                            Magazine Publishers Association.</p>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -232,19 +241,14 @@
                 <div class="clearfix"></div>
             </div><!-- POST -->
 
-
-
-
-
-
         </div>
+
         <div class="col-lg-4 col-md-4">
             {{> main/sidebar}}
         </div>
+
     </div>
 </div>
-
-
 
 <div class="container">
     <div class="row">
@@ -273,8 +277,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    
-</script>
 
