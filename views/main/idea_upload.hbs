@@ -98,7 +98,7 @@
                     <div class="postinfobot">
 
                         <div class="notechbox pull-left">
-                            <input type="checkbox" name="note" id="note" class="form-control" />
+                            <input type="checkbox" name="note" id="note" class="form-control" onclick="if(!this.form.checkbox.checked){alert('You must agree to the terms first.');return false}" />
                         </div>
 
                         <div class="pull-left">
