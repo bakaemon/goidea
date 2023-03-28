@@ -1,4 +1,4 @@
-import { ExceptionFilter } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -12,6 +12,9 @@ import { Idea } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
 import { ExecException } from 'child_process';
+import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -22,26 +25,38 @@ export class IdeaAPIController {
     // Basic CRUD
     @Post("create")
     @UseGuards(AuthGuard)
-    async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+    @UseInterceptors(FilesInterceptor('files',10, {
+        storage: diskStorage({
+        destination: './public/assets/uploads',
+        filename: (req, file, cb) => {
+            const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+            return cb(null, `${randomName}${extname(file.originalname)}`);
+        }}), 
+    }))
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+        console.log(files);
         try {
+            
             ideaDto.author = account._id;
-            var tagNames = ideaDto.tags;
+            var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
             var newTags = [];
             for (var tagName of tagNames) {
                 try {
                     var tagCheck = await this.tagService.findOne({ name: tagName });
-                    newTags.push(tagCheck._id);
+                    newTags.push(tagCheck._id.toString());
                 }
                 catch (e) {
                     var newTag = await this.tagService.create({ name: tagName });
-                    newTags.push(newTag._id);
-                } 
-                    
-                
+                    newTags.push(newTag._id.toString());
+                }              
             }
             var ideaData = {
                 ...ideaDto,
+                files: files ?  files.map(file => file.filename) : [],
                 tags: newTags
             }
             await this.service.create(ideaData);
@@ -51,6 +66,7 @@ export class IdeaAPIController {
             });
 
         } catch (error) {
+            console.log(error.toString());
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: error.message
@@ -201,4 +217,39 @@ export class IdeaAPIController {
         }
     }
 
+    // //upload file
+    // @Post('file/upload')
+    // @UseGuards(AuthGuard)
+    // @UseInterceptors(FileInterceptor('file', {
+    //     storage: diskStorage({
+    //     destination: './public/assets/uploads',
+    //     filename: (req, file, cb) => {
+    //         const randomName = Array(32)
+    //         .fill(null)
+    //         .map(() => Math.round(Math.random() * 16).toString(16))
+    //         .join('');
+    //         return cb(null, `${randomName}${extname(file.originalname)}`);
+    //     }}),
+    // }))
+    // async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() res: Response) {
+    //     try {
+    //         console.log(file);
+    //         if(!file){
+    //             throw new HttpException("File not found!", HttpStatus.BAD_REQUEST);
+    //         } 
+    //         file.filename = file.originalname;
+    //         return res.json({
+    //             success: true,
+    //             data: file,
+    //         })
+    //     } catch (error) {
+    //         return res.status(HttpStatus.BAD_REQUEST).json({
+    //             success: false,
+    //             message: error.message
+    //         });
+    //     }
+    // }
+       
 }
+
+   

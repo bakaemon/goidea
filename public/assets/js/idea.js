@@ -27,7 +27,8 @@ async function uploadIdeas() {
     var description = tinymce.get('desc').getContent();
     var identify = document.getElementById('friends').checked;
     var category = document.getElementById('category').value;
-
+    var files = [...document.getElementById('file').files];
+    var formData = new FormData();
     var term = document.getElementById('note').checked;
     if (!term) {
         alert("Please accept the terms and conditions")
@@ -44,14 +45,19 @@ async function uploadIdeas() {
         tags: tags.map(tag => tag.value),
         description: description,
         anonymous: identify,
+        
+
+    }
+    for (var i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+    for(var key in data) {
+        formData.append(key, data[key]);
     }
     try {
         var response = await fetch('/ideas/api/create', {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+            body: formData
 
         });
         var data = await response.json();

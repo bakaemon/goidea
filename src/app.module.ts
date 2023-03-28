@@ -22,6 +22,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventModule } from './modules/events/event.module';
 import { MainModule } from './modules/main/main.module';
+import {MulterModule} from "@nestjs/platform-express";
 import nodemailer from 'nodemailer';
 import { EmailTransporter } from './common/email/email-transporter';
 @Module({
@@ -47,7 +48,10 @@ import { EmailTransporter } from './common/email/email-transporter';
     TagModule,
     IdeaModule,
     EventModule,
-    MainModule
+    MainModule,
+    MulterModule.register({
+      dest: '/public/assets/uploads',
+    }),
   ],
   controllers: [AppController,],
   providers: [
