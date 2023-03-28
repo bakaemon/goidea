@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { BaseService } from '../../common/service/base.service';
 import { Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -29,8 +30,8 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     async upvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: ideaId, upvoter: voter });
-        if (vote) {
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId });
+        if (vote.upvoter.includes(voter)) {
             this.removeVote(ideaId, voter, "upvote");
         } else {
             vote.upvoter.push(voter);
@@ -39,7 +40,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     async downvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: ideaId, downvoter: voter });
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId });
         if (vote) {
             this.removeVote(ideaId, voter, "downvote");
         } else {

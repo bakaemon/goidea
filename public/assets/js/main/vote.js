@@ -1,15 +1,13 @@
 
 const upVote = (id) => {
-        fetch (`/ideas/api/${id}/vote/upvote`, {
-            method: 'POST',
-        })
+        fetch (`/ideas/api/${id}/vote/upvote`)
         .then(res => res.json())
         .then(data => {
            if(data.success){
                console.log('You have successfully upvoted this idea');
-               location.reload();
+               getVoteCount();
               } else {
-                console.Log('upvote failed')
+                console.log('upvote failed')
            }
         }
     )
@@ -21,9 +19,9 @@ const downVote = (id) => {
         .then(data => {
            if(data.success){
                console.log('You have successfully downvoted this idea');
-               location.reload();
+               getVoteCount();
               } else {
-                console.Log('downvote failed')
+                console.log('downvote failed')
            }
         }
     )
@@ -33,6 +31,10 @@ const getVoteCount = (id) => {
     fetch(`/ideas/api/${id}/vote`)
     .then(res => res.json())
     .then(data => {
-        console.log(data)
+        $('#voteCount').text(data.data)
     })
 }
+
+window.addEventListener('load', () => {
+    getVoteCount(ideaId)
+})

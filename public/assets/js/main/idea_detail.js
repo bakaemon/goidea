@@ -22,7 +22,7 @@ const detailModel = (idea) => `
 
                     <div class="likeblock pull-left">
                         <a href="javascript:upVote('${idea._id}')" class="up"><i class="fa-regular fa-up"></i></a>
-                        <i>${idea.count??0}</i>
+                        <i id="voteCount" >0</i>
                         <a href="javascript:downVote('${idea._id}')" class="down"><i class="fa-regular fa-down"></i></a>
                     </div>
 
@@ -57,16 +57,8 @@ const loadIdeaDetail = async () => {
     $('#idea').html(detailModel(data));
 }
 
-const voteIdea = async () => {
-   $('.up i, .down i').click(() => {
-    console.log("clicked");
-    var e = $(this);
-    e.toggleClass("fa-regular fa-solid")
-   })
-}
 
 window.addEventListener('load', async () => {
    await loadIdeaDetail();
-   voteIdea()
 })
 

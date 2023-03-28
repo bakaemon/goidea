@@ -1,3 +1,4 @@
+import { ExceptionFilter } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -10,6 +11,7 @@ import { IdeaDto } from './dto/idea.dto';
 import { Idea } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
+import { ExecException } from 'child_process';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -161,6 +163,7 @@ export class IdeaAPIController {
     async vote(@AccountDecorator() account: AccountDocument,
         @Param() id: string, @Param('type') type: string, @Res() res: Response) {
         try {
+            
             if (type == 'upvote') {
                 await this.service.upvote(id, account._id);
             } else if (type == 'downvote') {
@@ -182,5 +185,20 @@ export class IdeaAPIController {
         }
     }
 
+    @Get(':id/vote')
+    async getVote(@Param('id') id, @Res() res: Response) {
+        try {
+            var voteCount = await this.service.countVote(id);
+            return res.json({
+                success: true,
+                data: voteCount,
+            })
+        } catch (e) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                messeage: e.toString()
+            })
+        }
+    }
 
 }
