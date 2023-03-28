@@ -21,8 +21,9 @@ const detailModel = (idea) => `
                 <div class="postinfobot">
 
                     <div class="likeblock pull-left">
-                        <a href="#" class="up"><i class="fa-regular fa-up"></i>0</a>
-                        <a href="#" class="down"><i class="fa-regular fa-down"></i>0</a>
+                        <a href="javascript:upVote('${idea._id}')" class="up"><i class="fa-regular fa-up"></i></a>
+                        <i>${idea.count??0}</i>
+                        <a href="javascript:downVote('${idea._id}')" class="down"><i class="fa-regular fa-down"></i></a>
                     </div>
 
                     <div class="prev pull-left">

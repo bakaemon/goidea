@@ -156,7 +156,7 @@ export class IdeaAPIController {
     }
 
 
-    @Post(':id/vote/:type')
+    @Get(':id/vote/:type')
     @UseGuards(AuthGuard)
     async vote(@AccountDecorator() account: AccountDocument,
         @Param() id: string, @Param('type') type: string, @Res() res: Response) {
