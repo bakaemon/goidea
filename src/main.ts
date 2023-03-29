@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { create }  from 'express-handlebars';
+import { create, engine }  from 'express-handlebars';
 import * as bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
 import { RATE_LIMIT_MAX, PORT } from './configs/env';
@@ -19,13 +19,13 @@ async function bootstrap() {
     defaultLayout: 'main.hbs',
     helpers: hbsHelper,
   }
-  const hbs = create(hbsConfig);
+  // const hbs = create(hbsConfig);
   app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
-  app.engine('hbs', hbs.engine);
+  // app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  // app.setViewEngine('hbs');
+  app.engine('hbs', engine(hbsConfig));
   app.set('view engine', 'hbs');
-  app.enable('view cache');
+  // app.enable('view cache');
   
 
   // NOTE: body parser
