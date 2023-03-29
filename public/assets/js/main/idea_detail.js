@@ -43,22 +43,25 @@ const detailModel = (idea) => `
 `
 
 if (!ideaId) {
-    alert('Unable to get idea id!');
+    alert('Something went wrong!');
     window.history.back();
 }
 
 const loadIdeaDetail = async () => {
     var response = await fetch('/ideas/api/' + ideaId);
     if (!response.ok) {
-        alert('Failed to load idea detail!');
+        alert('Something went wrong! The idea may not existed!');
+        window.history.back();
         return;
     }
     var data = await response.json();
+    document.title = data.title + ' | GoIdea';
     $('#idea').html(detailModel(data));
 }
 
 
 window.addEventListener('load', async () => {
+    document.title = 'Loading... | GoIdea';
     await loadIdeaDetail();
     var voteData = await getVoteCount(ideaId);
     if (voteData.voteStatus != null) {

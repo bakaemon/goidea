@@ -76,6 +76,7 @@ const loadPost = async () => {
                 })
             });
             $(`#${post._id} a.downvote`).on('click', function () {
+
                 downVote(post._id).then((data) => {
                     $(`#${post._id} span.count`).text(data.data);
                     $(`#${post._id} a.downvote`).toggleClass('downvote-on');
