@@ -30,7 +30,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     async upvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId });
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
         if (vote.upvoter.includes(voter)) {
             this.removeVote(ideaId, voter, "upvote");
         } else {
@@ -40,7 +40,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     async downvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId });
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
         if (vote) {
             this.removeVote(ideaId, voter, "downvote");
         } else {
@@ -50,7 +50,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
     async removeVote(ideaId: string, voter: string, voteType: string) {
         try {
-            const vote = await this.votesModel.findOne({ idea: ideaId });
+            const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
             if (voteType === "upvote") {
                 vote.upvoter = vote.upvoter.filter((v) => v !== voter);
                 vote.save();
@@ -66,7 +66,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     async countVote(ideaId: string){
-        const vote = await this.votesModel.findOne({ idea: ideaId });
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
         return vote.upvoter.length - vote.downvoter.length;
     }
 
@@ -106,12 +106,31 @@ export class IdeaService extends BaseService<IdeaDocument> {
 
     async findCommentsByIdeaId(ideaId: string, options?: QueryOptions) {
         try {
-            const paginateResults = await this.commentModel.paginate({ idea: ideaId}, options);
+            const paginateResults = await this.commentModel.paginate({ idea: new mongoose.Types.ObjectId(ideaId) }, options);
             const comments = paginateResults.docs;
             delete paginateResults.docs;
             return { data: comments, paginationOptions: paginateResults };
         }
         catch (error) {
+            throw error;
+        }
+    }
+
+    // comment
+    async createComment(ideaId: string, comment: string, commenter: string) {
+        try {
+            const commentDoc = this.commentModel.create({ idea: new mongoose.Types.ObjectId(ideaId), content: comment, 
+                author: new mongoose.Types.ObjectId(commenter) });
+            return commentDoc;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteComment(commentId: string) {
+        try {
+            return this.commentModel.deleteOne({ _id: new mongoose.Types.ObjectId(commentId) });
+        } catch (error) {
             throw error;
         }
     }
