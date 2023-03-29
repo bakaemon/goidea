@@ -160,8 +160,8 @@ export class IdeaAPIController {
     }
 
     // Advanced CRUD
-    @Get('comments/all')
-    async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
+    @Get(':id/comments/all')
+    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response) {
         try {
             if (ideaId) {
                 return res.json(await this.service.findCommentsByIdeaId(ideaId));
@@ -176,15 +176,14 @@ export class IdeaAPIController {
     }
 
     // post comments to selected idea includes author, ideaID, content
-    @Post('comments/create')
+    @Post(':id/comments/create')
     @UseGuards(AuthGuard)
     async createComment(@AccountDecorator() account: AccountDocument,
-    @Param() ideaID: string, 
-    @Body() ideaDto: IdeaDto, 
+    @Param('id') ideaID: string, 
+    @Body() content: string,
     @Res() res: Response) {
         try {
-            ideaDto.author = account._id;
-            await this.service.createComment(ideaDto);
+            await this.service.createComment(ideaID, content, account._id);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Created Comment successfully"
