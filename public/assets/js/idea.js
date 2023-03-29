@@ -27,7 +27,8 @@ async function uploadIdeas() {
     var description = tinymce.get('desc').getContent();
     var identify = document.getElementById('friends').checked;
     var category = document.getElementById('category').value;
-    var files = [...document.getElementById('file').files];
+    // var files = [...document.getElementById('files').files];
+    var files = currentFilesUpload;
     var formData = new FormData();
     var term = document.getElementById('note').checked;
     if (!term) {

@@ -36,7 +36,9 @@ export class IdeaAPIController {
             return cb(null, `${randomName}${extname(file.originalname)}`);
         }}), 
     }))
-    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, 
+    @AccountDecorator() account: AccountDocument, 
+    @Res() res: Response) {
         console.log(files);
         try {
             
@@ -172,6 +174,30 @@ export class IdeaAPIController {
             });
         }
     }
+
+    // post comments to selected idea includes author, ideaID, content
+    @Post('comments/create')
+    @UseGuards(AuthGuard)
+    async createComment(@AccountDecorator() account: AccountDocument,
+    @Param() ideaID: string, 
+    @Body() ideaDto: IdeaDto, 
+    @Res() res: Response) {
+        try {
+            ideaDto.author = account._id;
+            await this.service.createComment(ideaDto);
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                message: "Created Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
 
 
     @Get(':id/vote/:type')

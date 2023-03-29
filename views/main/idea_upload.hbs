@@ -17,6 +17,10 @@
 '
 }}
 
+<script>
+    var currentFilesUpload = []
+</script>
+
 <div class="container">
     <div class="row">
         <div class="col-lg-8 breadcrumbf">
@@ -75,6 +79,29 @@
                                     <input name='tags' id="tags" value='tag1, tag2'>
                                 </div>
                             </div><br>
+
+                            <div class="row">
+                                        <section class="upload-file">
+                                            <h1 class="heading">Upload files</h1>
+                                            <p class="paragraph">You can upload multiple files.</p>
+                                            <div class="files hidden" data-files></div>
+                                            <form class="form" enctype="multipart/formdata">
+                                                <div class="dropzone" data-dropzone>
+                                                    <div class="dropzone__field">
+                                                        <label class="dropzone__label" for="files"
+                                                            data-dropzone-label>Upload
+                                                            files</label>
+                                                        <input class="dropzone__file" id="files" name="files"
+                                                            type="file" multiple data-dropzone-file>
+                                                    </div>
+                                                    <button class="dropzone__upload button" name="uploadFile"
+                                                        type="submit">Uploadfiles</button>
+                                                </div>
+                                            </form>
+                                        </section>
+                            </div><br>
+
+
 
                             <div class="row">
                                 <div>
@@ -283,37 +310,6 @@
         </div>
     </div>
 </div>
-
-<head>
-    <link rel="stylesheet" href="/assets/css/staff.css">
-</head>
-<section>
-    <div class="container">
-        <div class="upload_centered">
-            <section class="upload-file">
-                <h1 class="heading">Upload files</h1>
-                <p class="paragraph">You can upload multiple files.</p>
-                <div class="files hidden" data-files></div>
-                <form class="form" enctype="multipart/formdata">
-                    <div class="dropzone" data-dropzone>
-                        <div class="dropzone__field">
-                            <label class="dropzone__label" for="files" data-dropzone-label>Upload files</label>
-                            <input class="dropzone__file" id="files" name="files" type="file" multiple
-                                data-dropzone-file>
-                        </div>
-                        <button class="dropzone__upload button" name="uploadFile" type="submit">Uploadfiles</button>
-                    </div>
-                    <label for="name"><b>Title</b></label>
-                    <input type="text" placeholder="Title" id="name" name="name" required>
-                    <label for="email"><b>Discription</b></label>
-                    <input type="email" placeholder="Discription your idea" name="email" id="email" required>
-
-                    <button class="button" name="continue" type="submit">Continue</button>
-                </form>
-            </section>
-        </div>
-    </div>
-</section>
 {{!-- UPLOAD --}}
 <script>
     function isDragAndDropSupported() {
@@ -436,8 +432,7 @@
                 this.uploadFile(file);
         }
         Dropzone.prototype.uploadFile = function (file) {
-            const formData = new FormData();
-            formData.append('documents', file);
+            currentFilesUpload.push(file);
             this.file.appendChild(this.getStatusHtml(file, true));
         }
     }
