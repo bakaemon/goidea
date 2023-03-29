@@ -6,7 +6,7 @@ async function uploadComments() {
         emailNotify: emailNotify,
     }
     try {
-        var response = await fetch('/ideas/api/comment/' + selectedid, {
+        var response = await fetch('/ideas/api/comments/create', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -35,7 +35,7 @@ const commentDetail = async (comment) => {
     `<div class="topwrap">
         <div class="userinfo pull-left">
             <div class="avatar">
-                <img height="50" width="50"  src="${comment.author.avatar}" alt="" />
+                <img height="50" width="50"  src="${comment.author}" alt="" />
                 <div class="status green">&nbsp;</div>
             </div>
             <div class="icons">
@@ -44,7 +44,7 @@ const commentDetail = async (comment) => {
              </div>
         </div>
         <div class="posttext pull-left">
-            <p>${comment.description}</p>
+            <p>${comment.content}</p>
         </div>
         <div class="clearfix"></div>
         </div>
@@ -77,7 +77,7 @@ if (!commentId) {
 }
 
 const loadCommentDetail = async () => {
-    var response = await fetch('/ideas/api/comment/' + commentId);
+    var response = await fetch('/ideas/api/comments/all');
     if (!response.ok) {
         alert('Failed to load comment detail!');
         return;

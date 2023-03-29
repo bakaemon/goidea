@@ -117,7 +117,15 @@ export class IdeaService extends BaseService<IdeaDocument> {
     }
 
     
-    //upload file
+    // create comment
+    async createComment(content: Partial<CommentDocument>) {
+        try {
+            const comment = await this.commentModel.create(content);
+            return comment;
+        } catch (error) {
+            throw error;
+        }
+    }
 
     // event that runs every 24 hours
     @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
