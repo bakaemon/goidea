@@ -1,11 +1,11 @@
 
 var postModel = (idea) => {
     return `
-    <div class="post">
+    <div class="post" id="${idea._id}">
         <div class="wrap-ut pull-left">
             <div id="the-id" class="upvotejs pull-left">
                 <a class="upvote"></a>
-                <span class="count">${idea.vote || 0}</span>
+                <span class="count">--</span>
                 <a class="downvote"></a>
                 <a class="star"></a>
             </div>
@@ -57,8 +57,12 @@ const loadPost = async () => {
     var posts =  document.getElementById('posts');
     var ideaData = await getIdeaData()
     console.log(ideaData)
-    ideaData.forEach(post => {
+    await ideaData.forEach((post) => {
         posts.innerHTML += postModel(post)
+        getVoteCount(post._id).then(voteCount => {
+            $(`#${post._id} span.count`).text(voteCount.data);
+        })
+        
     })
 }
 

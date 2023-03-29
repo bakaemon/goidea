@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose, { Query } from 'mongoose';
 import { BaseService } from '../../common/service/base.service';
 import { Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginateModel, FilterQuery, QueryOptions, Document, Types, PaginateOptions } from 'mongoose';
+import { PaginateModel, FilterQuery, QueryOptions, Document, Types, PaginateOptions, QueryWithHelpers } from 'mongoose';
 import { Idea, IdeaDocument } from './schema/idea.schema';
 import { VotesDocument } from './schema/votes.schema';
 import { filter } from 'rxjs';
@@ -29,37 +29,94 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
+    // upvote
     async upvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
-        if (vote.upvoter.includes(voter)) {
-            this.removeVote(ideaId, voter, "upvote");
-        } else {
-            vote.upvoter.push(voter);
-            await vote.save();
+        try {
+            let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
+            if (vote.upvoter.includes(voter)) {
+                vote = await this.removeVote(vote, voter, "upvote");
+            } else {
+                if (vote.downvoter.includes(voter)) {
+                    vote = await this.toggleVote(vote, voter, "downvote");
+                } else {
+                    vote = await this.addVote(vote, voter, "upvote");
+                }
+            }
+            vote.save();
+            return vote;
+        } catch (error) {
+            throw error;
         }
     }
 
+    // downvote
     async downvote(ideaId: string, voter: string) {
-        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
-        if (vote) {
-            this.removeVote(ideaId, voter, "downvote");
-        } else {
-            vote.downvoter.push(voter);
-            await vote.save();
+        try {
+            let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
+            if (vote.downvoter.includes(voter)) {
+                vote = await this.removeVote(vote, voter, "downvote");
+            } else {
+                if (vote.upvoter.includes(voter)) {
+                    vote = await this.toggleVote(vote, voter, "upvote");
+                } else {
+                    await this.addVote(vote, voter, "downvote");
+                }
+            }
+            vote.save();
+            return vote;
+        } catch (error) {
+            throw error;
         }
     }
-    async removeVote(ideaId: string, voter: string, voteType: string) {
+
+
+    // toggle upvote and downvote
+    async toggleVote(vote: any, voter: string, voteType: string) {
         try {
-            const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
             if (voteType === "upvote") {
-                vote.upvoter = vote.upvoter.filter((v) => v !== voter);
-                vote.save();
+                vote = await this.removeVote(vote, voter, "upvote");
+                vote.downvoter.push(voter);
             } else if (voteType === "downvote") {
-                vote.downvoter = vote.downvoter.filter((v) => v !== voter);
-                vote.save();
+                vote = await this.removeVote(vote, voter, "downvote");
+                vote.upvoter.push(voter);
             } else {
                 throw new Error("Invalid vote type");
             }
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+
+    }
+
+    // remove upvote and downvote
+    async removeVote(vote: any, voter: string, voteType: string) {
+        try {
+            if (voteType === "upvote") {
+                vote.upvoter.pull(voter);
+            } else if (voteType === "downvote") {
+                vote.downvoter.pull(voter);
+            } else {
+                throw new Error("Invalid vote type");
+            }
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async addVote(vote: any, voter: string, voteType: string) {
+        try {
+            if (voteType === "upvote") {
+                vote.upvoter.push(voter);
+                
+            } else if (voteType === "downvote") {
+                vote.downvoter.push(voter);
+                
+            } else {
+                throw new Error("Invalid vote type");
+            }
+            return vote;
         } catch (error) {
             throw error;
         }

@@ -60,5 +60,6 @@ const loadIdeaDetail = async () => {
 
 window.addEventListener('load', async () => {
    await loadIdeaDetail();
+    $('#voteCount').text((await getVoteCount(ideaId)).data)
 })
 

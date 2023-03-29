@@ -1,4 +1,4 @@
-import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles, Put } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -199,22 +199,24 @@ export class IdeaAPIController {
 
 
 
-    @Get(':id/vote/:type')
+    @Put(':id/vote/:type')
     @UseGuards(AuthGuard)
     async vote(@AccountDecorator() account: AccountDocument,
         @Param() id: string, @Param('type') type: string, @Res() res: Response) {
         try {
-            
+            // refresh vote
+            let vote;
             if (type == 'upvote') {
-                await this.service.upvote(id, account._id);
+                vote = await this.service.upvote(id, account._id);
             } else if (type == 'downvote') {
-                await this.service.downvote(id, account._id);
+                vote = await this.service.downvote(id, account._id);
             } else {
                 throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
+                data: vote.upvoter.length - vote.downvoter.length,
                 message: "Voted Idea successfully"
             });
 
@@ -232,7 +234,7 @@ export class IdeaAPIController {
             var voteCount = await this.service.countVote(id);
             return res.json({
                 success: true,
-                data: voteCount,
+                data: voteCount.toString(),
             })
         } catch (e) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
