@@ -1,7 +1,9 @@
+import { HttpException } from '@nestjs/common';
 export const getTokenFromRequest = (req) => {
-    let token;
+    let token, refreshToken;
 
     const tokenQuery = req.query.token;
+    
     if (tokenQuery) {
         token = tokenQuery;
     }
@@ -12,5 +14,27 @@ export const getTokenFromRequest = (req) => {
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
-    return token;
+    if (req.cookies) {
+        token = req.cookies['token'];
+    }
+    refreshToken = req.cookies['refresh_token'];
+    return{ token, refreshToken};
+}
+
+export const getTokenFromCookies = (req) => {
+    try {
+        const token = req.cookies['token'];
+    const refreshToken = req.cookies['refresh_token'];
+    return {
+        token,
+        refreshToken
+    };
+    }
+    catch(error) {
+        console.log(error);
+        return {
+            token: null,
+            refreshToken: null
+        }
+    }
 }

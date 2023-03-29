@@ -38,17 +38,23 @@ export class Account {
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Organization"
+        ref: "Department"
     })
-    organization: string;
+    department: string;
 
 
     @Prop({
         enum: RoleNames,
-        default: [Role.User],
+        default: [Role.Staff],
         type: [{ type: mongoose.Schema.Types.String}],
     })
-    roles: string;
+    roles: string[];
+
+    @Prop({
+        required: true,
+        type: mongoose.Schema.Types.Date,
+    })
+    birthday: Date;
 
     @Prop({
         trim: true,
@@ -67,7 +73,7 @@ export const AccountSchema = SchemaFactory.createForClass(Account);
 
 AccountSchema.pre("save", async function (next) {
     const doc = this;
-    this.populate("organization");
+    this.populate("department");
     if (!doc.displayName) doc.displayName = doc.username;
     if (doc.isModified("password") && doc.password) doc.password = hashSync(doc.password, BCRYPT_SALT);
     next();
@@ -75,7 +81,7 @@ AccountSchema.pre("save", async function (next) {
 
 AccountSchema.pre("findOneAndUpdate", async function (next) {
     const doc = this;
-    this.populate("organization");
+    this.populate("department");
 
     if (doc["_update"] && doc["_update"]["password"]) doc["_update"]["password"] =
         hashSync(doc["_update"]["password"], BCRYPT_SALT);

@@ -1,0 +1,31 @@
+{{setVar "head"
+
+"
+<link href='https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css' rel='stylesheet' type='text/css'>
+<link href='/assets/css/modal.css' rel='stylesheet' type='text/css'>
+
+"
+
+}}
+{{setVarIter "scripts" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+
+{{setVar "title" "Event Page "}}
+{{setVar "user" "Admin"}}
+
+    <section>
+            <form>
+                <input type="button" class="darkBlueBtn" value="Create Date"
+                    onclick="location.href='createDate'">
+            </form>
+            <br>
+            <br>
+            <div id="table-area" style="width: 100%;"></div>
+    </section>
+</section>
+<div class="modal-area"></div>
+

@@ -1,4 +1,4 @@
-import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller } from '@nestjs/common';
+import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller, Delete, Get, Query } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import TokenEnum from "@src/common/enums/token.enum";
@@ -12,10 +12,15 @@ import { LoginDto } from "./dto/login.dto";
 import { LogoutDto } from "./dto/logout.dto";
 import { RegisterAccountDto } from "./dto/register.dto";
 import { ForgetPasswordDto } from "./dto/forget-password.dto";
+import Role from '@src/common/enums/role.enum';
+import RoleGuard from '@src/common/guards/role.guard';
+import { Request } from 'express';
+import { ObjectId } from 'mongoose';
+import { Response } from 'express';
 
 
 @Controller('api')
-export class AuthController {
+export class AuthAPIController {
     constructor(
         private authService: AuthService,
         private accountService: AccountsService,
@@ -57,11 +62,16 @@ export class AuthController {
 
     @Post("register")
     async register(@Body() registerAccountDto: RegisterAccountDto) {
-        await this.authService.register(registerAccountDto);
-        return {
-            message: "Register account successfully, you can login now.",
-            success: true
-        };
+        try {
+            await this.authService.register(registerAccountDto);
+            return {
+                message: "Register account successfully, you can login now.",
+                success: true
+            };
+        }
+        catch (e) {
+            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // @Post("forget_password")
@@ -77,8 +87,17 @@ export class AuthController {
     //     };
     // }
 
+    @Get("verify_token")
+    async verifyToken(
+        @Query("token") token: string,
+        @Res() res: Response
+    ) {
+        res.json(await this.authService.verifyTokenFromRequest(token, "jwt.accessTokenPrivateKey"));
+    }
+
+
     @Post("login")
-    async login(@Body() loginDto: LoginDto) {
+    async login(@Body() loginDto: LoginDto, @Res({passthrough: true}) res: Response) {
         try {
 
             const account = await this.authService.authenticate(loginDto.loginField, loginDto.password);
@@ -95,58 +114,69 @@ export class AuthController {
                 accessTokenExpiresAt
             } = await this.authService.generateAuthTokens(payload, account);
 
-
-            return {
+            const response = {
                 access_token,
                 access_token_expires_at: accessTokenExpiresAt,
                 refresh_token,
                 account,
                 success: true
             };
+            res.cookie("token", access_token, { maxAge: 1000 * 60 * 30 });
+            res.cookie("refresh_token", refresh_token, { maxAge: 1000 * 60 * 60 * 24 * 14});
+            return response;
         } catch (e) {
             console.log(e);
-            if (e.message === "verifyAccount") throw new HttpException("Please verify your email to continue", HttpStatus.INTERNAL_SERVER_ERROR);
-            else throw new HttpException("Login failed", HttpStatus.UNAUTHORIZED);
+            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            //if (e.message === "verifyAccount") throw new HttpException("Please verify your email to continue", HttpStatus.INTERNAL_SERVER_ERROR);
+            //else throw new HttpException("Login failed", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     @Post("refresh")
     async refresh_token(@Req() req, @Res() res) {
-
-        let refresh_token;
-        if (req.body.refresh_token) {
-            refresh_token = await this.tokenService.findOne({ token: req.body.refresh_token });
-            if (!refresh_token) {
-                throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+        try {
+            if (!req.body.refresh_token) {
+                throw new HttpException("Refresh token is required", HttpStatus.NOT_ACCEPTABLE);
             }
+            const token = await this.tokenService.findOne({ token: req.body.refresh_token });
+            if (!token) {
+                throw new HttpException("Can't find token", HttpStatus.NOT_ACCEPTABLE);
+            }
+            const { access_token,
+                access_token_expires_at,
+                account } = await this.authService.refreshToken(token.token);
+            // await token.updateOne({ token: new_refresh_token });
+            res.cookie("token", access_token);
+            //res.cookie("refresh_token", new_refresh_token);
+            return res.status(HttpStatus.OK).json({
+                access_token,
+                access_token_expires_at,
+                // refresh_token: new_refresh_token,
+                account,
+                success: true
+            });
         }
-
-        const payload = await this.authService.verifyToken(refresh_token.token, "jwt.refreshTokenPrivateKey");
-        const access_token = this.authService.generateToken({ accountId: payload.accountId }, "jwt.accessTokenPrivateKey", { expiresIn: this.configService.get("jwt.expiresTime.access") });
-
-        const { accessTokenExpiresAt } = await this.authService.generateTokenExpiresTimes();
-
-        const account = await this.accountService.findOne({ _id: payload.accountId });
-        if (!account) {
-            throw new HttpException("Account does not exist", HttpStatus.NOT_FOUND);
+        catch (e) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: e.message,
+                success: false
+            });
         }
-        return res.status(HttpStatus.OK).json({
-            access_token, access_token_expires_at: accessTokenExpiresAt, account, success: true
-        });
     }
 
-    @Post("logout")
+    @Get("logout")
     @UseGuards(AuthGuard)
-    async logout(@Body() logoutDto: LogoutDto, @AccountDecorator() account: AccountDocument) {
+    async logout(@AccountDecorator() account: AccountDocument) {
 
         await this.tokenService.deleteOne({
             author: account._id,
-            token: logoutDto.refreshToken
         });
 
         return {
             message: "Log out successfully"
         };
     }
+
 
 }

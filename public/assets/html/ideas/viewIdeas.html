@@ -1,0 +1,64 @@
+<!-- <div class="container">
+    <form>
+        <label for="tag">Name</label>
+        <input type="text" id="tag" name="tag" placeholder="loading">
+        <label for="Upload">Closure Date</label>
+        <input type="date" id="date">
+        <label for="Upload By">Upload At</label>
+        <input type="date" id="date">
+        <label for="Idea">Idea Description</label>
+        <textarea id="idea" name="idea" class="textArea" style="height:200px"></textarea>
+    </form>
+</div> -->
+
+<script>
+    async function loadIdeaTable() {
+            var tableArea = document.getElementById('table-area-ideas');
+            tableArea.innerHTML = "";
+            var table = document.createElement('table');
+            table.style.width = "100%";
+            table.id = "information";
+            document.getElementById('table-area-ideas').appendChild(table);
+            fetch('/ideas/api/all', { headers: { 'Authorization': 'Bearer ' + getCookie('token') } })
+                .then(response => response.json())
+                .then(resData => {
+                    var data = resData.data;
+                    if (!data.length) {
+                        return
+                    }
+                    var newHeaders = Object.keys(data[0]);
+                    newHeaders = newHeaders.filter((item) => item != '__v' && item != 'anonymous' && item != 'createdAt' && item != '_id');
+                    newHeaders.push('Actions');
+                    var newRows = [];
+                    for (var row of data) {
+                        var newRow = [];
+                        for (var key in row) {
+                            if (key == '__v' || key == 'anonymous' || key == 'createdAt' || key == '_id') {
+                                continue;
+                            } else newRow.push(row[key]);
+                        }
+                        newRow.push(`
+                        <a class="actionBtn modal-trigger"
+                                                onclick="viewIdeaForm(this, '${row._id}')" modal-param="${row._id}">Edit</a>
+                        <button class="actionBtn" onclick="deleteIdeas('${row._id}')">Delete</button>
+                `);
+                        newRows.push(newRow);
+                    }
+                    console.log(newRows);
+                    new simpleDatatables.DataTable(table, {
+                        data: {
+                            headings: newHeaders,
+                            data: newRows
+                        }
+                    })
+                })
+
+
+        }
+
+  
+    window.onload = async (e) => {
+        loadIdeaTable();
+    }      
+</script>
+

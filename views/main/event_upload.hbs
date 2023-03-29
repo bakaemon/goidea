@@ -1,0 +1,101 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 breadcrumbf">
+            <a href="#">Name Page</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-8">
+
+            <!-- POST -->
+            <div class="post">
+                <form action="#" class="form newtopic" method="post">
+                    <div class="topwrap">
+                        <div class="userinfo pull-left">
+                            <div class="avatar">
+                                <img src="/assets/images/avatar4.jpg" alt="" />
+                                <div class="status red">&nbsp;</div>
+                            </div>
+
+                            <div class="icons">
+                                <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg"
+                                    alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
+                                    src="/assets/images/icon6.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div class="posttext pull-left">
+
+                            <div>
+                                <label for="titleEvent">Title</label>
+                                <input name="titleEvent" type="text" placeholder="Event Title" class="form-control" />
+                            </div>
+
+                            <div>
+                                <label for="titleEvent">Description</label>
+                                <input name="desEvent" type="text" placeholder="Description" class="form-control" />
+                            </div>
+
+                            <div>
+                                <label for="1stdead"><b>1st Deadline</b></label>
+                                <input id="1stdead" onchange="checkDate()" required class="datepicker-input" type="date"
+                                    data-date-format="yyyy-mm-dd">
+                            </div>
+
+                            <div>
+                                <label for="2nddead"><b>2nd Deadline</b></label>
+                                <input id="2nddead" onchange="checkDate()" required class="datepicker-input" type="date"
+                                    data-date-format="yyyy-mm-dd">
+                            </div>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="postinfobot">
+
+                        {{!-- <div class="notechbox pull-left">
+                            <input type="checkbox" name="note" id="note" class="form-control" />
+                        </div> --}}
+
+                        {{!-- <div class="pull-left">
+                            <label for="note"> I agree to terms & conditions</label>
+                        </div> --}}
+
+                        <div class="pull-right postreply">
+                            <div class="pull-left smile"><a href="#"><i class="fa fa-smile-o"></i></a></div>
+                            <div class="pull-left"><button type="submit" class="btn btn-primary">Post</button></div>
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div><!-- POST -->
+        </div>
+        <div class="col-lg-4 col-md-4">
+            {{> main/sidebar}}
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkDate() {
+        var selectedclosureDate = document.getElementById('1stdead').value;
+        var selectedfinalClosureDate = document.getElementById('2nddead').value;
+        var dateNow = new Date()
+        var yesterdayDate = dateNow.setDate(dateNow.getDate() - 1);
+        var date1 = new Date(selectedclosureDate);
+        var date2 = new Date(selectedfinalClosureDate)
+        if (date2 < date1) {
+            alert("Final Closure Date must be greater than Closure Date!!");
+            document.getElementById("2nddead").value = 'dd/mm/yyyy';
+        }
+        if (date1 < yesterdayDate) {
+            alert("Closure Date can not past!!");
+            document.getElementById("1stdead").value = 'dd/mm/yyyy';
+        }
+    }
+</script>

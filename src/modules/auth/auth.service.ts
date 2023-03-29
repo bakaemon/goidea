@@ -26,6 +26,24 @@ export class AuthService {
     ) {
     }
 
+
+    async refreshToken(refreshToken: string) {
+       
+        
+        const payload = await this.verifyToken(refreshToken, "jwt.refreshTokenPrivateKey");
+        const access_token = this.generateToken({ accountId: payload.accountId }, "jwt.accessTokenPrivateKey", { expiresIn: this.configService.get("jwt.expiresTime.access") });
+        //const new_refresh_token = this.authService.generateToken({ accountId: payload.accountId }, "jwt.accessTokenPrivateKey", { expiresIn: this.configService.get("jwt.expiresTime.refresh") });
+        const { accessTokenExpiresAt } = await this.generateTokenExpiresTimes();
+        const account = await this.accountService.findOne({ _id: payload.accountId });
+        if (!account) {
+            throw new HttpException("Account does not exist", HttpStatus.NOT_FOUND);
+        }
+        return {
+            access_token,
+            access_token_expires_at: accessTokenExpiresAt,
+            account
+        };
+    }
     async register(registerAccountDto: RegisterAccountDto) {
         if (await this.accountService.count({ $or: [{ username: registerAccountDto.username }, { email: registerAccountDto.email }] }) > 0) throw new HttpException("This account is already exists", 500);
         const account = await this.accountService.create(registerAccountDto);

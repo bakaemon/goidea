@@ -60,7 +60,7 @@ export class BaseService<T extends Document> {
         return document;
     }
 
-    async remove(filter: FilterQuery<T>, options?: QueryOptions): Promise<UnpackedIntersection<HydratedDocument<T, {}, {}>, {}>> {
+    async delete(filter: FilterQuery<T>, options?: QueryOptions): Promise<UnpackedIntersection<HydratedDocument<T, {}, {}>, {}>> {
         const document = await this.model.findOneAndDelete(filter, options).populate(options?.populate);
         if (options?.nullable !== true && !document) throw new HttpException(`${this.model.modelName} not found`, 500);
 
@@ -68,7 +68,7 @@ export class BaseService<T extends Document> {
     }
 
 
-    async removeAll(filter: FilterQuery<T>, options?: QueryOptions) {
+    async deleteMany(filter: FilterQuery<T>, options?: QueryOptions) {
         const result = await this.model.deleteMany(filter, options).populate(options?.populate);
 
         return result;

@@ -1,0 +1,28 @@
+<form id="createEventForm">
+    <div class="container">
+        <hr>
+        <label for="name"><b>Event Name</b></label>
+        <input type="text" id="name" name="name" placeholder="abc" required>
+        <label for="closureDate"><b>Closure Date</b></label>
+        <input id="closureDate" onchange="checkDate()" required class="datepicker-input" type="date"
+        data-date-format="yyyy-mm-dd">
+        <label for="finalClosureDate"><b>Final Closure Date</b></label>
+        <input id="finalClosureDate" onchange="checkDate()" required class="datepicker-input" type="date"
+        data-date-format="yyyy-mm-dd">
+        <label for="description"><b>Description</b></label>
+        <input type="text" placeholder="Description" id="description" name="description" required>
+        <div style="width:200">
+            <label for="department"><b>Department</b></label>
+            <br>
+            <select name="departments" class="selectedItem" id="department" required>
+            </select>
+        </div>
+        <div style="width:200">
+            <label for="category"><b>Category</b></label>
+            <br>
+            <select name="categories" class="selectedItem" id="category" required>
+            </select>
+        </div>
+        <hr>
+    </div>
+</form>

@@ -14,7 +14,10 @@ export class AccountsService extends BaseService<AccountDocument> {
         return await this.accountModel.create({
             email: account.email,
             username: account.username,
-            password: account.password
+            password: account.password,
+            roles: account.roles,
+            department: account.department,
+            birthday: account.birthday,
         });
     }
 }

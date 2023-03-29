@@ -1,0 +1,33 @@
+{{setVar "head"
+
+"
+<link href='https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css' rel='stylesheet' type='text/css'>
+<link href='/assets/css/modal.css' rel='stylesheet' type='text/css'>
+
+"
+
+}}
+{{setVarIter "head" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+{{setVarIter "scripts" '
+<script src="/assets/js/department_index.js"></script>'}}
+
+
+{{setVar "title" "Departments Page "}}
+    <section>
+        <h2>Departments Page</h3>
+            <form>
+                <input type="button" class="darkBlueBtn" value="Create Department"
+                    onclick="createDepartmentForm(this)">
+            </form>
+            <br>
+            <br>
+            <div id="table-area" style="width: 100%;">
+            </div>
+    </section>
+    <div class="modal-area"></div>
+

@@ -1,0 +1,32 @@
+<form id="editForm">
+    <div class="container">
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="User Name" id="username" name="name" required>
+        <label for="email"><b>Email</b></label>
+        <input type="email" placeholder="abc@email.com" name="email" id="email" required>
+        <label for="DateOfBirth"><b>Date of Birth</b></label>
+        <input type="date" id="DateOfBirth" name="DateOfBirth" required>
+        <div style="width:200">
+            <label for="department"><b>Department</b></label>
+            <br>
+            <select name="departments" class="selectedItem" id="department" required>
+            </select>
+        </div>
+        <div>
+            <label for="roles">Roles</label>
+            <br>
+                <input type="checkbox" name="role" value="staff">
+                <label for="role">Staff</label>
+                <br>
+                <input type="checkbox" name="role" value="qac">
+                <label for="role">Quality Assurance Coordinator</label>
+                <br>
+                <input type="checkbox" name="role" value="qam">
+                <label for="role">Quality Assurance Manager</label>
+                <br>
+                <input type="checkbox" name="role" value="admin">
+                <label for="role">Admin</label>
+        </div>
+        
+    </div>
+</form>

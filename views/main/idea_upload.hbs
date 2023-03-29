@@ -1,0 +1,286 @@
+{{setVar "head"
+'
+<link rel="stylesheet" href="/assets/css/staff.css">
+<link rel="stylesheet" href="https://richtexteditor.com/richtexteditor/rte_theme_default.css" />
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/rte.js"></script>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/plugins/all_plugins.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+'
+}}
+
+{{setVar "scripts"
+'
+<script src="/assets/js/idea.js"></script>
+'
+}}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 breadcrumbf">
+            <a href="#">Name Page</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-8">
+
+
+
+            <!-- POST -->
+            <div class="post">
+                <form action="#" class="form newtopic" method="post">
+                    <div class="topwrap">
+                        <div class="userinfo pull-left">
+                            <div class="avatar">
+                                <img src="/assets/images/avatar4.jpg" alt="" />
+                                <div class="status red">&nbsp;</div>
+                            </div>
+
+                            <div class="icons">
+                                <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg"
+                                    alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
+                                    src="/assets/images/icon6.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div class="posttext pull-left">
+
+                            <div>
+                                <label for="topicName"><b>Topic</b></label>
+                                <input id="topicName" type="text" placeholder="Enter Idea Title"
+                                    class="form-control" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="events"><b>Event</b></label>
+                                    <select name="category" id="events" class="form-control">
+                                        <option value="" disabled selected>Select Event</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="category"><b>Category</b></label>
+                                    <select name="subcategory" id="category" class="form-control">
+                                        <option value="" disabled selected>Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="tags"><b>Tag</b></label>
+                                    <input name='tags' id="tags" value='tag1, tag2'>
+                                </div>
+                            </div><br>
+
+                            <div class="row">
+                                <div>
+                                    <textarea name="desc" id="desc" placeholder="Description"
+                                        class="form-control uploadFile"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row newtopcheckbox">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="notiEmail" /> Notification reply?
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="friends" /> Anonymous?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        {{!-- <div class="clearfix"></div> --}}
+                    </div>
+                    <div class="postinfobot">
+
+                        <div class="notechbox pull-left">
+                            <input type="checkbox" name="note" id="note" class="form-control" />
+                        </div>
+
+                        <div class="pull-left">
+                            <label for="note"> I agree to terms & conditions</label>
+                        </div>
+
+                        <div class="pull-right postreply">
+                            <div class="pull-left smile"><a href="#"><i class="fa fa-smile-o"></i></a></div>
+                            <div class="pull-left">
+                                <a class="btn btn-primary" href="javascript:uploadIdeas()">Post</a>
+                            </div>
+                            {{!-- <div class="clearfix"></div> --}}
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div><!-- POST -->
+
+            <div class="row similarposts">
+                <div class="col-lg-10"><i class="fa fa-info-circle"></i>
+                    <p>Similar Posts according to your <a href="#">Topic Title</a>.</p>
+                </div>
+                <div class="col-lg-2 loading"><i class="fa fa-spinner"></i></div>
+
+            </div>
+
+            <!-- POST -->
+            <div class="post">
+                <div class="wrap-ut pull-left">
+                    <div class="userinfo pull-left">
+                        <div class="avatar">
+                            <img src="/assets/images/avatar.jpg" alt="" />
+                            <div class="status green">&nbsp;</div>
+                        </div>
+
+                        <div class="icons">
+                            <img src="/assets/images/icon1.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
+                        </div>
+                    </div>
+                    <div class="posttext pull-left">
+                        <h2>10 Kids Unaware of Their Halloween Costume</h2>
+                        <p>It's one thing to subject yourself to a Halloween costume mishap because, hey,
+                            that's your prerogative.</p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="postinfo pull-left">
+                    <div class="comments">
+                        <div class="commentbg">
+                            560
+                            <div class="mark"></div>
+                        </div>
+
+                    </div>
+                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
+                    <div class="time"><i class="fa fa-clock-o"></i> 24 min</div>
+                </div>
+                <div class="clearfix"></div>
+            </div><!-- POST -->
+
+
+            <!-- POST -->
+            <div class="post">
+                <div class="wrap-ut pull-left">
+                    <div class="userinfo pull-left">
+                        <div class="avatar">
+                            <img src="/assets/images/avatar2.jpg" alt="" />
+                            <div class="status red">&nbsp;</div>
+                        </div>
+
+                        <div class="icons">
+                            <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg"
+                                alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
+                                src="/assets/images/icon6.jpg" alt="" />
+                        </div>
+                    </div>
+                    <div class="posttext pull-left">
+                        <h2>What Instagram Ads Will Look Like</h2>
+                        <p>Instagram offered a first glimpse at what its ads will look like in a blog post
+                            Thursday. The sample ad, which you can see below.</p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="postinfo pull-left">
+                    <div class="comments">
+                        <div class="commentbg">
+                            89
+                            <div class="mark"></div>
+                        </div>
+
+                    </div>
+                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
+                    <div class="time"><i class="fa fa-clock-o"></i> 15 min</div>
+                </div>
+                <div class="clearfix"></div>
+            </div><!-- POST -->
+
+
+            <!-- POST -->
+            <div class="post">
+                <div class="wrap-ut pull-left">
+                    <div class="userinfo pull-left">
+                        <div class="avatar">
+                            <img src="/assets/images/avatar3.jpg" alt="" />
+                            <div class="status red">&nbsp;</div>
+                        </div>
+
+                        <div class="icons">
+                            <img src="/assets/images/icon2.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
+                        </div>
+                    </div>
+                    <div class="posttext pull-left">
+                        <h2>The Future of Magazines Is on Tablets</h2>
+                        <p>Eric Schmidt has seen the future of magazines, and it's on the tablet. At a
+                            Magazine Publishers Association.</p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="postinfo pull-left">
+                    <div class="comments">
+                        <div class="commentbg">
+                            456
+                            <div class="mark"></div>
+                        </div>
+
+                    </div>
+                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
+                    <div class="time"><i class="fa fa-clock-o"></i> 2 days</div>
+                </div>
+                <div class="clearfix"></div>
+            </div><!-- POST -->
+
+        </div>
+
+        <div class="col-lg-4 col-md-4">
+            {{> main/sidebar}}
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-xs-12">
+            <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>
+            <div class="pull-left">
+                <ul class="paginationforum">
+                    <li class="hidden-xs"><a href="#">1</a></li>
+                    <li class="hidden-xs"><a href="#">2</a></li>
+                    <li class="hidden-xs"><a href="#">3</a></li>
+                    <li class="hidden-xs"><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">6</a></li>
+                    <li><a href="#" class="active">7</a></li>
+                    <li><a href="#">8</a></li>
+                    <li class="hidden-xs"><a href="#">9</a></li>
+                    <li class="hidden-xs"><a href="#">10</a></li>
+                    <li class="hidden-xs hidden-md"><a href="#">11</a></li>
+                    <li class="hidden-xs hidden-md"><a href="#">12</a></li>
+                    <li class="hidden-xs hidden-sm hidden-md"><a href="#">13</a></li>
+                    <li><a href="#">1586</a></li>
+                </ul>
+            </div>
+            <div class="pull-left"><a href="#" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>

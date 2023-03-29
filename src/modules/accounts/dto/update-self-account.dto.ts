@@ -1,18 +1,26 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from "class-validator";
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, IsDate, IsArray } from 'class-validator';
 import { RoleName, RoleNames } from "@common/enums/role.enum";
+import { Department } from '../../department/schema/department.schema';
 
 export class UpdateAccountDto {
-    @IsOptional()
-    @IsBoolean()
-    isActivated?: boolean;
-
-    @IsOptional()
     @IsString()
     displayName?: string;
 
+    @IsString()
+    @IsNotEmpty()
+    email: string;
+
+    @IsDate()
+    @IsNotEmpty()
+    birthday: Date;
+
+    @IsString()
+    department: string;
+
     @IsOptional()
-    @IsEnum(RoleNames)
-    role?: RoleName;
+    @IsArray()
+    @IsEnum(RoleNames, { each: true })
+    roles?: string[];
 }
 
 export class UpdateSelfAccountDto {

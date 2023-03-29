@@ -1,0 +1,28 @@
+{{setVar "head"
+
+"
+<link href='https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css' rel='stylesheet' type='text/css'>
+<link href='/assets/css/modal.css' rel='stylesheet' type='text/css'>
+
+"
+
+}}
+{{setVar "scripts" 
+"
+<script src='/assets/js/category.js' type='text/javascript'></script>
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+"}}
+
+{{setVar "title" "Category Page "}}
+{{setVar "user" "Admin"}}
+<section>
+    <h2>{{title}}</h3>
+        <form>
+            <input type="button" class="darkBlueBtn" value="Create Category" onclick="openCreateForm()">
+        </form>
+        <br>
+        <br>
+        <div id="table-area" style="width: 100%;">
+        </div>
+</section>
+<div class="modal-area"></div>
