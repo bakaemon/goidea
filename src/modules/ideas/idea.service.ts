@@ -127,6 +127,14 @@ export class IdeaService extends BaseService<IdeaDocument> {
         return vote.upvoter.length - vote.downvoter.length;
     }
 
+    async checkVoted(ideaId: string, accountId: string) {
+        const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
+        var status = "not voted";
+        if (vote.upvoter.includes(accountId)) status = "upvoted";
+        else if (vote.downvoter.includes(accountId)) status = "downvoted";
+        return status;
+    }
+
     async findAll(filter:QueryOptions,paginateOptions?: PaginateOptions) {
         try {
             const paginateResults = await this.ideaModel.paginate(filter, paginateOptions);

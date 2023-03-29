@@ -59,8 +59,29 @@ const loadPost = async () => {
     console.log(ideaData)
     await ideaData.forEach((post) => {
         posts.innerHTML += postModel(post)
-        getVoteCount(post._id).then(voteCount => {
-            $(`#${post._id} span.count`).text(voteCount.data);
+        getVoteCount(post._id).then(voteData => {
+            $(`#${post._id} span.count`).text(voteData.data);
+            if (voteData.voteStatus != null) {
+                if (voteData.voteStatus == 'upvoted') {
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                } else if (voteData.voteStatus == 'downvoted') {
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                }
+            }
+            $(`#${post._id} a.upvote`).on('click', function () {
+                upVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                    $(`#${post._id} a.downvote`).removeClass('downvote-on');
+                })
+            });
+            $(`#${post._id} a.downvote`).on('click', function () {
+                downVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                    $(`#${post._id} a.upvote`).removeClass('upvote-on');
+                })
+            });
         })
         
     })
@@ -68,4 +89,5 @@ const loadPost = async () => {
 
 window.onload = async () => {
     await loadPost()
+
 } 
