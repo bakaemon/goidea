@@ -235,11 +235,14 @@ export class IdeaAPIController {
     async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
-            var account = await this.authService.verifyTokenFromRequest(req.cookies['refresh_token'],
-                'jwt.refreshTokenPrivateKey');
+            var resToken = req.cookies['refresh_token'];
             var voteStatus = null;
-            if (account) {
-                voteStatus = await this.service.checkVoted(id, account._id.toString())
+            if (resToken) {
+                var account = await this.authService.verifyTokenFromRequest(resToken,
+                    'jwt.refreshTokenPrivateKey');
+                if (account) {
+                    voteStatus = await this.service.checkVoted(id, account._id.toString())
+                }
             }
             return res.json({
                 success: true,
