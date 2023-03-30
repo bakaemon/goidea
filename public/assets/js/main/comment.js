@@ -1,12 +1,12 @@
 async function uploadComments() {
     var comment = tinymce.get('comment').getContent();
-    var emailNotify = document.getElementById('note').checked;
     var data = {
-        comment: comment,
-        emailNotify: emailNotify,
+        content: comment,
+        ideaId: ideaId,
+        author: _id
     }
     try {
-        var response = await fetch('/ideas/api/comments/create', {
+        var response = await fetch('/ideas/api/' + ideaId + '/comments/create', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -29,7 +29,6 @@ async function uploadComments() {
     }
     return false;
 }
-
 
 const commentDetail = async (comment) => {
     `<div class="topwrap">
@@ -71,21 +70,21 @@ const commentDetail = async (comment) => {
     </div>`
 }
 
-if (!commentId) {
-    alert('Unable to get comment id!');
-    window.history.back();
-}
+// if (!commentId) {
+//     alert('Unable to get comment id!');
+//     window.history.back();
+// }
 
-const loadCommentDetail = async () => {
-    var response = await fetch('/ideas/api/comments/all');
-    if (!response.ok) {
-        alert('Failed to load comment detail!');
-        return;
-    }
-    var data = await response.json();
-    $('#comment').html(commentDetail(data));
-}
+// const loadCommentDetail = async () => {
+//     var response = await fetch('/ideas/api' + commentId + '/comments/all');
+//     if (!response.ok) {
+//         alert('Failed to load comment detail!');
+//         return;
+//     }
+//     var data = await response.json();
+//     $('#comment').html(commentDetail(data));
+// }
 
-window.addEventListener('load', async () => {
-   await loadCommentDetail();
-})
+// window.addEventListener('load', async () => {
+//    await loadCommentDetail();
+// })
