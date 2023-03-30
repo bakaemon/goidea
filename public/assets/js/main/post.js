@@ -1,11 +1,11 @@
 
 var postModel = (idea) => {
     return `
-    <div class="post">
+    <div class="post" id="${idea._id}">
         <div class="wrap-ut pull-left">
             <div id="the-id" class="upvotejs pull-left">
                 <a class="upvote"></a>
-                <span class="count">${idea.vote || 0}</span>
+                <span class="count">--</span>
                 <a class="downvote"></a>
                 <a class="star"></a>
             </div>
@@ -57,11 +57,38 @@ const loadPost = async () => {
     var posts =  document.getElementById('posts');
     var ideaData = await getIdeaData()
     console.log(ideaData)
-    ideaData.forEach(post => {
+    await ideaData.forEach((post) => {
         posts.innerHTML += postModel(post)
+        getVoteCount(post._id).then(voteData => {
+            $(`#${post._id} span.count`).text(voteData.data);
+            if (voteData.voteStatus != null) {
+                if (voteData.voteStatus == 'upvoted') {
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                } else if (voteData.voteStatus == 'downvoted') {
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                }
+            }
+            $(`#${post._id} a.upvote`).on('click', function () {
+                upVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                    $(`#${post._id} a.downvote`).removeClass('downvote-on');
+                })
+            });
+            $(`#${post._id} a.downvote`).on('click', function () {
+
+                downVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                    $(`#${post._id} a.upvote`).removeClass('upvote-on');
+                })
+            });
+        })
+        
     })
 }
 
 window.onload = async () => {
     await loadPost()
+
 } 

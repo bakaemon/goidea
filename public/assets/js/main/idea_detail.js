@@ -21,9 +21,9 @@ const detailModel = (idea) => `
                 <div class="postinfobot">
 
                     <div class="likeblock pull-left">
-                        <a href="javascript:upVote('${idea._id}')" class="up"><i class="fa-regular fa-up"></i></a>
+                        <a href="#" class="up"><i class="fa-regular fa-up"></i></a>
                         <i id="voteCount" >0</i>
-                        <a href="javascript:downVote('${idea._id}')" class="down"><i class="fa-regular fa-down"></i></a>
+                        <a href="#" class="down"><i class="fa-regular fa-down"></i></a>
                     </div>
 
                     <div class="prev pull-left">
@@ -43,22 +43,71 @@ const detailModel = (idea) => `
 `
 
 if (!ideaId) {
-    alert('Unable to get idea id!');
+    alert('Something went wrong!');
     window.history.back();
 }
 
 const loadIdeaDetail = async () => {
     var response = await fetch('/ideas/api/' + ideaId);
-    if(!response.ok) {
-        alert('Failed to load idea detail!');
+    if (!response.ok) {
+        alert('Something went wrong! The idea may not existed!');
+        window.history.back();
         return;
     }
     var data = await response.json();
+    document.title = data.title + ' | GoIdea';
     $('#idea').html(detailModel(data));
 }
 
 
 window.addEventListener('load', async () => {
-   await loadIdeaDetail();
+    document.title = 'Loading... | GoIdea';
+    await loadIdeaDetail();
+    var voteData = await getVoteCount(ideaId);
+    if (voteData.voteStatus != null) {
+        if (voteData.voteStatus == 'upvoted') {
+            $('i.fa-up').toggleClass('fa-regular fa-solid');
+        } else if (voteData.voteStatus == 'downvoted') {
+            $('i.fa-down').toggleClass('fa-regular fa-solid');
+        }
+    }
+    $('#voteCount').text(voteData.data)
+    $('.up').on('click', () => {
+        upVote(ideaId)
+            .then(data => {
+                if (data.success) {
+                    if ($('i.fa-down').hasClass('fa-solid')) {
+                        $('i.fa-down').toggleClass('fa-regular fa-solid');
+                    }
+                    if ($('i.fa-up').hasClass('fa-regular')) {
+                        $('i.fa-up').toggleClass('fa-solid fa-regular');
+                    } else {
+                        $('i.fa-up').toggleClass('fa-regular fa-solid');
+                    }
+                    $('#voteCount').html(data.data.toString())
+                } else {
+                    console.log('upvote failed')
+                }
+            });
+    });
+    $('.down').on('click', () => {
+        downVote(ideaId)
+            .then(data => {
+                if (data.success) {
+                    if ($('i.fa-up').hasClass('fa-solid')) {
+                        $('i.fa-up').toggleClass('fa-regular fa-solid');
+                    }
+                    if ($('i.fa-down').hasClass('fa-regular')) {
+                        $('i.fa-down').toggleClass('fa-solid fa-regular');
+                    } else {
+                        $('i.fa-down').toggleClass('fa-regular fa-solid');
+                    }
+                    $('#voteCount').html(data.data.toString())
+                } else {
+                    console.log('downvote failed')
+                }
+            }
+            )
+    });
 })
 

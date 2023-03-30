@@ -617,6 +617,8 @@ td.chbox {
 }
 
 .up i,
+.up i.fa-solid,
+
 .down i {
     font-size: 20px;
     padding-right: 10px;
@@ -626,6 +628,11 @@ td.chbox {
     color: #db7a7a;
     font-size: 12px;
     margin-left: 20px;
+}
+
+
+.down i.fa-solid {
+    color: #db7a7a;
 }
 
 a.up:hover {

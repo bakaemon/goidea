@@ -1,4 +1,4 @@
-import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles, Put, Req } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -15,33 +15,36 @@ import { ExecException } from 'child_process';
 import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { AuthService } from '@modules/auth/auth.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
+        private readonly authService: AuthService
     ) { }
 
     // Basic CRUD
     @Post("create")
     @UseGuards(AuthGuard)
-    @UseInterceptors(FilesInterceptor('files',10, {
+    @UseInterceptors(FilesInterceptor('files', 10, {
         storage: diskStorage({
-        destination: './public/assets/uploads',
-        filename: (req, file, cb) => {
-            const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-            return cb(null, `${randomName}${extname(file.originalname)}`);
-        }}), 
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
     }))
-    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, 
-    @AccountDecorator() account: AccountDocument, 
-    @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>,
+        @AccountDecorator() account: AccountDocument,
+        @Res() res: Response) {
         console.log(files);
         try {
-            
+
             ideaDto.author = account._id;
             var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
@@ -54,11 +57,11 @@ export class IdeaAPIController {
                 catch (e) {
                     var newTag = await this.tagService.create({ name: tagName });
                     newTags.push(newTag._id.toString());
-                }              
+                }
             }
             var ideaData = {
                 ...ideaDto,
-                files: files ?  files.map(file => file.filename) : [],
+                files: files ? files.map(file => file.filename) : [],
                 tags: newTags
             }
             await this.service.create(ideaData);
@@ -179,9 +182,9 @@ export class IdeaAPIController {
     @Post(':id/comments/create')
     @UseGuards(AuthGuard)
     async createComment(@AccountDecorator() account: AccountDocument,
-    @Param('id') ideaID: string, 
-    @Body() content: string,
-    @Res() res: Response) {
+        @Param('id') ideaID: string,
+        @Body() content: string,
+        @Res() res: Response) {
         try {
             await this.service.createComment(ideaID, content, account._id);
             return res.status(HttpStatus.OK).json({
@@ -199,22 +202,24 @@ export class IdeaAPIController {
 
 
 
-    @Get(':id/vote/:type')
+    @Put(':id/vote/:type')
     @UseGuards(AuthGuard)
     async vote(@AccountDecorator() account: AccountDocument,
         @Param() id: string, @Param('type') type: string, @Res() res: Response) {
         try {
-            
+            // refresh vote
+            let vote;
             if (type == 'upvote') {
-                await this.service.upvote(id, account._id);
+                vote = await this.service.upvote(id, account._id);
             } else if (type == 'downvote') {
-                await this.service.downvote(id, account._id);
+                vote = await this.service.downvote(id, account._id);
             } else {
                 throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
+                data: vote.upvoter.length - vote.downvoter.length,
                 message: "Voted Idea successfully"
             });
 
@@ -227,12 +232,22 @@ export class IdeaAPIController {
     }
 
     @Get(':id/vote')
-    async getVote(@Param('id') id, @Res() res: Response) {
+    async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
+            var resToken = req.cookies['refresh_token'];
+            var voteStatus = null;
+            if (resToken) {
+                var account = await this.authService.verifyTokenFromRequest(resToken,
+                    'jwt.refreshTokenPrivateKey');
+                if (account) {
+                    voteStatus = await this.service.checkVoted(id, account._id.toString())
+                }
+            }
             return res.json({
                 success: true,
-                data: voteCount,
+                voteStatus,
+                data: voteCount.toString(),
             })
         } catch (e) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -274,7 +289,7 @@ export class IdeaAPIController {
     //         });
     //     }
     // }
-       
+
 }
 
-   
+

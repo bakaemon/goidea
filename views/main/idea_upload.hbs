@@ -61,14 +61,14 @@
                             <div class="row">
                                 <div class="col-lg-6 col-md-6">
                                     <label for="events"><b>Event</b></label>
-                                    <select name="category" id="events" class="form-control">
-                                        <option value="" disabled selected>Select Event</option>
+                                    <select class="form-control" data-show-subtext="false"
+                                        data-live-search="true" name="events" id="events">
                                     </select>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <label for="category"><b>Category</b></label>
-                                    <select name="subcategory" id="category" class="form-control">
-                                        <option value="" disabled selected>Select Category</option>
+                                    <select name="category" id="category" class="form-control"
+                                        data-show-subtext="false" data-live-search="true">
                                     </select>
                                 </div>
                             </div>
@@ -76,29 +76,28 @@
                             <div class="row">
                                 <div class="col-lg-6 col-md-6">
                                     <label for="tags"><b>Tag</b></label>
-                                    <input name='tags' id="tags" value='tag1, tag2'>
+                                    <input name='tags' id="tags" value=''>
                                 </div>
                             </div><br>
 
                             <div class="row">
-                                        <section class="upload-file">
-                                            <h1 class="heading">Upload files</h1>
-                                            <p class="paragraph">You can upload multiple files.</p>
-                                            <div class="files hidden" data-files></div>
-                                            <form class="form" enctype="multipart/formdata">
-                                                <div class="dropzone" data-dropzone>
-                                                    <div class="dropzone__field">
-                                                        <label class="dropzone__label" for="files"
-                                                            data-dropzone-label>Upload
-                                                            files</label>
-                                                        <input class="dropzone__file" id="files" name="files"
-                                                            type="file" multiple data-dropzone-file>
-                                                    </div>
-                                                    <button class="dropzone__upload button" name="uploadFile"
-                                                        type="submit">Uploadfiles</button>
-                                                </div>
-                                            </form>
-                                        </section>
+                                <section class="upload-file">
+                                    <h1 class="heading">Upload files</h1>
+                                    <p class="paragraph">You can upload multiple files.</p>
+                                    <div class="files hidden" data-files></div>
+                                    <form class="form" enctype="multipart/formdata">
+                                        <div class="dropzone" data-dropzone>
+                                            <div class="dropzone__field">
+                                                <label class="dropzone__label" for="files" data-dropzone-label>Upload
+                                                    files</label>
+                                                <input class="dropzone__file" id="files" name="files" type="file"
+                                                    multiple data-dropzone-file>
+                                            </div>
+                                            <button class="dropzone__upload button" name="uploadFile"
+                                                type="submit">Uploadfiles</button>
+                                        </div>
+                                    </form>
+                                </section>
                             </div><br>
 
 
