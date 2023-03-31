@@ -61,7 +61,7 @@ const generateAdminMenu = () => {
                         <svg>
                             <use xlink:href="#comments"></use>
                         </svg>
-                        <span>Ideas</span>
+                        <span>Events Management</span>
                     </a>
                 </li>
             </div>
