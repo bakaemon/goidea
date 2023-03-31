@@ -21,9 +21,9 @@ const detailModel = (idea) => `
                 <div class="postinfobot">
 
                     <div class="likeblock pull-left">
-                        <a href="#" class="up"><i class="fa-regular fa-up"></i></a>
-                        <i id="voteCount" >0</i>
-                        <a href="#" class="down"><i class="fa-regular fa-down"></i></a>
+                        <a href="#" class="up up-idea"><i class="fa-regular fa-up" id='u-idea'></i></a>
+                        <i id="ideaVote" >0</i>
+                        <a href="#" class="down down-idea"><i class="fa-regular fa-down" id='d-idea'></i></a>
                     </div>
 
                     <div class="prev pull-left">
@@ -64,45 +64,42 @@ window.addEventListener('load', async () => {
     document.title = 'Loading... | GoIdea';
     await loadIdeaDetail();
     var voteData = await getVoteCount(ideaId);
+    var upBtn = $('#u-idea');
+    var downBtn = $('#d-idea');
     if (voteData.voteStatus != null) {
         if (voteData.voteStatus == 'upvoted') {
-            $('i.fa-up').toggleClass('fa-regular fa-solid');
+            upBtn.toggleClass('fa-regular fa-solid');
         } else if (voteData.voteStatus == 'downvoted') {
-            $('i.fa-down').toggleClass('fa-regular fa-solid');
+            downBtn.toggleClass('fa-regular fa-solid');
         }
     }
-    $('#voteCount').text(voteData.data)
-    $('.up').on('click', () => {
+    var up = $('.up-idea');
+    var down = $('.down-idea');
+    $('#ideaVote').text(voteData.data)
+    up.on('click', () => {
         upVote(ideaId)
             .then(data => {
                 if (data.success) {
-                    if ($('i.fa-down').hasClass('fa-solid')) {
-                        $('i.fa-down').toggleClass('fa-regular fa-solid');
+                    
+                    upBtn.toggleClass('fa-regular fa-solid');
+                    if (downBtn.hasClass('fa-solid')) {
+                        downBtn.toggleClass('fa-regular fa-solid');
                     }
-                    if ($('i.fa-up').hasClass('fa-regular')) {
-                        $('i.fa-up').toggleClass('fa-solid fa-regular');
-                    } else {
-                        $('i.fa-up').toggleClass('fa-regular fa-solid');
-                    }
-                    $('#voteCount').html(data.data.toString())
+                    $('#ideaVote').html(data.data.toString())
                 } else {
                     console.log('upvote failed')
                 }
             });
     });
-    $('.down').on('click', () => {
+    down.on('click', () => {
         downVote(ideaId)
             .then(data => {
                 if (data.success) {
-                    if ($('i.fa-up').hasClass('fa-solid')) {
-                        $('i.fa-up').toggleClass('fa-regular fa-solid');
+                    downBtn.toggleClass('fa-regular fa-solid');
+                    if (upBtn.hasClass('fa-solid')) {
+                        upBtn.toggleClass('fa-regular fa-solid');
                     }
-                    if ($('i.fa-down').hasClass('fa-regular')) {
-                        $('i.fa-down').toggleClass('fa-solid fa-regular');
-                    } else {
-                        $('i.fa-down').toggleClass('fa-regular fa-solid');
-                    }
-                    $('#voteCount').html(data.data.toString())
+                    $('#ideaVote').html(data.data.toString())
                 } else {
                     console.log('downvote failed')
                 }

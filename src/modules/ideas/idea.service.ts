@@ -29,98 +29,25 @@ export class IdeaService extends BaseService<IdeaDocument> {
         }
     }
 
+
+
+
     // upvote
     async upvote(ideaId: string, voter: string) {
-        try {
-            let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
-            if (vote.upvoter.includes(voter)) {
-                vote = await this.removeVote(vote, voter, "upvote");
-            } else {
-                if (vote.downvoter.includes(voter)) {
-                    vote = await this.toggleVote(vote, voter, "downvote");
-                } else {
-                    vote = await this.addVote(vote, voter, "upvote");
-                }
-            }
-            vote.save();
-            return vote;
-        } catch (error) {
-            throw error;
-        }
+        let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
+        vote = await this._upvote(vote, voter);
+        return vote;
     }
 
     // downvote
     async downvote(ideaId: string, voter: string) {
-        try {
-            let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
-            if (vote.downvoter.includes(voter)) {
-                vote = await this.removeVote(vote, voter, "downvote");
-            } else {
-                if (vote.upvoter.includes(voter)) {
-                    vote = await this.toggleVote(vote, voter, "upvote");
-                } else {
-                    await this.addVote(vote, voter, "downvote");
-                }
-            }
-            vote.save();
-            return vote;
-        } catch (error) {
-            throw error;
-        }
+        let vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
+        vote = await this._downvote(vote, voter);
+        return vote;
     }
 
 
-    // toggle upvote and downvote
-    async toggleVote(vote: any, voter: string, voteType: string) {
-        try {
-            if (voteType === "upvote") {
-                vote = await this.removeVote(vote, voter, "upvote");
-                vote.downvoter.push(voter);
-            } else if (voteType === "downvote") {
-                vote = await this.removeVote(vote, voter, "downvote");
-                vote.upvoter.push(voter);
-            } else {
-                throw new Error("Invalid vote type");
-            }
-            return vote;
-        } catch (error) {
-            throw error;
-        }
-
-    }
-
-    // remove upvote and downvote
-    async removeVote(vote: any, voter: string, voteType: string) {
-        try {
-            if (voteType === "upvote") {
-                vote.upvoter.pull(voter);
-            } else if (voteType === "downvote") {
-                vote.downvoter.pull(voter);
-            } else {
-                throw new Error("Invalid vote type");
-            }
-            return vote;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async addVote(vote: any, voter: string, voteType: string) {
-        try {
-            if (voteType === "upvote") {
-                vote.upvoter.push(voter);
-                
-            } else if (voteType === "downvote") {
-                vote.downvoter.push(voter);
-                
-            } else {
-                throw new Error("Invalid vote type");
-            }
-            return vote;
-        } catch (error) {
-            throw error;
-        }
-    }
+    
 
     async countVote(ideaId: string){
         const vote = await this.votesModel.findOne({ idea: new mongoose.Types.ObjectId(ideaId) });
@@ -134,6 +61,7 @@ export class IdeaService extends BaseService<IdeaDocument> {
         else if (vote.downvoter.includes(accountId)) status = "downvoted";
         return status;
     }
+
 
     async findAll(filter:QueryOptions,paginateOptions?: PaginateOptions) {
         try {
@@ -185,11 +113,25 @@ export class IdeaService extends BaseService<IdeaDocument> {
     async createComment(ideaId: string, comment: string, commenter: string) {
         try {
             const commentDoc = this.commentModel.create({ idea: new mongoose.Types.ObjectId(ideaId), content: comment, 
-                author: new mongoose.Types.ObjectId(commenter) });
+                author: new mongoose.Types.ObjectId(commenter), upvoters: [], downvoters: [] });
             return commentDoc;
         } catch (error) {
             throw error;
         }
+    }
+
+    // upvote comment
+    async upvoteComment(commentId: string, voter: string) {
+        let comment = await this.commentModel.findOne({ _id: new mongoose.Types.ObjectId(commentId) });
+        comment = await this._upvote(comment, voter);
+        return comment;
+    }
+
+    // downvote comment
+    async downvoteComment(commentId: string, voter: string) {
+        let comment = await this.commentModel.findOne({ _id: new mongoose.Types.ObjectId(commentId) });
+        comment = await this._downvote(comment, voter);
+        return comment;
     }
 
     async deleteComment(commentId: string) {
@@ -237,6 +179,94 @@ export class IdeaService extends BaseService<IdeaDocument> {
         });
     }
 
+    async _upvote(votable: any, voter: string) {
+        try {
+            let vote = votable;
+            if (vote.upvoter.includes(voter)) {
+                vote = await this._removeVote(vote, voter, "upvote");
+            } else {
+                if (vote.downvoter.includes(voter)) {
+                    vote = await this._toggleVote(vote, voter, "downvote");
+                } else {
+                    vote = await this._addVote(vote, voter, "upvote");
+                }
+            }
+            vote.save();
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    async _downvote(votable: any, voter: string) {
+        try {
+            let vote = votable;
+            if (vote.downvoter.includes(voter)) {
+                vote = await this._removeVote(vote, voter, "downvote");
+            } else {
+                if (vote.upvoter.includes(voter)) {
+                    vote = await this._toggleVote(vote, voter, "upvote");
+                } else {
+                    await this._addVote(vote, voter, "downvote");
+                }
+            }
+            vote.save();
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // toggle upvote and downvote
+    async _toggleVote(vote: any, voter: string, voteType: string) {
+        try {
+            if (voteType === "upvote") {
+                vote = await this._removeVote(vote, voter, "upvote");
+                vote.downvoter.push(voter);
+            } else if (voteType === "downvote") {
+                vote = await this._removeVote(vote, voter, "downvote");
+                vote.upvoter.push(voter);
+            } else {
+                throw new Error("Invalid vote type");
+            }
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+
+    }
+
+    // remove upvote and downvote
+    async _removeVote(vote: any, voter: string, voteType: string) {
+        try {
+            if (voteType === "upvote") {
+                vote.upvoter.pull(voter);
+            } else if (voteType === "downvote") {
+                vote.downvoter.pull(voter);
+            } else {
+                throw new Error("Invalid vote type");
+            }
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async _addVote(vote: any, voter: string, voteType: string) {
+        try {
+            if (voteType === "upvote") {
+                vote.upvoter.push(voter);
+
+            } else if (voteType === "downvote") {
+                vote.downvoter.push(voter);
+
+            } else {
+                throw new Error("Invalid vote type");
+            }
+            return vote;
+        } catch (error) {
+            throw error;
+        }
+    }
 
 }

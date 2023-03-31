@@ -164,11 +164,54 @@ export class IdeaAPIController {
 
     // Advanced CRUD
     @Get(':id/comments/all')
-    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response) {
+    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response, @Req() req: any) {
         try {
-            if (ideaId) {
-                return res.json(await this.service.findCommentsByIdeaId(ideaId));
-            } else return res.json(await this.service.findALlComment({}));
+            var dataResults = await this.service.findCommentsByIdeaId(ideaId, {
+                populate: [
+                    { path: "author" },
+                ]
+            });
+            var comments = dataResults.data;
+            delete dataResults.data;
+            var token  = req.cookies['token'];
+            var results;
+            if (token) {   
+                var account = await this.authService.verifyTokenFromRequest(token, 'jwt.accessTokenPrivateKey');
+                const checkVote = (comment) => {
+                    if (comment.upvoter.includes(account._id.toString())) {
+                        return "upvoted";
+                    }
+                    else if (comment.downvoter.includes(account._id.toString())) {
+                        return "downvoted";
+                    }
+                    else {
+                        return "not voted";
+                    }
+                }; 
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = checkVote(comment);
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            } else {
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = "not voted";
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            }
+
+            return res.json({
+                data: results,
+                ...dataResults
+            });
+            
         } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -183,12 +226,13 @@ export class IdeaAPIController {
     @UseGuards(AuthGuard)
     async createComment(@AccountDecorator() account: AccountDocument,
         @Param('id') ideaID: string,
-        @Body() content: string,
+        @Body() {content}: {content: string},
         @Res() res: Response) {
         try {
-            await this.service.createComment(ideaID, content, account._id);
+            var comment = await this.service.createComment(ideaID, content, account._id);
             return res.status(HttpStatus.OK).json({
                 success: true,
+                data: comment,
                 message: "Created Comment successfully"
             });
 
@@ -199,6 +243,37 @@ export class IdeaAPIController {
             });
         }
     }
+
+    //vote comment
+    @Put(':id/comments/:commentId/vote/:type')
+    @UseGuards(AuthGuard)
+    async voteComment(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('commentId') commentId: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
+            if (type == 'upvote') {
+                vote = await this.service.upvoteComment(commentId, account._id);
+            } else if (type == 'downvote') {
+                vote = await this.service.downvoteComment(commentId, account._id);
+            } else {
+                throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
+            }
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                type,
+                data: vote.upvoter.length - vote.downvoter.length,
+                message: "Voted Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
 
 
 
@@ -235,11 +310,11 @@ export class IdeaAPIController {
     async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
-            var resToken = req.cookies['refresh_token'];
+            var token = req.cookies['token'];
             var voteStatus = null;
-            if (resToken) {
-                var account = await this.authService.verifyTokenFromRequest(resToken,
-                    'jwt.refreshTokenPrivateKey');
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token,
+                    'jwt.accessTokenPrivateKey');
                 if (account) {
                     voteStatus = await this.service.checkVoted(id, account._id.toString())
                 }
