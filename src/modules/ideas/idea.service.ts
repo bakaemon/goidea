@@ -237,6 +237,16 @@ export class IdeaService extends BaseService<IdeaDocument> {
         });
     }
 
-
+    //search ideas
+    async searchIdeas(search: string, options?: QueryOptions) {
+        try {
+            const paginateResults = await this.ideaModel.paginate({ $text: { $search: search } }, options);
+            const ideas = paginateResults.docs;
+            delete paginateResults.docs;
+            return { data: ideas, paginationOptions: paginateResults };
+        } catch (error) {
+            throw error;
+        }
+    }
 
 }

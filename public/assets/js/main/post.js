@@ -88,6 +88,7 @@ const loadPost = async () => {
     })
 }
 
+
 window.onload = async () => {
     await loadPost()
 

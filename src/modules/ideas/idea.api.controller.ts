@@ -257,6 +257,19 @@ export class IdeaAPIController {
         }
     }
 
+    //search ideas
+    @Get('search?keyword=:keyword')
+    async search(@Query('keyword') keyword: string, @Res() res: Response) {
+        try {
+            return res.json(await this.service.searchIdeas(keyword));
+        } catch (error) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
     // //upload file
     // @Post('file/upload')
     // @UseGuards(AuthGuard)
