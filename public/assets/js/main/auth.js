@@ -12,6 +12,9 @@ const checkAuth = () => {
 const verifyToken = async () => {
     const token = getCookie('token');
     const response = await fetch('/auth/api/verify_token?token=' + token);
+    if (!response.ok) {
+        window.location.href = '/login';
+    }
     account = await response.json();
 }
 

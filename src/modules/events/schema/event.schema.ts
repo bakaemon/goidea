@@ -32,12 +32,7 @@ export class Event {
     })
     department: string;
     
-    @Prop({
-        required: true,
-        ref: "Category",
-        type: mongoose.Schema.Types.ObjectId
-    })
-    category: string;
+
     
     @Prop({
         required: true,

@@ -55,11 +55,43 @@ const getIdeaData = async (page) => {
     return ideas;
 }
 
+const searchIdea = async (keyword, page, limit, sort, sortMode) => {
+    var url = '/ideas/api/all';
+    if (keyword) {
+        url += '?keyword=' + keyword;
+    }
+    if (page) {
+        url += '&page=' + page;
+    }
+    if (limit) {
+        url += '&limit=' + limit;
+    }
+    if (sort) {
+        url += '&sort=' + sort;
+    }
+    if (sortMode) {
+        url += '&sortMode=' + sortMode;
+    }
+    var response = await fetch(url);
+    if (!response.ok) {
+        alert('Faile to get idea from server!')
+        return;
+    }
+    var ideas = (await response.json());
+    return ideas;
+}
 
 
-const loadPost = async (page='') => {
+
+const loadPost = async () => {
     var posts =  document.getElementById('posts');
-    var ideaResponse = await getIdeaData(page)
+    var ideaResponse;
+    if (queries.keyword) {
+        var { keyword, page, limit, sort, sortMode } = queries;
+        ideaResponse = await searchIdea(keyword, page, limit, sort, sortMode);
+    } else {
+        ideaResponse = await getIdeaData();
+    }
     Paginator('#pagination', loadPost).paginate(ideaResponse.paginationOptions);
     var ideaData = ideaResponse.data;
     await ideaData.forEach((post) => {

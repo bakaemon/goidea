@@ -1,6 +1,9 @@
 import { FunctionObject } from "express-handlebars/types";
 
 export const hbsHelper: FunctionObject = {
+    json: (content: any) => {
+        return JSON.stringify(content);
+    },
     setVar: (varName: string, varValue: string, options: any) => {
         if (!options.data.root) {
             options.data.root = {};

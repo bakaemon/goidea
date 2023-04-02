@@ -46,6 +46,7 @@ async function uploadIdeas() {
         tags: tags.map(tag => tag.value),
         description: description,
         anonymous: identify,
+        category: category,
         
 
     }
