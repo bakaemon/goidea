@@ -49,8 +49,8 @@ const detailModel = (idea) => `
                         <p>${idea.description}</p>
                         <!-- show tags -->
                         <div class="tags">
-                            <a href="/ideas/tag/${idea.category._id}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
-                            ${idea.tags.map(tag => `<a href="/ideas/tag/${tag._id}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
+                            <a href="/home?keyword=${idea.category._id}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
+                            ${idea.tags.map(tag => `<a href="/home?keyword=${tag.name}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
                         </div>
                         <br>
                         <br>
