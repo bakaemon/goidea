@@ -333,7 +333,7 @@ export class IdeaAPIController {
     }
 
     //search ideas
-    @Get('search?keyword=:keyword')
+    @Get('search')
     async search(@Query('keyword') keyword: string, @Res() res: Response) {
         try {
             return res.json(await this.service.searchIdeas(keyword));
