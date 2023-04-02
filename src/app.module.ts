@@ -24,6 +24,7 @@ import { EventModule } from './modules/events/event.module';
 import { MainModule } from './modules/main/main.module';
 import nodemailer from 'nodemailer';
 import { EmailTransporter } from './common/email/email-transporter';
+import { TestController } from './test.controller';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -49,7 +50,7 @@ import { EmailTransporter } from './common/email/email-transporter';
     EventModule,
     MainModule
   ],
-  controllers: [AppController,],
+  controllers: [AppController, TestController],
   providers: [
     AppService,
     EmailTransporter,
