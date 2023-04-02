@@ -29,7 +29,7 @@ var loadTop5Ideas = function () {
                 var id = item._id;
                 html += `<div class="divline"></div>
                             <div class="blocktxt">
-                                <a href="/idea/${id}">${title}</a>
+                                <a href="/home/idea/${id}">${title}</a>
                             </div>`;
             });
             $('#popularIdeas').html(html);
