@@ -41,22 +41,27 @@ var postModel = (idea) => {
     `
 }
 
-const getIdeaData = async () => {
-    var response = await fetch('/ideas/api/all');
+const getIdeaData = async (page) => {
+    var url = '/ideas/api/all';
+    if (page) {
+        url += '?page=' + page;
+    }
+    var response = await fetch(url);
     if(!response.ok) {
         alert('Faile to get idea from server!')
         return;
     }
-    var ideas = ( await response.json()).data;
+    var ideas = ( await response.json());
     return ideas;
 }
 
 
 
-const loadPost = async () => {
+const loadPost = async (page='') => {
     var posts =  document.getElementById('posts');
-    var ideaData = await getIdeaData()
-    console.log(ideaData)
+    var ideaResponse = await getIdeaData(page)
+    Paginator('#pagination', loadPost).paginate(ideaResponse.paginationOptions);
+    var ideaData = ideaResponse.data;
     await ideaData.forEach((post) => {
         posts.innerHTML += postModel(post)
         getVoteCount(post._id).then(voteData => {
@@ -90,6 +95,11 @@ const loadPost = async () => {
 
 
 window.onload = async () => {
+    var transition = new Transition('.container-fluid');
+    transition.start();
     await loadPost()
+    // delay for 3 seconds
+    await new Promise(resolve => setTimeout(resolve, 500));
+    transition.end();
 
 } 

@@ -61,6 +61,8 @@ const loadIdeaDetail = async () => {
 
 
 window.addEventListener('load', async () => {
+    var transition =  new Transition('.container-fluid');
+    transition.start();
     document.title = 'Loading... | GoIdea';
     await loadIdeaDetail();
     var voteData = await getVoteCount(ideaId);
@@ -106,5 +108,7 @@ window.addEventListener('load', async () => {
             }
             )
     });
+    await new Promise(resolve => setTimeout(resolve, 250));
+    transition.end();
 })
 

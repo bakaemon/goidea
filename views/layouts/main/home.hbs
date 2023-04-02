@@ -44,10 +44,24 @@
 
     <script src="/assets/js/main/common/editor.js"></script>
     <script src="/assets/js/main/search.js"></script>
+
+    <!-- Transition -->
+    <script src="/assets/js/main/common/transition.js"></script>
+    <link rel="stylesheet" href="/assets/css/transition.css">
     {{{ head }}}
 </head>
 
 <body>
+        <!-- Transition -->
+        <div class="spinner-overlay" id="animation-overlay">
+            <div class="spinner-overlay__inner">
+                <div class="spinner">
+                    <div class="spinner__bounce spinner__bounce--1"></div>
+                    <div class="spinner__bounce spinner__bounce--2"></div>
+                    <div class="spinner__bounce spinner__bounce--3"></div>
+                </div>
+            </div>
+        </div>
 
     <div class="container-fluid">
 
@@ -146,6 +160,7 @@
         </footer>
     </div>
 
+
     <!-- get jQuery from the google apis -->
     <script type="text/javascript" src="/assets/js/jquery/jquery.js"></script>
 
@@ -156,6 +171,7 @@
 
     <script src="/assets/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+    
 
 
     <!-- LOOK THE DOCUMENTATION FOR MORE INFORMATIONS -->
