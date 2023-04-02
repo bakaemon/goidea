@@ -71,13 +71,18 @@ const commentDetail = (comment) => {
             </div>`
 }
 
-const loadComments = async () => {
-    var response = await fetch('/ideas/api/' + ideaId + '/comments/all');
+const loadComments = async (page) => {
+    var url = '/ideas/api/' + ideaId + '/comments/all';
+    if (page) {
+        url += '?page=' + page;
+    }
+    var response = await fetch(url);
     if (!response.ok) {
         alert('Failed to load comments!');
         return;
     }
     var data = await response.json();
+    Paginator('#pagination', loadComments).paginate(data.paginationOptions);
     var commentSection = document.getElementsByClassName('comment-section')[0];
     var comments = data.data;
     if (comments.length == 0) {
