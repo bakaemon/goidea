@@ -111,6 +111,8 @@ export class IdeaAPIController {
                 {
                     populate: [
                         { path: "author" },
+                        { path: 'tags' },
+                        
                     ]
                 }))
         } catch (error) {

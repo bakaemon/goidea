@@ -15,6 +15,10 @@ const detailModel = (idea) => `
                     <div class="posttext pull-left">
                         <h2>${idea.title}</h2>
                         <p>${idea.description}</p>
+                        <!-- show tags -->
+                        <div class="tags">
+                            ${idea.tags.map(tag => `<a href="/ideas/tag/${tag._id}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
+                        </div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
