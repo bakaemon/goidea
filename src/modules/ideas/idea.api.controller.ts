@@ -16,12 +16,14 @@ import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthService } from '@modules/auth/auth.service';
+import { CategoryService } from '../category/category.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
+        private readonly categoryService: CategoryService
     ) { }
 
     // Basic CRUD
@@ -80,18 +82,39 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any },
+    async getAll(@Query() { keyword, page, limit, sort, sortMode }: { keyword?: string, page?: number, limit?: number, sort?: string, sortMode?: any },
         @Res() res: Response) {
         if (!page) page = 1;
-        var ideas = await this.service.findAll({}, {
+        var filter = {};
+        if (keyword) {
+            filter["$or"] = [
+                { title: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+            ];
+            // look for tags that match the keyword
+            var tags = await this.tagService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (tags.data.length > 0) {
+                filter["$or"].push({ tags: { $in: tags.data.map(tag => tag._id) } });
+            }
+            // look for categories that match the keyword
+            var categories = await this.categoryService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (categories.data.length > 0) {
+                filter["$or"].push({ category: { $in: categories.data.map(category => category._id) } });
+            }
+        }
+        var options = {
             page: page || 1,
             limit: limit || 10,
             sort: sort ? { [sort]: sortMode } : null,
             populate: [
                 { path: "author" },
-                { path: "event" }
+                { path: "event" },
+                { path: "tags" },
+                { path: "category" }
+
             ]
-        });
+        };
+        var ideas = await this.service.findAll(filter, options);
         let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
             let newIdea = idea.toObject();
             newIdea.votes = await this.service.countVote(idea._id);
@@ -112,7 +135,7 @@ export class IdeaAPIController {
                     populate: [
                         { path: "author" },
                         { path: 'tags' },
-                        
+
                     ]
                 }))
         } catch (error) {
@@ -175,9 +198,9 @@ export class IdeaAPIController {
             });
             var comments = dataResults.data;
             delete dataResults.data;
-            var token  = req.cookies['token'];
+            var token = req.cookies['token'];
             var results;
-            if (token) {   
+            if (token) {
                 var account = await this.authService.verifyTokenFromRequest(token, 'jwt.accessTokenPrivateKey');
                 const checkVote = (comment) => {
                     if (comment.upvoter.includes(account._id.toString())) {
@@ -189,7 +212,7 @@ export class IdeaAPIController {
                     else {
                         return "not voted";
                     }
-                }; 
+                };
                 results = [...comments.map(comment => {
                     var newComment = comment.toObject();
                     newComment.voteStatus = checkVote(comment);
@@ -213,7 +236,7 @@ export class IdeaAPIController {
                 data: results,
                 ...dataResults
             });
-            
+
         } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -228,7 +251,7 @@ export class IdeaAPIController {
     @UseGuards(AuthGuard)
     async createComment(@AccountDecorator() account: AccountDocument,
         @Param('id') ideaID: string,
-        @Body() {content}: {content: string},
+        @Body() { content }: { content: string },
         @Res() res: Response) {
         try {
             var comment = await this.service.createComment(ideaID, content, account._id);
@@ -335,50 +358,45 @@ export class IdeaAPIController {
     }
 
     //search ideas
-    @Get('search')
-    async search(@Query('keyword') keyword: string, @Res() res: Response) {
+    @Get("search")
+    async search(@Res() res: Response, @Query() query: {
+        keyword: string,
+        page?: number,
+        limit?: number,
+        sort?: string,
+        sortMode?: string,
+    }) {
         try {
-            return res.json(await this.service.searchIdeas(keyword));
+            var { keyword, page, limit, sort, sortMode } = query;
+            var filter = {
+                $or: [
+                    { title: { $regex: keyword, $options: 'i' } },
+                    { content: { $regex: keyword, $options: 'i' } },
+                    {tags: [{$elemMatch: {name: {$regex: keyword, $options: 'i'}}}]},
+                    { category: {$elemMatch: {name: {$regex: keyword, $options: 'i'}}}},
+                ]
+            };
+            var options = {
+                page: page || 1,
+                limit: limit || 10,
+                sort: sort ? { [sort]: sortMode } : null,
+                populate: [
+                    { path: "author" },
+                    { path: "event" },
+                    { path: "tags" },
+                    { path: "category" }
+
+                ]
+            };
+            return res.json(await this.service.findAll(filter, options));
         } catch (error) {
+            console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
                 message: error.message
             });
         }
     }
-
-    // //upload file
-    // @Post('file/upload')
-    // @UseGuards(AuthGuard)
-    // @UseInterceptors(FileInterceptor('file', {
-    //     storage: diskStorage({
-    //     destination: './public/assets/uploads',
-    //     filename: (req, file, cb) => {
-    //         const randomName = Array(32)
-    //         .fill(null)
-    //         .map(() => Math.round(Math.random() * 16).toString(16))
-    //         .join('');
-    //         return cb(null, `${randomName}${extname(file.originalname)}`);
-    //     }}),
-    // }))
-    // async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() res: Response) {
-    //     try {
-    //         console.log(file);
-    //         if(!file){
-    //             throw new HttpException("File not found!", HttpStatus.BAD_REQUEST);
-    //         } 
-    //         file.filename = file.originalname;
-    //         return res.json({
-    //             success: true,
-    //             data: file,
-    //         })
-    //     } catch (error) {
-    //         return res.status(HttpStatus.BAD_REQUEST).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-    // }
 
 }
 

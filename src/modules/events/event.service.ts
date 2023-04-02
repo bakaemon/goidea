@@ -20,7 +20,6 @@ export class EventService extends BaseService<EventDocument> {
         let query = await this.eventModel.paginate(filter, {
             populate: [
                 { path: 'department' },
-                { path: 'category' },
                 { path: 'author' },
             ]
         });

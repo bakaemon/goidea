@@ -23,8 +23,8 @@ const files = (fileNames) => {
         }
         html += `
                     <div class="file" style="width: 75px; height: 75px; background-color:#f5f5f5">
-                        <a href="/assets/uploads/${fileName}" target="_blank" download>
-                            <img src="/assets/images/filetypes/${matchExt}.png" alt="${fileName}" style="width: 90%; height: 80%; "/>
+                        <a href="/assets/uploads/${fileName}" target="_blank" title="${fileName}" download>
+                            <img src="/assets/images/filetypes/${matchExt}.png" alt="${fileName}" style="width: 100%; height: 80%; "/>
                         </a>
                     </div>`
     }
