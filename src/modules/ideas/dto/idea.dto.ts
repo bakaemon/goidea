@@ -1,4 +1,6 @@
 import { IsString , IsBoolean, IsArray} from 'class-validator';
+import { FileTypeValidator, MaxFileSizeValidator, ParseFilePipe, UploadedFile } from '@nestjs/common';
+
 export class IdeaDto {
     @IsString()
     title: string;
@@ -16,11 +18,11 @@ export class IdeaDto {
     anonymous: boolean;
 
     @IsArray()
-    tags: string[];
+    tags: string;
 
     @IsArray()
     flag: string[];
 
-
-    
+    @IsString()
+    file?: string;
 }

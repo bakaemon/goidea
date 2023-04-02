@@ -30,7 +30,7 @@ export class Idea {
     event: string;
 
     @Prop({
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: "Tag"
     })
     tags: string[];
@@ -45,6 +45,12 @@ export class Idea {
         default: [Flag.Queue]
     })
     flag: string[];
+
+    @Prop ({
+        type: [mongoose.Schema.Types.String],
+        default: []
+    })
+    files: string[];
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);

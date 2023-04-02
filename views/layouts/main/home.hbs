@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 
 <!-- Mirrored from forum.azyrusthemes.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Mar 2023 16:10:46 GMT -->
@@ -6,10 +6,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home Page</title>
+    <title>{{title}}</title>
 
     <!-- Bootstrap -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css"
+        rel="stylesheet" />
+
 
     <!-- Custom -->
     <link href="/assets/css/custom.css" rel="stylesheet">
@@ -39,11 +43,25 @@
     <script src="/assets/js/util/getCookie.js"></script>
 
     <script src="/assets/js/main/common/editor.js"></script>
+    <script src="/assets/js/main/search.js"></script>
 
+    <!-- Transition -->
+    <script src="/assets/js/main/common/transition.js"></script>
+    <link rel="stylesheet" href="/assets/css/transition.css">
     {{{ head }}}
 </head>
 
 <body>
+        <!-- Transition -->
+        <div class="spinner-overlay" id="animation-overlay">
+            <div class="spinner-overlay__inner">
+                <div class="spinner">
+                    <div class="spinner__bounce spinner__bounce--1"></div>
+                    <div class="spinner__bounce spinner__bounce--2"></div>
+                    <div class="spinner__bounce spinner__bounce--3"></div>
+                </div>
+            </div>
+        </div>
 
     <script src="/assets/js/search.js"></script>
 
@@ -68,7 +86,7 @@
         <div class="headernav">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-1 col-xs-3 col-sm-2 col-md-2 logo "><a href="index-2.html"><img
+                    <div class="col-lg-1 col-xs-3 col-sm-2 col-md-2 logo "><a href="/"><img
                                 src="/assets/images/logo.jpg" alt="" /></a></div>
                     <div class="col-lg-3 col-xs-9 col-sm-5 col-md-3 selecttopic">
                         <div class="dropdown">
@@ -86,10 +104,10 @@
                     </div>
                     <div class="col-lg-4 search hidden-xs hidden-sm col-md-3">
                         <div class="wrap">
-                            
-                                <div class="pull-left txt"><input type="text" class="form-control" id="search-input"
+                            <form class="form">
+                                <div class="pull-left txt"><input type="text" id="search" class="form-control"
                                         placeholder="Search Topics"></div>
-                                <div class="pull-right"><button class="btn btn-default" type="button" id="search"><i
+                                <div class="pull-right"><button class="btn btn-default" type="button" onclick="searchIdeas()"><i
                                             class="fa fa-search"></i></button></div>
                                 <div class="clearfix"></div>
                             
@@ -144,6 +162,7 @@
         </footer>
     </div>
 
+
     <!-- get jQuery from the google apis -->
     <script type="text/javascript" src="/assets/js/jquery/jquery.js"></script>
 
@@ -153,6 +172,8 @@
     <script type="text/javascript" src="/assets/rs-plugin/js/jquery.themepunch.revolution.min.js"></script>
 
     <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+    
 
 
     <!-- LOOK THE DOCUMENTATION FOR MORE INFORMATIONS -->

@@ -27,7 +27,9 @@ async function uploadIdeas() {
     var description = tinymce.get('desc').getContent();
     var identify = document.getElementById('friends').checked;
     var category = document.getElementById('category').value;
-
+    // var files = [...document.getElementById('files').files];
+    var files = currentFilesUpload;
+    var formData = new FormData();
     var term = document.getElementById('note').checked;
     if (!term) {
         alert("Please accept the terms and conditions")
@@ -44,14 +46,19 @@ async function uploadIdeas() {
         tags: tags.map(tag => tag.value),
         description: description,
         anonymous: identify,
+        
+
+    }
+    for (var i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+    for(var key in data) {
+        formData.append(key, data[key]);
     }
     try {
         var response = await fetch('/ideas/api/create', {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+            body: formData
 
         });
         var data = await response.json();
@@ -99,20 +106,26 @@ const loadCategory = async () => {
     var category = await populateCategoryData();
     category.forEach(category => {
         var option = document.createElement('option');
-        option.value = category._id;
-        option.innerHTML = category.name;
+         $(option).attr('data-tokens', () => category.name)
+         $(option).text(category.name)
+         $(option).val(category._id)
+        // option.value = category._id;
+        // option.innerHTML = category.name;
         document.getElementById('category').appendChild(option);
     });
+    $('#category').selectpicker()
 }
 
 const loadEvent = async () => {
     var event = await populateEventData();
     event.forEach(event => {
         var option = document.createElement('option');
-        option.value = event._id;
-        option.innerHTML = event.name;
+        $(option).attr('data-tokens', () => event.name)
+        $(option).text(event.name)
+        $(option).val(event._id)
         document.getElementById('events').appendChild(option);
     });
+    $('#events').selectpicker()
 }
 // window.onload = async (e) => {
 //     loadTableDepartment();

@@ -1,4 +1,4 @@
-import { ExceptionFilter } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles, Put, Req } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -12,36 +12,56 @@ import { Idea } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
 import { ExecException } from 'child_process';
+import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { AuthService } from '@modules/auth/auth.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
+        private readonly authService: AuthService
     ) { }
 
     // Basic CRUD
     @Post("create")
     @UseGuards(AuthGuard)
-    async create(@Body() ideaDto: IdeaDto, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+    @UseInterceptors(FilesInterceptor('files', 10, {
+        storage: diskStorage({
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
+    }))
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>,
+        @AccountDecorator() account: AccountDocument,
+        @Res() res: Response) {
+        console.log(files);
         try {
+
             ideaDto.author = account._id;
-            var tagNames = ideaDto.tags;
+            var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
             var newTags = [];
             for (var tagName of tagNames) {
                 try {
                     var tagCheck = await this.tagService.findOne({ name: tagName });
-                    newTags.push(tagCheck._id);
+                    newTags.push(tagCheck._id.toString());
                 }
                 catch (e) {
                     var newTag = await this.tagService.create({ name: tagName });
-                    newTags.push(newTag._id);
-                } 
-                    
-                
+                    newTags.push(newTag._id.toString());
+                }
             }
             var ideaData = {
                 ...ideaDto,
+                files: files ? files.map(file => file.filename) : [],
                 tags: newTags
             }
             await this.service.create(ideaData);
@@ -51,6 +71,7 @@ export class IdeaAPIController {
             });
 
         } catch (error) {
+            console.log(error.toString());
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: error.message
@@ -90,6 +111,8 @@ export class IdeaAPIController {
                 {
                     populate: [
                         { path: "author" },
+                        { path: 'tags' },
+                        
                     ]
                 }))
         } catch (error) {
@@ -142,12 +165,55 @@ export class IdeaAPIController {
     }
 
     // Advanced CRUD
-    @Get('comments/all')
-    async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
+    @Get(':id/comments/all')
+    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response, @Req() req: any) {
         try {
-            if (ideaId) {
-                return res.json(await this.service.findCommentsByIdeaId(ideaId));
-            } else return res.json(await this.service.findALlComment({}));
+            var dataResults = await this.service.findCommentsByIdeaId(ideaId, {
+                populate: [
+                    { path: "author" },
+                ]
+            });
+            var comments = dataResults.data;
+            delete dataResults.data;
+            var token  = req.cookies['token'];
+            var results;
+            if (token) {   
+                var account = await this.authService.verifyTokenFromRequest(token, 'jwt.accessTokenPrivateKey');
+                const checkVote = (comment) => {
+                    if (comment.upvoter.includes(account._id.toString())) {
+                        return "upvoted";
+                    }
+                    else if (comment.downvoter.includes(account._id.toString())) {
+                        return "downvoted";
+                    }
+                    else {
+                        return "not voted";
+                    }
+                }; 
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = checkVote(comment);
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            } else {
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = "not voted";
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            }
+
+            return res.json({
+                data: results,
+                ...dataResults
+            });
+            
         } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -157,23 +223,80 @@ export class IdeaAPIController {
         }
     }
 
-
-    @Get(':id/vote/:type')
+    // post comments to selected idea includes author, ideaID, content
+    @Post(':id/comments/create')
     @UseGuards(AuthGuard)
-    async vote(@AccountDecorator() account: AccountDocument,
-        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+    async createComment(@AccountDecorator() account: AccountDocument,
+        @Param('id') ideaID: string,
+        @Body() {content}: {content: string},
+        @Res() res: Response) {
         try {
-            
+            var comment = await this.service.createComment(ideaID, content, account._id);
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                data: comment,
+                message: "Created Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    //vote comment
+    @Put(':id/comments/:commentId/vote/:type')
+    @UseGuards(AuthGuard)
+    async voteComment(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('commentId') commentId: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
             if (type == 'upvote') {
-                await this.service.upvote(id, account._id);
+                vote = await this.service.upvoteComment(commentId, account._id);
             } else if (type == 'downvote') {
-                await this.service.downvote(id, account._id);
+                vote = await this.service.downvoteComment(commentId, account._id);
             } else {
                 throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
+                data: vote.upvoter.length - vote.downvoter.length,
+                message: "Voted Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+
+
+
+    @Put(':id/vote/:type')
+    @UseGuards(AuthGuard)
+    async vote(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
+            if (type == 'upvote') {
+                vote = await this.service.upvote(id, account._id);
+            } else if (type == 'downvote') {
+                vote = await this.service.downvote(id, account._id);
+            } else {
+                throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
+            }
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                type,
+                data: vote.upvoter.length - vote.downvoter.length,
                 message: "Voted Idea successfully"
             });
 
@@ -186,12 +309,22 @@ export class IdeaAPIController {
     }
 
     @Get(':id/vote')
-    async getVote(@Param('id') id, @Res() res: Response) {
+    async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
+            var token = req.cookies['token'];
+            var voteStatus = null;
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token,
+                    'jwt.accessTokenPrivateKey');
+                if (account) {
+                    voteStatus = await this.service.checkVoted(id, account._id.toString())
+                }
+            }
             return res.json({
                 success: true,
-                data: voteCount,
+                voteStatus,
+                data: voteCount.toString(),
             })
         } catch (e) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -201,4 +334,52 @@ export class IdeaAPIController {
         }
     }
 
+    //search ideas
+    @Get('search')
+    async search(@Query('keyword') keyword: string, @Res() res: Response) {
+        try {
+            return res.json(await this.service.searchIdeas(keyword));
+        } catch (error) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    // //upload file
+    // @Post('file/upload')
+    // @UseGuards(AuthGuard)
+    // @UseInterceptors(FileInterceptor('file', {
+    //     storage: diskStorage({
+    //     destination: './public/assets/uploads',
+    //     filename: (req, file, cb) => {
+    //         const randomName = Array(32)
+    //         .fill(null)
+    //         .map(() => Math.round(Math.random() * 16).toString(16))
+    //         .join('');
+    //         return cb(null, `${randomName}${extname(file.originalname)}`);
+    //     }}),
+    // }))
+    // async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() res: Response) {
+    //     try {
+    //         console.log(file);
+    //         if(!file){
+    //             throw new HttpException("File not found!", HttpStatus.BAD_REQUEST);
+    //         } 
+    //         file.filename = file.originalname;
+    //         return res.json({
+    //             success: true,
+    //             data: file,
+    //         })
+    //     } catch (error) {
+    //         return res.status(HttpStatus.BAD_REQUEST).json({
+    //             success: false,
+    //             message: error.message
+    //         });
+    //     }
+    // }
+
 }
+
+

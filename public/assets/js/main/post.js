@@ -1,11 +1,11 @@
 
 var postModel = (idea) => {
     return `
-    <div class="post">
+    <div class="post" id="${idea._id}">
         <div class="wrap-ut pull-left">
             <div id="the-id" class="upvotejs pull-left">
                 <a class="upvote"></a>
-                <span class="count">${idea.vote || 0}</span>
+                <span class="count">--</span>
                 <a class="downvote"></a>
                 <a class="star"></a>
             </div>
@@ -41,27 +41,65 @@ var postModel = (idea) => {
     `
 }
 
-const getIdeaData = async () => {
-    var response = await fetch('/ideas/api/all');
+const getIdeaData = async (page) => {
+    var url = '/ideas/api/all';
+    if (page) {
+        url += '?page=' + page;
+    }
+    var response = await fetch(url);
     if(!response.ok) {
         alert('Faile to get idea from server!')
         return;
     }
-    var ideas = ( await response.json()).data;
+    var ideas = ( await response.json());
     return ideas;
 }
 
 
 
-const loadPost = async () => {
+const loadPost = async (page='') => {
     var posts =  document.getElementById('posts');
-    var ideaData = await getIdeaData()
-    console.log(ideaData)
-    ideaData.forEach(post => {
+    var ideaResponse = await getIdeaData(page)
+    Paginator('#pagination', loadPost).paginate(ideaResponse.paginationOptions);
+    var ideaData = ideaResponse.data;
+    await ideaData.forEach((post) => {
         posts.innerHTML += postModel(post)
+        getVoteCount(post._id).then(voteData => {
+            $(`#${post._id} span.count`).text(voteData.data);
+            if (voteData.voteStatus != null) {
+                if (voteData.voteStatus == 'upvoted') {
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                } else if (voteData.voteStatus == 'downvoted') {
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                }
+            }
+            $(`#${post._id} a.upvote`).on('click', function () {
+                upVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.upvote`).toggleClass('upvote-on');
+                    $(`#${post._id} a.downvote`).removeClass('downvote-on');
+                })
+            });
+            $(`#${post._id} a.downvote`).on('click', function () {
+
+                downVote(post._id).then((data) => {
+                    $(`#${post._id} span.count`).text(data.data);
+                    $(`#${post._id} a.downvote`).toggleClass('downvote-on');
+                    $(`#${post._id} a.upvote`).removeClass('upvote-on');
+                })
+            });
+        })
+        
     })
 }
 
+
 window.onload = async () => {
+    var transition = new Transition('.container-fluid');
+    transition.start();
     await loadPost()
+    // delay for 3 seconds
+    await new Promise(resolve => setTimeout(resolve, 500));
+    transition.end();
+
 } 

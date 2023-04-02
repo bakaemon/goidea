@@ -47,6 +47,19 @@ export class EventAPIController {
         return res.json(await this.service.find({}));
     }
 
+    // get idea by event id
+    @Get(":id/ideas")
+    async getIdeasByEventId(@Param() id: string, @Res() res: Response) {
+        try {
+            return res.json(await this.service.findIdeasByEventId(id));
+        } catch (error) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
     @Get(":id")
     async getEventById(@Param() id: string, @Res() res: Response) {
         try {
