@@ -39,5 +39,5 @@ lerna-debug.log*
 .env.example
 .env.local
 .env.staging
-public/assets/uploads/*
+/public/assets/uploads
 
