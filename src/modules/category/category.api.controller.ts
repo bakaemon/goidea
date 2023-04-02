@@ -12,7 +12,7 @@ export class CategoryAPIController {
         private readonly service: CategoryService,
     ) { }
     @Post("create")
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async create(@Body() {name} : {name: String}, @Res() res: Response) {
         try {
             await this.service.create({name: name});
@@ -49,7 +49,7 @@ export class CategoryAPIController {
     }
 
     @Patch(":id/update")
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async update(
         @Param() id: string,
         @Body() { name }: { name: String }, @Res() res: Response
@@ -70,7 +70,7 @@ export class CategoryAPIController {
     }
 
     @Delete(':id/delete')
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async delete(@Param() id: string, @Res() res: Response) {
         try {
             await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
