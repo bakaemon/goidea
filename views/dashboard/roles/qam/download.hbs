@@ -1,0 +1,51 @@
+{{setVarIter 'scripts' '
+<script src="\assets\js\download.js"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+'}}
+
+
+{{setVarIter "scripts" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+<link rel="stylesheet" href="/assets/css/download.css">
+
+<form class="mt-4">
+    <div class="mt-4 f-flex align-items-center">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+            <label class="form-check-label" for="checkbox-all">
+                Select All
+            </label>
+        </div>
+
+        <button class="btn-primary btn-sm btn-check-all-submit disabled">Download</button>
+    </div>
+
+
+        <Table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2"></th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each Idea}}
+                <tr>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
+                        </div>
+                    </td>
+                    <th scope="row">{{sum @index 1}}</th>
+                    <td>{{this.title}}</td>
+                    <td>{{this.author}}</td>
+                </tr>
+            </tbody>
+        </Table>
+</form>

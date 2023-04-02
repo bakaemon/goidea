@@ -19,10 +19,10 @@ export class QamController {
         return res.render('dashboard/roles/qam/dashboard', { layout: mainLayout });
     }
 
-    @Get('test')
-    test(@Res() res: Response) {
-        return res.render('dashboard/roles/qam/test', { layout: mainLayout });
+    @Get('download')
+    @UseGuards(HttpRoleGuard(Role.QAM))
+    download(@Res() res: Response) {
+        return res.render('dashboard/roles/qam/download', { layout: mainLayout });
     }
-
 
 }

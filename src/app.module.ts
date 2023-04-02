@@ -25,6 +25,7 @@ import { MainModule } from './modules/main/main.module';
 import {MulterModule} from "@nestjs/platform-express";
 import nodemailer from 'nodemailer';
 import { EmailTransporter } from './common/email/email-transporter';
+import { TestController } from './test.controller';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -53,7 +54,7 @@ import { EmailTransporter } from './common/email/email-transporter';
       dest: '/public/assets/uploads',
     }),
   ],
-  controllers: [AppController,],
+  controllers: [AppController, TestController],
   providers: [
     AppService,
     EmailTransporter,

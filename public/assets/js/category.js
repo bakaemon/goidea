@@ -82,8 +82,9 @@ async function editCategory(button, id){
    });
 
    modal.on("open", async (modal) => {
-        var response = await fetch('/category/api/' + id);
-        console.log('loading...')
+    console.log('loading...')
+    var response = await fetch('/category/api/' + id);
+
         if(!response.ok) {
             alert("Something went wrong!!!")
             return;
@@ -91,7 +92,7 @@ async function editCategory(button, id){
         var data = await response.json();
         var name = document.getElementById('name');
         name.value = data.name;
-        console.log('close')
+        console.log('Done')
    });
 
    modal.on("close", (modal) => {
