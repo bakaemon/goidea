@@ -1,4 +1,36 @@
-
+const files = (fileNames) => {
+    var html = '';
+    for (var fileName of fileNames) {
+        var file = fileName.split('.');
+        var ext = file[1];
+        
+        var exts = {
+            jpg: ['jpg', 'jpeg'],
+            mp4: ['mp4'],
+            png: ['png'],
+            pdf: ['pdf'],
+            doc: ['doc', 'docx'],
+            ppt: ['ppt', 'pptx'],
+            xls: ['xls', 'xlsx'],
+            zip: ['zip', 'rar', '7z'],
+        }
+        var matchExt = 'file';
+        for (var key in exts) {
+            if (exts[key].includes(ext)) {
+                matchExt = key;
+                break;
+            } 
+        }
+        html += `
+                    <div class="file" style="width: 75px; height: 75px; background-color:#f5f5f5">
+                        <a href="/assets/uploads/${fileName}" target="_blank" download>
+                            <img src="/assets/images/filetypes/${matchExt}.png" alt="${fileName}" style="width: 90%; height: 80%; "/>
+                        </a>
+                    </div>`
+    }
+    return html;
+    
+}
 const detailModel = (idea) => `
                 <div class="topwrap">
                     <div class="userinfo pull-left">
@@ -19,6 +51,14 @@ const detailModel = (idea) => `
                         <div class="tags">
                             ${idea.tags.map(tag => `<a href="/ideas/tag/${tag._id}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
                         </div>
+                        <br>
+                        <br>
+                        <h5>Attachments</h5>
+                        <!-- show files -->
+                        <div class="files">
+                            ${files(idea.files)}
+                        </div>
+
                     </div>
                     <div class="clearfix"></div>
                 </div>
