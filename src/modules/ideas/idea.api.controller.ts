@@ -135,6 +135,7 @@ export class IdeaAPIController {
                     populate: [
                         { path: "author" },
                         { path: 'tags' },
+                        { path: 'category' },
 
                     ]
                 }))
