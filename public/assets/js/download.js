@@ -32,7 +32,7 @@ async function loadTableDepartment() {
                         } else newRow.push(row[key]);
                     }
                     newRows.push(`
-                        <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}"></input>`
+                        <input class="form-check-input" type="checkbox"  name="${idea._id}[]" value="${this.id}"></input>`
                             
                     );
                     newRows.push(newRow);
