@@ -11,6 +11,10 @@
 "
 
 }}
+{{setVarIter "scripts" "
+<script src='/assets/js/download.js' type='text/javascript'></script>
+
+"}}
 <link rel="stylesheet" href="/assets/css/download.css">
 
 <form class="mt-4">
@@ -22,11 +26,11 @@
             </label>
         </div>
 
-        <button class="btn-primary btn-sm btn-check-all-submit disabled">Download</button>
+        <button class="btn-primary btn-sm btn-check-all-submit disabled" onclick="tableToCSV()">Download</button>
     </div>
 
 
-        <Table class="table mt-4">
+        {{!-- <Table class="table mt-4">
             <thead>
                 <tr>
                     <th scope="col" colspan="2"></th>
@@ -42,10 +46,21 @@
                             <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
                         </div>
                     </td>
-                    <th scope="row">{{sum @index 1}}</th>
+                    <td scope="row">{{sum @index 1}}</td>
                     <td>{{this.title}}</td>
                     <td>{{this.author}}</td>
                 </tr>
+                {{/each}}
             </tbody>
-        </Table>
+        </Table> --}}
+        <center>
+        <table class="table mt-4" border="1" cellspacing="0" cellpadding="10">
+            <tr>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Day Created</th>
+            </tr>
+        </table>
+        <br><br>
 </form>
