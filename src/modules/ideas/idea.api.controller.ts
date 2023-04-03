@@ -1,4 +1,4 @@
-import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles, Put, Req } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -15,31 +15,38 @@ import { ExecException } from 'child_process';
 import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { AuthService } from '@modules/auth/auth.service';
+import { CategoryService } from '../category/category.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
+        private readonly authService: AuthService,
+        private readonly categoryService: CategoryService
     ) { }
 
     // Basic CRUD
     @Post("create")
     @UseGuards(AuthGuard)
-    @UseInterceptors(FilesInterceptor('files',10, {
+    @UseInterceptors(FilesInterceptor('files', 10, {
         storage: diskStorage({
-        destination: './public/assets/uploads',
-        filename: (req, file, cb) => {
-            const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-            return cb(null, `${randomName}${extname(file.originalname)}`);
-        }}), 
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
     }))
-    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>,
+        @AccountDecorator() account: AccountDocument,
+        @Res() res: Response) {
         console.log(files);
         try {
-            
+
             ideaDto.author = account._id;
             var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
@@ -52,11 +59,11 @@ export class IdeaAPIController {
                 catch (e) {
                     var newTag = await this.tagService.create({ name: tagName });
                     newTags.push(newTag._id.toString());
-                }              
+                }
             }
             var ideaData = {
                 ...ideaDto,
-                files: files ?  files.map(file => file.filename) : [],
+                files: files ? files.map(file => file.filename) : [],
                 tags: newTags
             }
             await this.service.create(ideaData);
@@ -75,18 +82,39 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any },
+    async getAll(@Query() { keyword, page, limit, sort, sortMode }: { keyword?: string, page?: number, limit?: number, sort?: string, sortMode?: any },
         @Res() res: Response) {
         if (!page) page = 1;
-        var ideas = await this.service.findAll({}, {
+        var filter = {};
+        if (keyword) {
+            filter["$or"] = [
+                { title: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+            ];
+            // look for tags that match the keyword
+            var tags = await this.tagService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (tags.data.length > 0) {
+                filter["$or"].push({ tags: { $in: tags.data.map(tag => tag._id) } });
+            }
+            // look for categories that match the keyword
+            var categories = await this.categoryService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (categories.data.length > 0) {
+                filter["$or"].push({ category: { $in: categories.data.map(category => category._id) } });
+            }
+        }
+        var options = {
             page: page || 1,
             limit: limit || 10,
             sort: sort ? { [sort]: sortMode } : null,
             populate: [
                 { path: "author" },
-                { path: "event" }
+                { path: "event" },
+                { path: "tags" },
+                { path: "category" }
+
             ]
-        });
+        };
+        var ideas = await this.service.findAll(filter, options);
         let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
             let newIdea = idea.toObject();
             newIdea.votes = await this.service.countVote(idea._id);
@@ -106,6 +134,9 @@ export class IdeaAPIController {
                 {
                     populate: [
                         { path: "author" },
+                        { path: 'tags' },
+                        { path: 'category' },
+
                     ]
                 }))
         } catch (error) {
@@ -158,12 +189,55 @@ export class IdeaAPIController {
     }
 
     // Advanced CRUD
-    @Get('comments/all')
-    async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
+    @Get(':id/comments/all')
+    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response, @Req() req: any) {
         try {
-            if (ideaId) {
-                return res.json(await this.service.findCommentsByIdeaId(ideaId));
-            } else return res.json(await this.service.findALlComment({}));
+            var dataResults = await this.service.findCommentsByIdeaId(ideaId, {
+                populate: [
+                    { path: "author" },
+                ]
+            });
+            var comments = dataResults.data;
+            delete dataResults.data;
+            var token = req.cookies['token'];
+            var results;
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token, 'jwt.accessTokenPrivateKey');
+                const checkVote = (comment) => {
+                    if (comment.upvoter.includes(account._id.toString())) {
+                        return "upvoted";
+                    }
+                    else if (comment.downvoter.includes(account._id.toString())) {
+                        return "downvoted";
+                    }
+                    else {
+                        return "not voted";
+                    }
+                };
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = checkVote(comment);
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            } else {
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = "not voted";
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            }
+
+            return res.json({
+                data: results,
+                ...dataResults
+            });
+
         } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -173,23 +247,80 @@ export class IdeaAPIController {
         }
     }
 
-
-    @Get(':id/vote/:type')
+    // post comments to selected idea includes author, ideaID, content
+    @Post(':id/comments/create')
     @UseGuards(AuthGuard)
-    async vote(@AccountDecorator() account: AccountDocument,
-        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+    async createComment(@AccountDecorator() account: AccountDocument,
+        @Param('id') ideaID: string,
+        @Body() { content }: { content: string },
+        @Res() res: Response) {
         try {
-            
+            var comment = await this.service.createComment(ideaID, content, account._id);
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                data: comment,
+                message: "Created Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    //vote comment
+    @Put(':id/comments/:commentId/vote/:type')
+    @UseGuards(AuthGuard)
+    async voteComment(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('commentId') commentId: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
             if (type == 'upvote') {
-                await this.service.upvote(id, account._id);
+                vote = await this.service.upvoteComment(commentId, account._id);
             } else if (type == 'downvote') {
-                await this.service.downvote(id, account._id);
+                vote = await this.service.downvoteComment(commentId, account._id);
             } else {
                 throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
+                data: vote.upvoter.length - vote.downvoter.length,
+                message: "Voted Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+
+
+
+    @Put(':id/vote/:type')
+    @UseGuards(AuthGuard)
+    async vote(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
+            if (type == 'upvote') {
+                vote = await this.service.upvote(id, account._id);
+            } else if (type == 'downvote') {
+                vote = await this.service.downvote(id, account._id);
+            } else {
+                throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
+            }
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                type,
+                data: vote.upvoter.length - vote.downvoter.length,
                 message: "Voted Idea successfully"
             });
 
@@ -202,12 +333,22 @@ export class IdeaAPIController {
     }
 
     @Get(':id/vote')
-    async getVote(@Param('id') id, @Res() res: Response) {
+    async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
+            var token = req.cookies['token'];
+            var voteStatus = null;
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token,
+                    'jwt.accessTokenPrivateKey');
+                if (account) {
+                    voteStatus = await this.service.checkVoted(id, account._id.toString())
+                }
+            }
             return res.json({
                 success: true,
-                data: voteCount,
+                voteStatus,
+                data: voteCount.toString(),
             })
         } catch (e) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -217,39 +358,47 @@ export class IdeaAPIController {
         }
     }
 
-    // //upload file
-    // @Post('file/upload')
-    // @UseGuards(AuthGuard)
-    // @UseInterceptors(FileInterceptor('file', {
-    //     storage: diskStorage({
-    //     destination: './public/assets/uploads',
-    //     filename: (req, file, cb) => {
-    //         const randomName = Array(32)
-    //         .fill(null)
-    //         .map(() => Math.round(Math.random() * 16).toString(16))
-    //         .join('');
-    //         return cb(null, `${randomName}${extname(file.originalname)}`);
-    //     }}),
-    // }))
-    // async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() res: Response) {
-    //     try {
-    //         console.log(file);
-    //         if(!file){
-    //             throw new HttpException("File not found!", HttpStatus.BAD_REQUEST);
-    //         } 
-    //         file.filename = file.originalname;
-    //         return res.json({
-    //             success: true,
-    //             data: file,
-    //         })
-    //     } catch (error) {
-    //         return res.status(HttpStatus.BAD_REQUEST).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-    // }
-       
+    //search ideas
+    @Get("search")
+    async search(@Res() res: Response, @Query() query: {
+        keyword: string,
+        page?: number,
+        limit?: number,
+        sort?: string,
+        sortMode?: string,
+    }) {
+        try {
+            var { keyword, page, limit, sort, sortMode } = query;
+            var filter = {
+                $or: [
+                    { title: { $regex: keyword, $options: 'i' } },
+                    { content: { $regex: keyword, $options: 'i' } },
+                    {tags: [{$elemMatch: {name: {$regex: keyword, $options: 'i'}}}]},
+                    { category: {$elemMatch: {name: {$regex: keyword, $options: 'i'}}}},
+                ]
+            };
+            var options = {
+                page: page || 1,
+                limit: limit || 10,
+                sort: sort ? { [sort]: sortMode } : null,
+                populate: [
+                    { path: "author" },
+                    { path: "event" },
+                    { path: "tags" },
+                    { path: "category" }
+
+                ]
+            };
+            return res.json(await this.service.findAll(filter, options));
+        } catch (error) {
+            console.log(error);
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
 }
 
-   
+

@@ -35,6 +35,13 @@ export class Idea {
     })
     tags: string[];
 
+    @Prop({
+        required: true,
+        ref: "Category",
+        type: mongoose.Schema.Types.ObjectId
+    })
+    category: string;
+
     // is anonymous
     @Prop({ default: false })
     anonymous: boolean;

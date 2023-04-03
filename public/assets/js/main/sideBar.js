@@ -9,7 +9,7 @@ var loadTop5Category = function () {
             data.forEach(function (item) {
                 var name = item.name;
                 var count = item.count;
-                html += `<li><a href="/category/${name}">${name} <span class="badge pull-right">${count}</span></a></li>`;
+                html += `<li><a href="/home/?keyword=${name}">${name} <span class="badge pull-right">${count}</span></a></li>`;
             });
                 
             $('ul.cats').html(html);
@@ -29,7 +29,7 @@ var loadTop5Ideas = function () {
                 var id = item._id;
                 html += `<div class="divline"></div>
                             <div class="blocktxt">
-                                <a href="/idea/${id}">${title}</a>
+                                <a href="/home/idea/${id}">${title}</a>
                             </div>`;
             });
             $('#popularIdeas').html(html);

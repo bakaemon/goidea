@@ -46,6 +46,7 @@ async function uploadIdeas() {
         tags: tags.map(tag => tag.value),
         description: description,
         anonymous: identify,
+        category: category,
         
 
     }
@@ -106,20 +107,26 @@ const loadCategory = async () => {
     var category = await populateCategoryData();
     category.forEach(category => {
         var option = document.createElement('option');
-        option.value = category._id;
-        option.innerHTML = category.name;
+         $(option).attr('data-tokens', () => category.name)
+         $(option).text(category.name)
+         $(option).val(category._id)
+        // option.value = category._id;
+        // option.innerHTML = category.name;
         document.getElementById('category').appendChild(option);
     });
+    $('#category').selectpicker()
 }
 
 const loadEvent = async () => {
     var event = await populateEventData();
     event.forEach(event => {
         var option = document.createElement('option');
-        option.value = event._id;
-        option.innerHTML = event.name;
+        $(option).attr('data-tokens', () => event.name)
+        $(option).text(event.name)
+        $(option).val(event._id)
         document.getElementById('events').appendChild(option);
     });
+    $('#events').selectpicker()
 }
 // window.onload = async (e) => {
 //     loadTableDepartment();
