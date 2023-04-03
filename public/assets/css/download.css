@@ -3,25 +3,25 @@
     margin: 0 16px;
 }
 
-#table mt-4 {
+#ideas-table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
   }
   
-  #table mt-4 td, #customers th {
+  #ideas-table td, #customers th {
     border: 1px solid #ddd;
     padding: 8px;
   }
   
-  #table mt-4 tr:nth-child(even){background-color: #f2f2f2;}
+  #ideas-table tr:nth-child(even){background-color: #f2f2f2;}
   
-  #table mt-4 tr:hover {background-color: #ddd;}
+  #ideas-table tr:hover {background-color: #ddd;}
   
-  #table mt-4 th {
+  #ideas-table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: #04AA6D;
+    background-color: #0d244b;
     color: white;
   }

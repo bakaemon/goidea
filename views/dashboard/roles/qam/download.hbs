@@ -11,13 +11,9 @@
 "
 
 }}
-{{setVarIter "scripts" "
-<script src='/assets/js/download.js' type='text/javascript'></script>
-
-"}}
 <link rel="stylesheet" href="/assets/css/download.css">
 
-<form class="mt-4">
+
     <div class="mt-4 f-flex align-items-center">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
@@ -25,21 +21,43 @@
                 Select All
             </label>
         </div>
+        
 
         <button class="btn-primary btn-sm btn-check-all-submit disabled" onclick="tableToCSV()">Download</button>
     </div>
 
-
-        {{!-- <Table class="table mt-4">
+        <center>
+        <Table id="ideas-table">
             <thead>
                 <tr>
-                    <th scope="col" colspan="2"></th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Author</th>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Day Created</th>
                 </tr>
             </thead>
             <tbody>
-                {{#each Idea}}
+                <tr>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
+                        </div>
+                    </td>
+                    <td>Bootstrap Flexbox Tutorial and Examples</td>
+                    <td>Cristina</td>
+                    <td>1.877</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
+                        </div>
+                    </td>
+                    <td>Bootstrap Flexbox Tutorial and Examples</td>
+                    <td>Cristina</td>
+                    <td>1.877</td>
+                </tr>
+                {{!-- {{#each Idea}}
                 <tr>
                     <td>
                         <div class="form-check">
@@ -50,17 +68,8 @@
                     <td>{{this.title}}</td>
                     <td>{{this.author}}</td>
                 </tr>
-                {{/each}}
+                {{/each}} --}}
             </tbody>
-        </Table> --}}
-        <center>
-        <table class="table mt-4" border="1" cellspacing="0" cellpadding="10">
-            <tr>
-                <th>Number</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Day Created</th>
-            </tr>
-        </table>
+        </Table>
+        </center>
         <br><br>
-</form>
