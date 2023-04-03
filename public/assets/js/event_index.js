@@ -28,7 +28,7 @@ async function loadEventTable() {
                     var newRow = [];
                     for (var key in row) {
                         if (!row || !row.hasOwnProperty(key)) continue;
-                        if (key == 'department' || key == 'category') {
+                        if (key == 'department') {
                             newRow.push(row[key].name ?? "no data!");
                         }
                         else if (key=="author") newRow.push(row[key].username);
@@ -137,14 +137,12 @@ async function createEvents() {
     var closureDate = document.getElementById('closureDate').value;
     var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
-    var category = document.getElementById('category').value;
     var data = {
         name: name,
         description: description,
         closureDate: closureDate,
         finalClosureDate: finalClosureDate,
         department: department,
-        category: category,
     }
     try {
         var response = await fetch('/event/api/create', {
@@ -178,7 +176,6 @@ async function editEvents() {
     var closureDate = document.getElementById('closureDate').value;
     var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
-    var category = document.getElementById('category').value;
     var data = {
         _id: id,
         name: name,
@@ -186,7 +183,6 @@ async function editEvents() {
         closureDate: closureDate,
         finalClosureDate: finalClosureDate,
         department: department,
-        category: category,
     }
     try {
         var response = await fetch('/event/api/' + selectedid + '/update', {
