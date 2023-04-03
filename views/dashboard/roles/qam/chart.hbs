@@ -5,6 +5,15 @@
 
 '}}
 
+{{setVarIter 'scripts' '
+<script src="\assets\js\dashboard\chart.js"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+'}}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="/assets/css/dashboard.css">
+
 
 <!-- https://dribbble.com/shots/3895042-Rapid-Use-Cases/attachments/885904 -->
 
@@ -37,106 +46,20 @@
 
         <div class="main-cards">
             <div class="card">
-                {{!-- <div class="chartCard">
-                    <canvas id="myChartIdea"></canvas>
-                </div> --}}
+                <div class="chart-pie">
+                    <canvas id="myPieChart"></canvas>
+                </div>
             </div>
             <div class="card">
-                {{!-- <div class="chartBox">
-                    <canvas id="myChartUser"></canvas>
-                </div> --}}
+                <div class="chart-bar">
+                    <canvas id="myBarChart"></canvas>
+                </div>
             </div>
-            <div class="card">Card</div>
+            <div class="card">
+                <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                </div>
+            </div>
         </div>
     </main>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- tao file script (vd chart.js) de trong js/dasboard
-    o day chi can dung script src r dan den file script vua tao -->
-
-
-<script>
-    const ctxIdea = document.getElementById('myChartIdea').getContext('2d');
-    const myChartIdea = new Chart(ctxIdea, {
-        type: "bar",
-        data: {
-            labels: [
-                "January",
-                "Ferbuary",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-            ],
-            datasets: [{
-                label: "Idea",
-                data: [10, 9, 3, 5, 2, 3, 10, 15, 3, 5, 10, 5],
-                backgroundcolor: [
-                    'rgb(55, 0, 0, 0.5)',
-                ],
-                borderWidth: 1,
-            },
-            {
-                label: "User",
-                data: [10, 9, 3, 5, 2, 3, 10, 15, 3, 5, 10, 5],
-                backgroundcolor: [
-                    'rgb(55, 0, 0, 0.5)',
-                ],
-                borderWidth: 1,
-            }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
-        },
-    });
-
-
-    const ctx = document.getElementById('myChartUser').getContext('2d');
-    const myChartUser = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: [
-                "January", "Ferbuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            datasets: [{
-                label: 'User',
-                data: [300, 50, 13, 33, 34, 53, 6, 43, 14, 64, 148, 16],
-                backgroundColor: [
-                    'rgb(55,99,13)',
-                    'rgb(54, 162, 235)',
-                    'rgb(123,124,133)',
-                    'rgb(58,872,9)',
-                    'rgb(23,54,545)',
-                    'rgb(78,451,13)',
-                    'rgb(55,99,894)',
-                    'rgb(55,48,7456)',
-                    'rgb(874,99,13)',
-                    'rgb(55,974,13)',
-                    'rgb(55,99,745)',
-                    'rgb(55,146,13)'
-                ],
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            plugin: {
-                title: {
-                    display: true,
-                    text: 'Chart.js Pie Chart'
-                }
-            }
-        }
-    });
-</script>
