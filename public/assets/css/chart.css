@@ -198,3 +198,18 @@ body {
     column-count: 2;
   }
 }
+
+.chart-pie1 {
+  height: 100%;
+  width: 100%;
+}
+
+.chart-bar1 {
+  height: 100%;
+  width: 100%;
+}
+
+.chart-area1 {
+  height: 100%;
+  width: 100%;
+}
