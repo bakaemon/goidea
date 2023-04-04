@@ -150,11 +150,11 @@ export class IdeaAPIController {
     @Patch(":id/update")
     @UseGuards(AuthGuard)
     async update(
-        @Param() id: String,
+        @Param() id: string,
         @Body() ideaDto: IdeaDto, @Res() res: Response
     ) {
         try {
-            await this.service.update({ _id: id }, ideaDto);
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, ideaDto);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update Idea successfully"
@@ -170,11 +170,11 @@ export class IdeaAPIController {
 
     @Delete(':id/delete')
     @UseGuards(AuthGuard)
-    async delete(@AccountDecorator() account: AccountDocument, @Param() id: String, @Res() res: Response) {
+    async delete(@AccountDecorator() account: AccountDocument, @Param() id: string, @Res() res: Response) {
         try {
-            if (account._id != id) throw new HttpException("You can't delete other people's idea!",
+            if (!account && !account.roles.includes(Role.Admin)) throw new HttpException("You can't delete other people's idea!",
                 HttpStatus.FORBIDDEN);
-            await this.service.delete({ _id: id });
+            await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Deleted Idea successfully"

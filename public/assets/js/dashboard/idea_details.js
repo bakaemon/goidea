@@ -1,7 +1,7 @@
 // load ideas by event id table
 var selectedid = null;
 const loadIdeasByEventId = async () => {
-
+    console.log('table loaded!');
     var tableArea = document.getElementById('table-area-ideas');
     tableArea.innerHTML = "";
     var table = document.createElement('table');
@@ -16,16 +16,31 @@ const loadIdeasByEventId = async () => {
     }
     var newHeaders = Object.keys(data[0]);
     newHeaders = newHeaders.filter((item) => item != '__v' && item != 'updatedAt' && item != 'createdAt' 
-    && item != 'event' && item != 'flag' && item != 'anonynous' && item != 'tags' && item != '_id');
+    && item != 'event' && item != 'anonymous' && item != 'tags' && item != '_id');
     newHeaders.push('Actions');
     var newRows = [];
     for (var row of data) {
         var newRow = [];
         for (var key in row) {
-            if (key == '__v' || key == '_id'|| key == 'updatedAt' || key == 'createdAt' || key == 'event' || key == 'flag' || 
-            key == 'anonynous' || key == 'tags' ) {
+            if (key == '__v' || key == '_id'|| key == 'updatedAt' || key == 'createdAt' || key == 'event' ||  
+            key == 'anonymous' || key == 'tags' ) {
                 continue;
-            } else newRow.push(row[key]);
+            } else if (key == 'author') {
+                newRow.push(row[key].username);
+            }
+            else if (key == 'files') {
+                var files = row[key];
+                var texts = files.join(', ');
+                newRow.push(texts);
+            }
+            else if (key == 'flag') {
+            
+                var texts = '';
+                var flags = row[key];
+                texts = flags.join(', ');
+                newRow.push(texts);
+            }
+            else newRow.push(row[key]);
         }
         newRow.push(`
             <a class="actionBtn modal-trigger"
@@ -58,7 +73,8 @@ async function deleteIdea(ideaId) {
         });
         var resData = await res.json();
         if (resData.status == 'success') {
-            loadIdeasByEventId();
+            alert(resData.message);
+            await loadIdeasByEventId();
         }
         else {
             alert(resData.message);
@@ -90,7 +106,7 @@ async function editIdea(button, ideaId) {
         </form>`,
         footer:`<button type="button" onclick="updateIdea()" class="editBtn">Edit</button>`
    });
-   modal.on("open", async (modal) => {
+   modal.on("open", async (m) => {
     var response = await fetch(`/ideas/api/${selectedid}`);
     console.log('loading...')
     if(!response.ok) {
@@ -102,9 +118,10 @@ async function editIdea(button, ideaId) {
     var description = document.getElementById('description');
     title.value = data.title;
     description.value = data.description;
-    console.log(data);
-    console.log('close')
-    });
+    document.querySelector('.editBtn').addEventListener('click', async () => {
+        modal.close()
+    })
+});
 
     modal.on("close", (modal) => {
         return confirm("Do you want to exit without save???") ? alert("Closing") : null;
@@ -130,8 +147,8 @@ async function updateIdea() {
         body: JSON.stringify(data)
     });
     var resData = await res.json();
-    if (resData.status == 'success') {
-        loadIdeasByEventId();
+    if (resData.success) {
+        await loadIdeasByEventId();
     }
 }
 
