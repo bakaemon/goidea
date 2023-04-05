@@ -72,13 +72,6 @@ async function createEventForm(e) {
             option.innerHTML = d.name;
             document.getElementById('department').appendChild(option);
         }
-        await populateCategoryData();
-        for (var c of categoryList) {
-            var option = document.createElement('option');
-            option.value = c._id;
-            option.innerHTML = c.name;
-            document.getElementById('category').appendChild(option);
-        }
     });
     modal.open();
 }
@@ -114,13 +107,6 @@ async function editEventForm(e, id) {
                 option.value = department._id;
                 option.innerHTML = department.name;
                 document.getElementById('department').appendChild(option);
-        });
-        await populateCategoryData();
-        categoryList.forEach(category => {
-            var option = document.createElement('option');
-            option.value = category._id;
-            option.innerHTML = category.name;
-            document.getElementById('category').appendChild(option);
         });
         
         setPlaceHolders(form, '');
