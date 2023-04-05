@@ -31,7 +31,6 @@ export class EventService extends BaseService<EventDocument> {
     async findOne(filter: FilterQuery<EventDocument>){
         let event = await this.eventModel.findOne(filter).populate([
             { path: 'department' },
-            { path: 'category' },
             { path: 'author' },
         ]);
         return event;
