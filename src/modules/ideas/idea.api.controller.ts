@@ -6,9 +6,9 @@ import { Response } from "express";
 import { IdeaService } from "./idea.service";
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
-import { AccountDocument } from '../accounts/schema/account.schema';
+import { AccountDocument, Account } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
-import { Idea } from './schema/idea.schema';
+import { Idea, IdeaDocument } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
 import { ExecException } from 'child_process';
@@ -17,13 +17,17 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthService } from '@modules/auth/auth.service';
 import { CategoryService } from '../category/category.service';
+import { EmailTransporter } from '@src/common/email/email-transporter';
+import { AccountsService } from '../accounts/accounts.service';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
         private readonly authService: AuthService,
-        private readonly categoryService: CategoryService
+        private readonly categoryService: CategoryService,
+        private readonly emailTransporter: EmailTransporter,
+        private readonly accountService: AccountsService
     ) { }
 
     // Basic CRUD
@@ -46,7 +50,6 @@ export class IdeaAPIController {
         @Res() res: Response) {
         console.log(files);
         try {
-
             ideaDto.author = account._id;
             var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
@@ -66,7 +69,8 @@ export class IdeaAPIController {
                 files: files ? files.map(file => file.filename) : [],
                 tags: newTags
             }
-            await this.service.create(ideaData);
+            var idea = await this.service.create(ideaData);
+            await this.notifyQAC(idea._id, ideaData, account);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Created Idea successfully"
@@ -255,7 +259,18 @@ export class IdeaAPIController {
         @Body() { content }: { content: string },
         @Res() res: Response) {
         try {
+            var idea = await (await this.service.findOne({ _id: new mongoose.Types.ObjectId(ideaID) })).populate('author');
             var comment = await this.service.createComment(ideaID, content, account._id);
+            var ideaObj = idea.toObject();
+            if (idea.isNotified) {
+                this.emailTransporter.sendMail({
+                    from: "GOIDEA<no-reply>",
+                    to: ideaObj.author.email, // change to your email you want to send to
+                    subject: `You just receive an comment! from another ${account.username}`,
+                    html: `<h1>GOIDEA</h1><p>You just receive an comment! from ${account.username}.</p>
+                    <p>Click <a href="https://${process.env.DOMAIN}/home/idea/${idea._id}">right here</a> to view the comment.</p>`,
+                });
+            }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 data: comment,
@@ -373,8 +388,8 @@ export class IdeaAPIController {
                 $or: [
                     { title: { $regex: keyword, $options: 'i' } },
                     { content: { $regex: keyword, $options: 'i' } },
-                    {tags: [{$elemMatch: {name: {$regex: keyword, $options: 'i'}}}]},
-                    { category: {$elemMatch: {name: {$regex: keyword, $options: 'i'}}}},
+                    { tags: [{ $elemMatch: { name: { $regex: keyword, $options: 'i' } } }] },
+                    { category: { $elemMatch: { name: { $regex: keyword, $options: 'i' } } } },
                 ]
             };
             var options = {
@@ -399,6 +414,21 @@ export class IdeaAPIController {
         }
     }
 
+    // notification to qac when a new idea is created
+    async notifyQAC( id, idea: any, author: AccountDocument) {
+        var qacs = await this.accountService.findAll({ roles: { $in: ['qac'] } },);
+        var ideaObj = idea;
+        qacs.data.forEach(async (qac) => {
+            this.emailTransporter.sendMail({
+                from: "GOIDEA<no-reply>",
+                to: qac.email, // change to your email you want to send to
+                subject: `${author.username} just uploaded an idea!`,
+                html: `<h1>GOIDEA</h1><p>${author.username} just uploaded an idea!.</p>
+                <p>Click <a href="https://${process.env.DOMAIN}/home/idea/${id}">${idea.title}</a> to view the idea.</p>`,
+            });
+        });
+
+    }
 }
 
 
