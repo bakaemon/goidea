@@ -82,7 +82,7 @@ export class IdeaAPIController {
     }
 
     @Get("all")
-    async getAll(@Query() { keyword, page, limit, sort, sortMode }: { keyword?: string, page?: number, limit?: number, sort?: string, sortMode?: any },
+    async getAll(@Query() { keyword, page, limit, sort, sortMode=1 }: { keyword?: string, page?: number, limit?: number, sort?: string, sortMode?: any },
         @Res() res: Response) {
         if (!page) page = 1;
         var filter = {};
@@ -105,7 +105,6 @@ export class IdeaAPIController {
         var options = {
             page: page || 1,
             limit: limit || 10,
-            sort: sort ? { [sort]: sortMode } : null,
             populate: [
                 { path: "author" },
                 { path: "event" },
@@ -120,6 +119,14 @@ export class IdeaAPIController {
             newIdea.votes = await this.service.countVote(idea._id);
             return newIdea;
         }));
+        promisedIdeas.sort((a, b) => {
+            if (a[sort] < b[sort]) {
+                return -1 * sortMode;
+            }
+            if (a[sort] > b[sort]) {
+                return 1 * sortMode;
+            }
+        });
         var results = {
             data: promisedIdeas,
             paginationOptions: ideas.paginationOptions
