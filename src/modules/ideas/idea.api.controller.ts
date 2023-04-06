@@ -17,6 +17,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthService } from '@modules/auth/auth.service';
 import { CategoryService } from '../category/category.service';
+import { pipeline } from 'stream';
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -81,8 +82,43 @@ export class IdeaAPIController {
         }
     }
 
+    // @Post('/allinfo')
+    // async info(@Body() {
+    //     createdAt, updateAt
+    // } : {
+    //     createdAt: {
+    //         month: number,
+    //         day: number,
+    //         year: number
+    //     },
+    //     updateAt: {
+    //         month: number,
+    //         day: number,
+    //         year: number
+    //     }
+    // }) {
+    //     var pipeline = [];
+    //     if (createdAt.day) pipeline.push(({$expr: { $eq: [{ $day: createdAt }, createdAt.day] }}));
+    //     if (createdAt.month) pipeline.push(({$expr: { $eq: [{ $month: createdAt }, createdAt.month] }}));
+    //     if (createdAt.year) pipeline.push(({$expr: { $eq: [{ $year: createdAt }, createdAt.year] }}));
+    //     var data = await this.service.aggregate({}, pipeline);
+    // }
+
     @Get("all")
-    async getAll(@Query() { keyword, page, limit, sort, sortMode=1 }: { keyword?: string, page?: number, limit?: number, sort?: string, sortMode?: any },
+    async getAll(@Query() { 
+        keyword, 
+        page, 
+        limit, 
+        sort, 
+        sortMode=1,
+        month,
+    }: { keyword?: string,
+         page?: number, 
+         limit?: number, 
+         sort?: string, 
+         sortMode?: any, 
+         month?: number
+        },
         @Res() res: Response) {
         if (!page) page = 1;
         var filter = {};
@@ -91,6 +127,7 @@ export class IdeaAPIController {
                 { title: { $regex: keyword, $options: "i" } },
                 { description: { $regex: keyword, $options: "i" } },
             ];
+            
             // look for tags that match the keyword
             var tags = await this.tagService.findAll({ name: { $regex: keyword, $options: "i" } });
             if (tags.data.length > 0) {
@@ -101,6 +138,9 @@ export class IdeaAPIController {
             if (categories.data.length > 0) {
                 filter["$or"].push({ category: { $in: categories.data.map(category => category._id) } });
             }
+        }
+        if (month) {
+            filter['$expr'] =  { $eq: [{ $month: '$createdAt' }, month] }
         }
         var options = {
             page: page || 1,
