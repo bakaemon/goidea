@@ -1,75 +1,45 @@
-{{setVarIter 'scripts' '
-<script src="\assets\js\download.js"></script>
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-'}}
-
-
 {{setVarIter "scripts" "
 <script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
 
 "
 
 }}
+{{setVar "title" "Download Page "}}
 <link rel="stylesheet" href="/assets/css/download.css">
 
 
-    <div class="mt-4 f-flex align-items-center">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
-            <label class="form-check-label" for="checkbox-all">
-                Select All
-            </label>
-        </div>
-        
-
-        <button class="btn-primary btn-sm btn-check-all-submit disabled" onclick="tableToCSV()">Download</button>
+<div class="mt-4 f-flex align-items-center">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+        <label class="form-check-label" for="checkbox-all">
+            Select All
+        </label>
     </div>
 
-        <center>
-        <Table id="ideas-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Day Created</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
-                        </div>
-                    </td>
-                    <td>Bootstrap Flexbox Tutorial and Examples</td>
-                    <td>Cristina</td>
-                    <td>1.877</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
-                        </div>
-                    </td>
-                    <td>Bootstrap Flexbox Tutorial and Examples</td>
-                    <td>Cristina</td>
-                    <td>1.877</td>
-                </tr>
-                {{!-- {{#each Idea}}
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"  name="idea._id[]" value="{{this.id}}" >
-                        </div>
-                    </td>
-                    <td scope="row">{{sum @index 1}}</td>
-                    <td>{{this.title}}</td>
-                    <td>{{this.author}}</td>
-                </tr>
-                {{/each}} --}}
-            </tbody>
-        </Table>
-        </center>
-        <br><br>
+    <button type="button" "btn-primary btn-sm btn-check-all-submit disabled" class="darkBlueBtn"
+        onclick="downloadIdeaDatas()">ZIP</button>
+
+    <button type="button" "btn-primary btn-sm btn-check-all-submit disabled" class="darkBlueBtn"
+        onclick="downloadIdeaDatas()">CSV</button>
+</div>
+
+<center>
+    <Table id="ideas-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Day Created</th>
+            </tr>
+        </thead>
+        <tbody id="table-ideas">
+
+        </tbody>
+    </Table>
+</center>
+<br><br>
+
+{{setVarIter 'scripts' '
+<script src="\assets\js\download.js"></script>
+'}}
