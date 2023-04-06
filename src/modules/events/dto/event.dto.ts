@@ -21,10 +21,6 @@ export class EventDto {
     @IsNotEmpty()
     department: string;
 
-    @IsString()
-    @IsNotEmpty()
-    category: string;
-
 }
 
 export class EventUpdateDto {
@@ -39,8 +35,5 @@ export class EventUpdateDto {
 
     @IsString()
     department: string;
-
-    @IsString()
-    category: string;
 
 }

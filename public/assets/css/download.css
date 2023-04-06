@@ -2,3 +2,26 @@
     width: 120px;
     margin: 0 16px;
 }
+
+#ideas-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #ideas-table td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #ideas-table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #ideas-table tr:hover {background-color: #ddd;}
+  
+  #ideas-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #0d244b;
+    color: white;
+  }

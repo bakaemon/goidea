@@ -13,7 +13,7 @@ const homeLayout = "main/home"
 export class QamController {
     constructor(private readonly appService: QamService) {}
     
-    @Get('dashboard/abc')
+    @Get('dashboard/home')
     @UseGuards(HttpRoleGuard(Role.QAM))
     root(@Res() res: Response) {
         return res.render('dashboard/roles/qam/dashboard', { layout: mainLayout });
@@ -23,6 +23,12 @@ export class QamController {
     @UseGuards(HttpRoleGuard(Role.QAM))
     download(@Res() res: Response) {
         return res.render('dashboard/roles/qam/download', { layout: mainLayout });
+    }
+
+    @Get('dashboard/chart')
+    @UseGuards(HttpRoleGuard(Role.QAM))
+    rootTest(@Res() res: Response) {
+        return res.render('dashboard/roles/qam/chart', { layout: mainLayout });
     }
 
 }

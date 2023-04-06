@@ -83,7 +83,15 @@ const generateQAMMenu = () => {
                     </a>
                 </li>
                 <li>
-                    <a href="/category/dashboard" class="a">
+                    <a href="/qam/download" class="a">
+                        <svg>
+                            <use xlink:href="#collection"></use>
+                        </svg>
+                        <span>Download Data</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/qam/dashboard/chart" class="a">
                         <svg>
                             <use xlink:href="#users"></use>
                         </svg>
