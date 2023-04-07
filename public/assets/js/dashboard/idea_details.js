@@ -102,6 +102,8 @@ async function editIdea(button, ideaId) {
                 <label for="Description"><b>Description</b></label>
                 <br>
                 <textarea placeholder="Description" id="description" name="description" style="width: 100%;" required></textarea>
+                <label for="Notify?"><b>Notify?</b></label>
+                <input type="checkbox" id="notify" name="notify" value="notify">
             </div>
         </form>`,
         footer:`<button type="button" onclick="updateIdea()" class="editBtn">Edit</button>`
@@ -116,8 +118,10 @@ async function editIdea(button, ideaId) {
     var data = await response.json();
     var title = document.getElementById('title');
     var description = document.getElementById('description');
+    var notify = document.getElementById('notify').checked; 
     title.value = data.title;
     description.value = data.description;
+    notify.value = data.isNotified;
     document.querySelector('.editBtn').addEventListener('click', async () => {
         modal.close()
     })
@@ -133,9 +137,11 @@ async function editIdea(button, ideaId) {
 async function updateIdea() {
     var title = document.getElementById('title');
     var description = document.getElementById('description');
+    var notify = document.getElementById('notify').checked;
     var data = {
         title: title.value,
         description: description.value,
+        isNotified: notify,
         id : selectedid
     }
     var res = await fetch(`/ideas/api/${selectedid}/update`, {

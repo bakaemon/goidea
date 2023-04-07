@@ -28,6 +28,8 @@ class Comment {
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }] })
     downvoter: string[];
+
+    
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
