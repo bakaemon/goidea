@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 import Role from '@src/common/enums/role.enum';
 import { HttpAuthFilter } from '@src/common/filters/http-unauthorize-filter';
 import HttpRoleGuard from '@src/common/guards/http-role.guard';
@@ -14,5 +14,10 @@ export class IdeaController {
         return res.render('dashboard/ideas/dashboard', { layout: 'dashboard/main' });
     }
 
-    
+    // edit own idea
+    @Get('edit/:id')
+    @UseGuards(RoleGuard(Role.Staff))
+    edit(@Res() res: Response, @Param('id') id: string) {
+        return res.render('main/edit_idea', { layout: 'main/home', id });
+    }
 }

@@ -30,4 +30,5 @@ export class MainController {
   event(@Res() res: Response) {
     return res.render('main/event_upload', { layout: homeLayout, title: "Events | GoIdea" });
   }
+
 }

@@ -11,14 +11,17 @@
 '
 }}
 
-{{setVar "scripts"
-'
-<script src="/assets/js/idea.js"></script>
-'
-}}
+{{setVarIter "scripts" '
+    <script src="/assets/js/main/ideas.functions.js"></script>
+'}}
+
 
 <script>
     var currentFilesUpload = []
+</script>
+
+<script>
+    
 </script>
 
 <div class="container">
@@ -156,24 +159,6 @@
                 </form>
             </div><!-- POST -->
 
-            <div class="row similarposts">
-                <div class="col-lg-10"><i class="fa fa-info-circle"></i>
-                    <p>Similar Posts according to your <a href="#">Topic Title</a>.</p>
-                </div>
-                <div class="col-lg-2 loading"><i class="fa fa-spinner"></i></div>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-4 col-md-4">
-            {{> sidebar}}
-        </div>
-
-    </div>
-</div>
-
-{{!-- UPLOAD --}}
 <script>
     function isDragAndDropSupported() {
         return typeof document.createElement('div').ondrop != 'undefined';
@@ -301,4 +286,77 @@
     }
     if (typeof Dropzone != 'undefined')
         new Dropzone(document.querySelector('[data-dropzone]'));
+</script>
+
+<script>
+var eventList;
+var categoryList;
+var ideaId = '{{ideaId}}';
+
+    async function loadIdeaForm(){
+    var res = await fetch(`/ideas/api/${ideaId}`);
+    var idea = await res.json();
+    document.getElementById('topicName').value = idea.title;
+    document.getElementById('desc').value = idea.description;
+    document.getElementById('anon').checked = idea.anonymous;
+    var category = await populateCategoryData();
+    category.forEach(category => {
+        var option = document.createElement('option');
+        $(option).attr('data-tokens', () => category.name)
+        $(option).text(category.name)
+        $(option).val(category._id)
+        document.getElementById('category').appendChild(option);
+    });
+    $('#category').selectpicker()
+
+    var event = await populateEventData();
+    event.forEach(event => {
+        var option = document.createElement('option');
+        $(option).attr('data-tokens', () => event.name)
+        $(option).text(event.name)
+        $(option).val(event._id)
+        document.getElementById('events').appendChild(option);
+    });
+    $('#events').selectpicker()
+
+    var tags = await populateTagData();
+    tags.forEach(tag => {
+        var option = document.createElement('option');
+        $(option).attr('data-tokens', () => tag.name)
+        $(option).text(tag.name)
+        $(option).val(tag._id)
+        document.getElementById('tags').appendChild(option);
+    });
+    $('#tags').selectpicker()
+
+}
+
+async function populateCategoryData() {
+    if (!categoryList) {
+        categoryList = [];
+        var data = await fetch('/category/api/all');
+        var category = (await data.json()).data;
+        for (var c of category) {
+            categoryList.push(c);
+        }
+        return categoryList;
+    }
+}
+
+async function populateEventData() {
+    if (!eventList) {
+        eventList = [];
+        var data = await fetch('/event/api/all');
+        var event = (await data.json()).data;
+        for (var e of event) {
+            eventList.push(e);
+        }
+        return eventList;
+    }
+}
+
+window.addEventListener('load', async () => {
+    await loadIdeaForm();
+    document.getElementById('submit').addEventListener('click', editIdea);
+});
 </script>

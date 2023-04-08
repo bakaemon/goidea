@@ -58,6 +58,12 @@ export class Idea {
         default: []
     })
     files: string[];
+
+    
+    // comment notification email to author if it's true
+    @Prop({ default: false })
+    isNotified: boolean;
+
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);

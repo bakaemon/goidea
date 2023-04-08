@@ -78,9 +78,9 @@ const detailModel = (idea) => `
                     <div class="posted pull-left"><i class="fa fa-clock-o"></i> Posted on : ${idea.createdAt}</div>
 
                     <div class="next pull-right">
-                        <a href="#"><i class="fa fa-share"></i></a>
+                        <a href="/ideas/edit/${ideaId}"><i class="fa fa-edit"></i></a>
 
-                        <a href="#"><i class="fa fa-flag"></i></a>
+                        <a href="#"><i class="fa fa-trash"></i></a>
                     </div>
 
                     <div class="clearfix"></div>
