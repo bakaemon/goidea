@@ -74,6 +74,8 @@ const generateGuestMenu = () => {
     loginOptions.innerHTML = html;
 }
 
+
+
 const generateExtraOptions = async () => {
     if (!checkAuth()) {
         return;

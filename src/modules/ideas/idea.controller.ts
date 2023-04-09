@@ -14,10 +14,5 @@ export class IdeaController {
         return res.render('dashboard/ideas/dashboard', { layout: 'dashboard/main' });
     }
 
-    // edit own idea
-    @Get('edit/:id')
-    @UseGuards(RoleGuard(Role.Staff))
-    edit(@Res() res: Response, @Param('id') id: string) {
-        return res.render('main/edit_idea', { layout: 'main/home', id });
-    }
+    
 }
