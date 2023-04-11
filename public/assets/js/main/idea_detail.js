@@ -49,11 +49,11 @@ const detailModel = (idea) => `
                     <div class="posttext pull-left">
                         <h2>${idea.title}</h2>
                         <div class="department">
-                            <a href="/home?keyword=${idea.event.department.name}"><span class="badge" style="background-color: red">Department: [${idea.event.department.name}]</span></a>
+                            <a href="/home?keyword=${idea.event.department.name.split(' ').join("+") }"><span class="badge" style="background-color: red">Department: [${idea.event.department.name}]</span></a>
                         </div>
                         <!-- show tags -->
                         <div class="tags">
-                            <a href="/home?keyword=${idea.category.name}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
+                            <a href="/home?keyword=${idea.category.name.split(' ').join("+")}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
                             ${idea.tags.map(tag => `<a href="/home?keyword=${tag.name}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
                         </div>
                         <br/><br/>
