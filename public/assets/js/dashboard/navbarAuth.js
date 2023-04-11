@@ -98,15 +98,6 @@ const generateQAMMenu = () => {
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <a href="/download" class="a">
-                        <svg>
-                            <use xlink:href="#collection"></use>
-                        </svg>
-                        <span>Idea Management</span>
-                    </a>
-                </li>
-               
             </ul>
     `;
     loginOptions.innerHTML = html;
