@@ -7,6 +7,8 @@ import { RouterModule } from "@nestjs/core";
 import { TagService } from '../tag/tag.service';
 import { CategoryService } from "../category/category.service";
 import { EventService } from "../events/event.service";
+import { EmailTransporter } from "@src/common/email/email-transporter";
+import { AccountsService } from "../accounts/accounts.service";
 
 
 @Module({
@@ -18,7 +20,7 @@ import { EventService } from "../events/event.service";
     ]),
     ],
     controllers: [IdeaController, IdeaAPIController],
-    providers: [IdeaService, TagService, CategoryService, EventService],
+    providers: [IdeaService, TagService, CategoryService, EventService,EmailTransporter, AccountsService],
     exports: []
 })
 export class IdeaModule { }

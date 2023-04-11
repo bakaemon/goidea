@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 import Role from '@src/common/enums/role.enum';
 import { HttpAuthFilter } from '@src/common/filters/http-unauthorize-filter';
 import HttpRoleGuard from '@src/common/guards/http-role.guard';

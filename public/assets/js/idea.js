@@ -25,7 +25,7 @@ async function uploadIdeas() {
     var tags = (JSON.parse(inputTag.getInputValue()));
     var events = document.getElementById('events').value;
     var description = tinymce.get('desc').getContent();
-    var identify = document.getElementById('friends').checked;
+    var identify = document.getElementById('anon').checked;
     var category = document.getElementById('category').value;
     // var files = [...document.getElementById('files').files];
     var files = currentFilesUpload;

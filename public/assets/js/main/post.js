@@ -1,4 +1,4 @@
-
+var paginator;
 var postModel = (idea) => {
     return `
     <div class="post" id="${idea._id}">
@@ -57,20 +57,24 @@ const getIdeaData = async (page) => {
 
 const searchIdea = async (keyword, page, limit, sort, sortMode) => {
     var url = '/ideas/api/all';
+    var params = [];
     if (keyword) {
-        url += '?keyword=' + keyword;
+        params.push('keyword=' + keyword);
     }
     if (page) {
-        url += '&page=' + page;
+        params.push('page=' + page);
     }
     if (limit) {
-        url += '&limit=' + limit;
+        params.push('limit=' + limit);
     }
     if (sort) {
-        url += '&sort=' + sort;
+        params.push('sort=' + sort);
     }
     if (sortMode) {
-        url += '&sortMode=' + sortMode;
+        params.push('sortMode=' + sortMode);
+    }
+    if (params.length > 0) {
+        url += '?' + params.join('&');
     }
     var response = await fetch(url);
     if (!response.ok) {
@@ -83,16 +87,23 @@ const searchIdea = async (keyword, page, limit, sort, sortMode) => {
 
 
 
-const loadPost = async () => {
+const loadPost = async (p) => {
     var posts =  document.getElementById('posts');
+    posts.innerHTML = '';
     var ideaResponse;
-    if (queries.keyword) {
+    if (queries.keyword || p) {
         var { keyword, page, limit, sort, sortMode } = queries;
+        if (p) {
+            page = p;
+        }
         ideaResponse = await searchIdea(keyword, page, limit, sort, sortMode);
     } else {
         ideaResponse = await getIdeaData();
     }
-    Paginator('#pagination', loadPost).paginate(ideaResponse.paginationOptions);
+    paginator = Paginator('#pagination', async (p) => {
+        await loadPost(p);
+    });
+    paginator.paginate(ideaResponse.paginationOptions);
     var ideaData = ideaResponse.data;
     await ideaData.forEach((post) => {
         

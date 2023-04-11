@@ -165,6 +165,24 @@ const downvoteComment = async (commentId) => {
     }
 }
 
+//send notification mail
+const sendNotificationMail = async () => {
+    var response = await fetch('/testmail', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if (!response.ok) {
+        alert('Failed to send notification mail!');
+        return;
+    }
+    var data = await response.json();
+    if (data.success) {
+        alert('Notification mail sent successfully!');
+    }
+}
+
 window.onload = async () => {
     loadComments();
 }

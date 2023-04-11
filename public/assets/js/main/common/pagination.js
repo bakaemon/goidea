@@ -11,20 +11,20 @@ const examplePaginationData = {
 
 const Paginator = (function (selector, movePageCallback = (page) => { }) {
     const movePage = movePageCallback;
-
+    window.movePage = movePage;
     const template = (pages, currentPage, prevPage, nextPage, hasPrevPage, hasNextPage) => {
         var html = '';
         var prevBtn = '';
         var nextBtn = '';
         if (hasPrevPage) {
-            prevBtn = `<div class="pull-left"><a href="javascript:movePage(${prevPage})" class="prevnext"><i class="fa fa-angle-left"></i></a></div>`;
+            prevBtn = `<div class="pull-left"><a href="javascript:window.movePage(${prevPage})" class="prevnext"><i class="fa fa-angle-left"></i></a></div>`;
         }
         else {
             prevBtn = `<div class="pull-left"><a href="javascript:void(0)" class="prevnext"><i class="fa fa-angle-left"></i></a></div>`;
         }
         if (hasNextPage) {
             nextBtn = `
-            <div class="pull-left"><a href="javascript:movePage(${nextPage})" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
+            <div class="pull-left"><a href="javascript:window.movePage(${nextPage})" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
         `;
         }
         else {
@@ -35,13 +35,14 @@ const Paginator = (function (selector, movePageCallback = (page) => { }) {
         for (let i = 0; i < pages.length; i++) {
             const page = pages[i];
             if (page === currentPage) {
+                console.log(currentPage);
                 html += `<li class="active"><a href="#">${page}</a></li>`;
             } else {
-                html += `<li><a href="javascript:movePage(${page})">${page}</a></li>`;
+                html += `<li id="page${page}"><a href="javascript:window.movePage(${page})">${page}</a></li>`;
             }
             if (i === 2) {
                 html += `<li><a href="#">...</a></li>`;
-                html += `<li><a href="javascript:movePage(${pages[pages.length - 1]})">${pages[pages.length - 1]}</a></li>`;
+                html += `<li><a href="javascript:window.movePage(${pages[pages.length - 1]})">${pages[pages.length - 1]}</a></li>`;
                 break;
             }
 

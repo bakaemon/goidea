@@ -10,11 +10,13 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { Flag } from '@src/common/enums/flag.enum';
 import { CommentDocument } from './schema/comment.schema';
 import * as paginate from 'mongoose-paginate-v2';
+import Role from '@src/common/enums/role.enum';
 export class IdeaService extends BaseService<IdeaDocument> {
     constructor(
         @InjectModel('Idea') private ideaModel: PaginateModel<IdeaDocument>,
         @InjectModel('Votes') private votesModel: PaginateModel<VotesDocument>,
         @InjectModel('Comment') private commentModel: PaginateModel<CommentDocument>,
+        @InjectModel('Account') private accountModel: PaginateModel<Document>,
     ) {
         super(ideaModel);
     }
@@ -268,5 +270,6 @@ export class IdeaService extends BaseService<IdeaDocument> {
             throw error;
         }
     }
+
 
 }

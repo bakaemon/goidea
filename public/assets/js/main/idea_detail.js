@@ -1,3 +1,5 @@
+var ideaDetail;
+
 const files = (fileNames) => {
     var html = '';
     for (var fileName of fileNames) {
@@ -77,15 +79,31 @@ const detailModel = (idea) => `
 
                     <div class="posted pull-left"><i class="fa fa-clock-o"></i> Posted on : ${idea.createdAt}</div>
 
-                    <div class="next pull-right">
-                        <a href="#"><i class="fa fa-share"></i></a>
-
-                        <a href="#"><i class="fa fa-flag"></i></a>
+                    <div class="next pull-right" id="staff-update">
                     </div>
 
                     <div class="clearfix"></div>
                 </div>
 `
+
+const generateStaffUpdate = async () => {
+    if (!checkAuth()) {
+        return;
+    }
+    const staffUpdate = document.getElementById('staff-update');
+    var res = await fetch('/auth/api/verify_token?token=' + getCookie('token'))
+    if(!res.ok) {
+        return;
+    }
+    var account = await res.json();
+    console.log(ideaDetail)
+    if (account._id == ideaDetail.author._id) {
+        const html = `
+            <a href="/home/idea/${ideaId}/edit"><i class="fa fa-edit"></i></a>
+            <a href="#"><i class="fa fa-trash"></i></a>`;
+        staffUpdate.innerHTML = html;
+    }
+}
 
 if (!ideaId) {
     alert('Something went wrong!');
@@ -100,8 +118,10 @@ const loadIdeaDetail = async () => {
         return;
     }
     var data = await response.json();
+    ideaDetail = data;
     document.title = data.title + ' | GoIdea';
     $('#idea').html(detailModel(data));
+    await generateStaffUpdate();
 }
 
 
