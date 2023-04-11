@@ -9,6 +9,7 @@ import { CategoryService } from "../category/category.service";
 import { EventService } from "../events/event.service";
 import { EmailTransporter } from "@src/common/email/email-transporter";
 import { AccountsService } from "../accounts/accounts.service";
+import { DepartmentService } from "../department/department.service";
 
 
 @Module({
@@ -20,7 +21,7 @@ import { AccountsService } from "../accounts/accounts.service";
     ]),
     ],
     controllers: [IdeaController, IdeaAPIController],
-    providers: [IdeaService, TagService, CategoryService, EventService,EmailTransporter, AccountsService],
+    providers: [IdeaService, TagService, CategoryService, EventService,EmailTransporter, AccountsService, DepartmentService],
     exports: []
 })
 export class IdeaModule { }

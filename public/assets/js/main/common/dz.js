@@ -1,4 +1,4 @@
-
+var dz;
 function isDragAndDropSupported() {
     return typeof document.createElement('div').ondrop != 'undefined';
 }
@@ -51,6 +51,11 @@ if (isDragAndDropSupported() && isFormDataSupported() && isFileApiSupported()) {
         this.status.innerHTML = 'Uploading files, please wait...';
         this.uploadFiles(event.currentTarget.files);
     }
+    Dropzone.prototype.addFiles = function (files) {
+        this.files.classList.remove('hidden');
+        this.status.innerHTML = 'Uploading files, please wait...';
+        this.uploadFiles(files);
+    }
     Dropzone.prototype.onFileFocus = function () {
         this.dropzone.querySelector('[data-dropzone-label]').classList.add('dropzone__label--focused');
     }
@@ -81,7 +86,11 @@ if (isDragAndDropSupported() && isFormDataSupported() && isFileApiSupported()) {
         const eventTarget = event.target;
         if (eventTarget.hasAttribute('data-file-remove')) {
             const listItem = eventTarget.parentNode;
+            var fileName = eventTarget.getAttribute('data-file-remove');
             listItem.parentNode.removeChild(listItem);
+            console.log(fileName);
+            currentFilesUpload = currentFilesUpload.filter(file => file.name != fileName)
+            
         }
     }
     Dropzone.prototype.getStatusHtml = function (result, isSuccess) {
@@ -105,7 +114,7 @@ if (isDragAndDropSupported() && isFormDataSupported() && isFileApiSupported()) {
         this.fileRemove = document.createElement('button');
         this.fileRemove.className = 'file__remove button';
         this.fileRemove.setAttribute('type', 'button');
-        this.fileRemove.setAttribute('data-file-remove', '');
+        this.fileRemove.setAttribute('data-file-remove', result.name);
         this.fileRemove.innerHTML = 'Remove';
         this.fileItem = document.createElement('li');
         this.fileItem.className = 'file__item';
@@ -125,4 +134,4 @@ if (isDragAndDropSupported() && isFormDataSupported() && isFileApiSupported()) {
     }
 }
 if (typeof Dropzone != 'undefined')
-    new Dropzone(document.querySelector('[data-dropzone]'));
+    dz = new Dropzone(document.querySelector('[data-dropzone]'));

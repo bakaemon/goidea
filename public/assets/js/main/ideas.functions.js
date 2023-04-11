@@ -27,12 +27,18 @@ async function loadIdeaForm(){
         document.getElementById('events').appendChild(option);
     });
     $('#events').selectpicker()
-
-    // idea.files.forEach(fileName => {
-    //     var file = new File()
-    // })
-
-
+    var files = []
+    idea.files.forEach(fileName => {
+        var url = '/assets/uploads/' + fileName;
+        fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            var file = new File([blob], fileName);
+            files.push(file);
+            dz.addFiles([file])
+        });  
+    });
+    
 }
 
 
@@ -80,7 +86,6 @@ async function editIdea(){
 async function populateCategoryData() {
         var categories = [];
         var data = await fetch('/category/api/all');
-        console.log(data);
         var category = (await data.json()).data;
         for (var c of category) {
             categories.push(c);
@@ -98,6 +103,7 @@ async function populateEventData() {
         }
     eventList = events;
 }
+
 
 
 window.addEventListener('load', async () => {
