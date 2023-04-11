@@ -43,6 +43,8 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express-rate-limit": "^6.7.0",
+    "filesystem": "^1.0.1",
+    "fs": "^0.0.1-security",
     "hbs": "^4.2.0",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
