@@ -95,6 +95,7 @@ const loadPost = async () => {
     Paginator('#pagination', loadPost).paginate(ideaResponse.paginationOptions);
     var ideaData = ideaResponse.data;
     await ideaData.forEach((post) => {
+        
         posts.innerHTML += postModel(post)
         getVoteCount(post._id).then(voteData => {
             $(`#${post._id} span.count`).text(voteData.data);
