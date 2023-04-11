@@ -25,17 +25,7 @@ var postModel = (idea) => {
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="postinfo pull-left">
-        <div class="comments">
-            <div class="commentbg">
-                560
-                <div class="mark"></div>
-            </div>
-    
-        </div>
-        <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-        <div class="time"><i class="fa fa-clock-o"></i>${idea.time}</div>                                    
-    </div>
+
     <div class="clearfix"></div>
 
     `
