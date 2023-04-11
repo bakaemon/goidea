@@ -24,12 +24,16 @@ export class AccountsAPIController {
     ) { }
     
     @Get('all')
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.Admin, Role.QAM))
     getAccounts(
         @Query() filter: FindAccountFilterDto,
+        @Query('month') month: number,
         @Query() options: PaginationParamsDto
     ) {
         try {
+            if (month) {
+                filter['$expr'] =  { $eq: [{ $month: '$createdAt' }, month] }
+            }
             return this.accountsService.findAll(filter,{
                 populate: {
                     path: "department",
