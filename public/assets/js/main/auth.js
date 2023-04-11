@@ -37,7 +37,6 @@ const loadOptions = async () => {
 const generateAdminMenu = () => {
     const loginOptions = document.getElementById('loginOptions');
     const html = `
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">My Profile</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-2" href="/admin">Dashboard</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-4" href="javascript:logout()">Log Out</a></li>
     `;
@@ -47,9 +46,6 @@ const generateAdminMenu = () => {
 const generateUserMenu = () => {
     const loginOptions = document.getElementById('loginOptions');
     const html = `
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">My Profile</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-2" href="#">Inbox</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-3" href="home/event">Event</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-4" href="javascript:logout()">Log Out</a></li>
     `;
     loginOptions.innerHTML = html;
