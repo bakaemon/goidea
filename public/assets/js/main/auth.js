@@ -58,8 +58,7 @@ const generateUserMenu = () => {
 const generateQAMMenu = () => {
     const loginOptions = document.getElementById('loginOptions');
     const html = `
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">My Profile</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-2" href="/qam/dashboard/home">Dashboard</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-2" href="/qam/dashboard/chart">Dashboard</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-3" href="javascript:logout()">Log Out</a></li>
     `;
     loginOptions.innerHTML = html;
