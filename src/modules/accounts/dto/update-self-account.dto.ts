@@ -7,6 +7,9 @@ export class UpdateAccountDto {
     displayName?: string;
 
     @IsString()
+    username: string;
+
+    @IsString()
     @IsNotEmpty()
     email: string;
 

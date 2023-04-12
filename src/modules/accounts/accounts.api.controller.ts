@@ -122,6 +122,7 @@ export class AccountsAPIController {
         account.birthday = updateAccountDto.birthday;
         account.roles = updateAccountDto.roles;
         account.department = updateAccountDto.department;
+        account.username = updateAccountDto.username;
         await account.save();
         return res.status(200).json({
             message: "Update account successfully",
