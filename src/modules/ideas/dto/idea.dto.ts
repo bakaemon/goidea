@@ -26,6 +26,6 @@ export class IdeaDto {
     @IsArray()
     flag: string[];
 
-    @IsString()
-    file?: string;
+    @IsArray()
+    files?: string[];
 }

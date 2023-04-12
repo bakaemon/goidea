@@ -192,6 +192,7 @@ async function updateAccounts() {
         email: email,
         birthday: dateofbirth,
         roles: roles,
+        displayName: username
 
     };
     try {
@@ -208,6 +209,7 @@ async function updateAccounts() {
         if (data.success) {
             alert(data.message);
             window.location.href = "/admin/users";
+            console.log(data);
             return;
         }
         else {

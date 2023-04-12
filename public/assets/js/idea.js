@@ -158,6 +158,7 @@ function enableForm(form) {
     }
 }
 
+
 window.onload = async (e) => {
     await loadCategory();
     await loadEvent();

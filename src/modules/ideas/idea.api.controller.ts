@@ -8,17 +8,18 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import { AccountDocument, Account } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
-import { Idea, IdeaDocument } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
-import { ExecException } from 'child_process';
-import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthService } from '@modules/auth/auth.service';
 import { CategoryService } from '../category/category.service';
 import { EmailTransporter } from '@src/common/email/email-transporter';
 import { AccountsService } from '../accounts/accounts.service';
+import * as fs from 'fs';
+import { DepartmentService } from '../department/department.service';
+
 @Controller('api')
 export class IdeaAPIController {
     constructor(
@@ -27,7 +28,8 @@ export class IdeaAPIController {
         private readonly authService: AuthService,
         private readonly categoryService: CategoryService,
         private readonly emailTransporter: EmailTransporter,
-        private readonly accountService: AccountsService
+        private readonly accountService: AccountsService,
+        private readonly departmentService: DepartmentService,
     ) { }
 
     // Basic CRUD
@@ -180,15 +182,20 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
+            var idea = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
                 {
                     populate: [
                         { path: "author" },
                         { path: 'tags' },
                         { path: 'category' },
+                        { path: 'event' },
 
                     ]
-                }))
+                }) as any;
+            var department = await this.departmentService.findOne({ _id: new mongoose.Types.ObjectId(idea.event.department) });
+            delete idea.event.department;
+            idea.event.department = department;
+            return res.json(idea)
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -198,13 +205,57 @@ export class IdeaAPIController {
     }
 
     @Patch(":id/update")
+    @UseInterceptors(FilesInterceptor('files', 10, {
+        storage: diskStorage({
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
+    }))
     @UseGuards(AuthGuard)
     async update(
         @Param() id: string,
-        @Body() ideaDto: IdeaDto, @Res() res: Response
+        @Body() ideaDto: IdeaDto, 
+        @Res() res: Response,
+        @UploadedFiles() files: Array<Express.Multer.File>
     ) {
         try {
-            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, ideaDto);
+            var idea = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) });
+            if (!idea) throw new HttpException("Idea not found!", HttpStatus.NOT_FOUND);
+            
+            if (files) {
+                // check if the files are different, if so, delete the old files
+                var oldFiles = idea.files;
+                var newFiles = files.map(file => file.filename);
+                var deletedFiles = oldFiles.filter(oldFile => !newFiles.includes(oldFile));
+                deletedFiles.forEach(file => {
+                    fs.unlinkSync(`./public/assets/uploads/${file}`);
+                });
+                ideaDto.files = newFiles;
+            }
+            var tagNames = ideaDto.tags.split(",");
+            delete ideaDto.tags;
+            var newTags = [];
+            for (var tagName of tagNames) {
+                try {
+                    var tagCheck = await this.tagService.findOne({ name: tagName });
+                    newTags.push(tagCheck._id.toString());
+                }
+                catch (e) {
+                    var newTag = await this.tagService.create({ name: tagName });
+                    newTags.push(newTag._id.toString());
+                }
+            }
+            var ideaData = {
+                ...ideaDto,
+                tags: newTags
+            }
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, ideaData);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update Idea successfully"

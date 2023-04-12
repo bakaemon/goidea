@@ -1,7 +1,7 @@
 var ideaDetail;
 
 const files = (fileNames) => {
-    var html = '';
+    var html = '<div class="file">';
     for (var fileName of fileNames) {
         var file = fileName.split('.');
         var ext = file[1];
@@ -24,12 +24,12 @@ const files = (fileNames) => {
             } 
         }
         html += `
-                    <div class="file" style="width: 75px; height: 75px; background-color:#f5f5f5">
                         <a href="/assets/uploads/${fileName}" target="_blank" title="${fileName}" download>
-                            <img src="/assets/images/filetypes/${matchExt}.png" alt="${fileName}" style="width: 100%; height: 80%; "/>
+                            <img src="/assets/images/filetypes/${matchExt}.png" alt="${fileName}" style="width: 75px; height: 75px; "/>
                         </a>
-                    </div>`
+                    `
     }
+    html += '</div>';
     return html;
     
 }
@@ -48,12 +48,16 @@ const detailModel = (idea) => `
                     </div>
                     <div class="posttext pull-left">
                         <h2>${idea.title}</h2>
-                        <p>${idea.description}</p>
+                        <div class="department">
+                            <a href="/home?keyword=${idea.event.department.name.split(' ').join("+") }"><span class="badge" style="background-color: red">Department: [${idea.event.department.name}]</span></a>
+                        </div>
                         <!-- show tags -->
                         <div class="tags">
-                            <a href="/home?keyword=${idea.category.name}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
+                            <a href="/home?keyword=${idea.category.name.split(' ').join("+")}"><span class="badge" style="background-color: orange">#${idea.category.name}</span></a>
                             ${idea.tags.map(tag => `<a href="/home?keyword=${tag.name}"><span class="badge badge-primary">#${tag.name}</span></a>`).join(' ')}
                         </div>
+                        <br/><br/>
+                        <p>${idea.description}</p>            
                         <br>
                         <br>
                         <h5>Attachments</h5>
@@ -100,7 +104,7 @@ const generateStaffUpdate = async () => {
     if (account._id == ideaDetail.author._id) {
         const html = `
             <a href="/home/idea/${ideaId}/edit"><i class="fa fa-edit"></i></a>
-            <a href="#"><i class="fa fa-trash"></i></a>`;
+            <a href="javascript:deleteIdea()"><i class="fa fa-trash"></i></a>`;
         staffUpdate.innerHTML = html;
     }
 }
@@ -124,6 +128,23 @@ const loadIdeaDetail = async () => {
     await generateStaffUpdate();
 }
 
+const deleteIdea = async () => {
+    confirm('Are you sure you want to delete this idea?') ? await (async () => {
+        var response = await fetch(`/ideas/api/${ideaId}/delete`, {
+            method: "DELETE"
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/home";
+            return;
+        }
+        else {
+            alert(data.message);
+            return;
+        }
+    })() : null;
+}
 
 window.addEventListener('load', async () => {
     var transition =  new Transition('.container-fluid');

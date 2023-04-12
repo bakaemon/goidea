@@ -24,12 +24,16 @@ export class AccountsAPIController {
     ) { }
     
     @Get('all')
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.Admin, Role.QAM))
     getAccounts(
         @Query() filter: FindAccountFilterDto,
+        @Query('month') month: number,
         @Query() options: PaginationParamsDto
     ) {
         try {
+            if (month) {
+                filter['$expr'] =  { $eq: [{ $month: '$createdAt' }, month] }
+            }
             return this.accountsService.findAll(filter,{
                 populate: {
                     path: "department",
@@ -118,6 +122,7 @@ export class AccountsAPIController {
         account.birthday = updateAccountDto.birthday;
         account.roles = updateAccountDto.roles;
         account.department = updateAccountDto.department;
+        account.username = updateAccountDto.username;
         await account.save();
         return res.status(200).json({
             message: "Update account successfully",

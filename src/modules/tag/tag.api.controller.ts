@@ -28,8 +28,9 @@ export class TagAPIController {
     }
 
     @Get("all")
-    async getAll() {
-        return await this.service.findAll({});
+    async getAll(@Res() res: Response) {
+        var tags = await this.service.findAll({});
+        return res.status(HttpStatus.OK).json(tags);
     }
 
     @Get(":id")
