@@ -19,13 +19,10 @@ export class EventAPIController {
     async createEvent(@Body() eventDto: EventDto, @AccountDecorator() account,@Res() res: Response) {
         try {
             var department = new mongoose.Types.ObjectId(eventDto.department);
-            var category = new mongoose.Types.ObjectId(eventDto.category);
             delete eventDto.department;
-            delete eventDto.category;
             await this.service.create({
                 ...eventDto,
                 department,
-                category,
                 author: account._id
             });
             return res.status(HttpStatus.CREATED).json({
@@ -45,6 +42,19 @@ export class EventAPIController {
     @Get("all")
     async getAllEvents(@Res() res: Response) {
         return res.json(await this.service.find({}));
+    }
+
+    // get idea by event id
+    @Get(":id/ideas")
+    async getIdeasByEventId(@Param() id: string, @Res() res: Response) {
+        try {
+            return res.json(await this.service.findIdeasByEventId(id));
+        } catch (error) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
     }
 
     @Get(":id")

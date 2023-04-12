@@ -29,21 +29,20 @@ export class BaseService<T extends Document> {
         };
     }
 
-    async aggregate(filter: FilterQuery<T>, pipeline: PipelineStage[] = [], options?: PaginateOptions): Promise<Aggregate<Array<T>>> {
+    async aggregate(filter: FilterQuery<T>, pipeline: PipelineStage[] = [], options?: PaginateOptions): Promise<any> {
         Object.keys(filter).forEach(data => {
             if (mongoose.isValidObjectId(filter[data])) Object.assign(filter, { [data]: new mongoose.Types.ObjectId(filter[data]) });
         });
-
-        return this.model.aggregate([{
-            $match: filter
-        }, ...pipeline, {
-            $sort: { _id: -1 }
-        }, {
-            $limit: options?.limit || 9
-        }, {
-            $skip: options?.limit * options?.page || 0
-        }]
-        );
+        var result = await this.model.aggregate(pipeline).exec();
+        return {
+            data: result,
+            paginationOptions: {
+                totalDocs: result.length,
+                limit: options?.limit,
+                totalPages: Math.floor(result.length / options?.limit),
+                page: options?.page
+            }
+        };
     }
 
     async findOne(filter: FilterQuery<T>, options?: QueryOptions): Promise<UnpackedIntersection<HydratedDocument<T, {}, {}>, {}>> {

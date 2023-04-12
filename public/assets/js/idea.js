@@ -25,9 +25,10 @@ async function uploadIdeas() {
     var tags = (JSON.parse(inputTag.getInputValue()));
     var events = document.getElementById('events').value;
     var description = tinymce.get('desc').getContent();
-    var identify = document.getElementById('friends').checked;
+    var identify = document.getElementById('anon').checked;
     var category = document.getElementById('category').value;
-    var files = [...document.getElementById('file').files];
+    // var files = [...document.getElementById('files').files];
+    var files = currentFilesUpload;
     var formData = new FormData();
     var term = document.getElementById('note').checked;
     if (!term) {
@@ -45,6 +46,7 @@ async function uploadIdeas() {
         tags: tags.map(tag => tag.value),
         description: description,
         anonymous: identify,
+        category: category,
         
 
     }
@@ -105,20 +107,26 @@ const loadCategory = async () => {
     var category = await populateCategoryData();
     category.forEach(category => {
         var option = document.createElement('option');
-        option.value = category._id;
-        option.innerHTML = category.name;
+         $(option).attr('data-tokens', () => category.name)
+         $(option).text(category.name)
+         $(option).val(category._id)
+        // option.value = category._id;
+        // option.innerHTML = category.name;
         document.getElementById('category').appendChild(option);
     });
+    $('#category').selectpicker()
 }
 
 const loadEvent = async () => {
     var event = await populateEventData();
     event.forEach(event => {
         var option = document.createElement('option');
-        option.value = event._id;
-        option.innerHTML = event.name;
+        $(option).attr('data-tokens', () => event.name)
+        $(option).text(event.name)
+        $(option).val(event._id)
         document.getElementById('events').appendChild(option);
     });
+    $('#events').selectpicker()
 }
 // window.onload = async (e) => {
 //     loadTableDepartment();
@@ -149,6 +157,7 @@ function enableForm(form) {
         }
     }
 }
+
 
 window.onload = async (e) => {
     await loadCategory();

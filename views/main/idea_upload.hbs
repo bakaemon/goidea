@@ -17,6 +17,10 @@
 '
 }}
 
+<script>
+    var currentFilesUpload = []
+</script>
+
 <div class="container">
     <div class="row">
         <div class="col-lg-8 breadcrumbf">
@@ -28,9 +32,6 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-md-8">
-
-
-
             <!-- POST -->
             <div class="post">
                 <form action="#" class="form newtopic" method="post">
@@ -51,21 +52,20 @@
 
                             <div>
                                 <label for="topicName"><b>Topic</b></label>
-                                <input id="topicName" type="text" placeholder="Enter Idea Title"
-                                    class="form-control" />
+                                <input id="topicName" type="text" placeholder="Enter Idea Title" class="form-control" />
                             </div>
 
                             <div class="row">
                                 <div class="col-lg-6 col-md-6">
                                     <label for="events"><b>Event</b></label>
-                                    <select name="category" id="events" class="form-control">
-                                        <option value="" disabled selected>Select Event</option>
+                                    <select class="form-control" data-show-subtext="false"
+                                        data-live-search="true" name="events" id="events">
                                     </select>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <label for="category"><b>Category</b></label>
-                                    <select name="subcategory" id="category" class="form-control">
-                                        <option value="" disabled selected>Select Category</option>
+                                    <select name="category" id="category" class="form-control"
+                                        data-show-subtext="false" data-live-search="true">
                                     </select>
                                 </div>
                             </div>
@@ -73,9 +73,31 @@
                             <div class="row">
                                 <div class="col-lg-6 col-md-6">
                                     <label for="tags"><b>Tag</b></label>
-                                    <input name='tags' id="tags" value='tag1, tag2'>
+                                    <input name='tags' id="tags" value=''>
                                 </div>
                             </div><br>
+
+                            <div class="row">
+                                <section class="upload-file">
+                                    <h1 class="heading">Upload files</h1>
+                                    <p class="paragraph">You can upload multiple files.</p>
+                                    <div class="files hidden" data-files></div>
+                                    <form class="form" enctype="multipart/formdata">
+                                        <div class="dropzone" data-dropzone>
+                                            <div class="dropzone__field">
+                                                <label class="dropzone__label" for="files" data-dropzone-label>Upload
+                                                    files</label>
+                                                <input class="dropzone__file" id="files" name="files" type="file"
+                                                    multiple data-dropzone-file>
+                                            </div>
+                                            <button class="dropzone__upload button" name="uploadFile"
+                                                type="submit">Uploadfiles</button>
+                                        </div>
+                                    </form>
+                                </section>
+                            </div><br>
+
+
 
                             <div class="row">
                                 <div>
@@ -98,7 +120,7 @@
                                         <div class="col-lg-6 col-md-6">
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" id="friends" /> Anonymous?
+                                                    <input type="checkbox" id="anon" /> Anonymous?
                                                 </label>
                                             </div>
                                         </div>
@@ -142,145 +164,141 @@
 
             </div>
 
-            <!-- POST -->
-            <div class="post">
-                <div class="wrap-ut pull-left">
-                    <div class="userinfo pull-left">
-                        <div class="avatar">
-                            <img src="/assets/images/avatar.jpg" alt="" />
-                            <div class="status green">&nbsp;</div>
-                        </div>
-
-                        <div class="icons">
-                            <img src="/assets/images/icon1.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
-                        </div>
-                    </div>
-                    <div class="posttext pull-left">
-                        <h2>10 Kids Unaware of Their Halloween Costume</h2>
-                        <p>It's one thing to subject yourself to a Halloween costume mishap because, hey,
-                            that's your prerogative.</p>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="postinfo pull-left">
-                    <div class="comments">
-                        <div class="commentbg">
-                            560
-                            <div class="mark"></div>
-                        </div>
-
-                    </div>
-                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-                    <div class="time"><i class="fa fa-clock-o"></i> 24 min</div>
-                </div>
-                <div class="clearfix"></div>
-            </div><!-- POST -->
-
-
-            <!-- POST -->
-            <div class="post">
-                <div class="wrap-ut pull-left">
-                    <div class="userinfo pull-left">
-                        <div class="avatar">
-                            <img src="/assets/images/avatar2.jpg" alt="" />
-                            <div class="status red">&nbsp;</div>
-                        </div>
-
-                        <div class="icons">
-                            <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg"
-                                alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
-                                src="/assets/images/icon6.jpg" alt="" />
-                        </div>
-                    </div>
-                    <div class="posttext pull-left">
-                        <h2>What Instagram Ads Will Look Like</h2>
-                        <p>Instagram offered a first glimpse at what its ads will look like in a blog post
-                            Thursday. The sample ad, which you can see below.</p>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="postinfo pull-left">
-                    <div class="comments">
-                        <div class="commentbg">
-                            89
-                            <div class="mark"></div>
-                        </div>
-
-                    </div>
-                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-                    <div class="time"><i class="fa fa-clock-o"></i> 15 min</div>
-                </div>
-                <div class="clearfix"></div>
-            </div><!-- POST -->
-
-
-            <!-- POST -->
-            <div class="post">
-                <div class="wrap-ut pull-left">
-                    <div class="userinfo pull-left">
-                        <div class="avatar">
-                            <img src="/assets/images/avatar3.jpg" alt="" />
-                            <div class="status red">&nbsp;</div>
-                        </div>
-
-                        <div class="icons">
-                            <img src="/assets/images/icon2.jpg" alt="" /><img src="/assets/images/icon4.jpg" alt="" />
-                        </div>
-                    </div>
-                    <div class="posttext pull-left">
-                        <h2>The Future of Magazines Is on Tablets</h2>
-                        <p>Eric Schmidt has seen the future of magazines, and it's on the tablet. At a
-                            Magazine Publishers Association.</p>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="postinfo pull-left">
-                    <div class="comments">
-                        <div class="commentbg">
-                            456
-                            <div class="mark"></div>
-                        </div>
-
-                    </div>
-                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-                    <div class="time"><i class="fa fa-clock-o"></i> 2 days</div>
-                </div>
-                <div class="clearfix"></div>
-            </div><!-- POST -->
-
         </div>
 
         <div class="col-lg-4 col-md-4">
-            {{> main/sidebar}}
+            {{> sidebar}}
         </div>
 
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-xs-12">
-            <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>
-            <div class="pull-left">
-                <ul class="paginationforum">
-                    <li class="hidden-xs"><a href="#">1</a></li>
-                    <li class="hidden-xs"><a href="#">2</a></li>
-                    <li class="hidden-xs"><a href="#">3</a></li>
-                    <li class="hidden-xs"><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">6</a></li>
-                    <li><a href="#" class="active">7</a></li>
-                    <li><a href="#">8</a></li>
-                    <li class="hidden-xs"><a href="#">9</a></li>
-                    <li class="hidden-xs"><a href="#">10</a></li>
-                    <li class="hidden-xs hidden-md"><a href="#">11</a></li>
-                    <li class="hidden-xs hidden-md"><a href="#">12</a></li>
-                    <li class="hidden-xs hidden-sm hidden-md"><a href="#">13</a></li>
-                    <li><a href="#">1586</a></li>
-                </ul>
-            </div>
-            <div class="pull-left"><a href="#" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-</div>
+{{!-- UPLOAD --}}
+<script>
+    function isDragAndDropSupported() {
+        return typeof document.createElement('div').ondrop != 'undefined';
+    }
+    function isFormDataSupported() {
+        return typeof FormData == 'function';
+    }
+    function isFileApiSupported() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        return typeof input.files != 'undefined';
+    }
+    if (isDragAndDropSupported() && isFormDataSupported() && isFileApiSupported()) {
+        var Dropzone = function (container) {
+            this.dropzone = container;
+            this.dropzone.classList.add('dropzone--actual');
+            this.dropzone.querySelector('[data-dropzone-label]').classList.add('button');
+            this.setupDropzone();
+            this.setupFileInput();
+            this.setupStatusBox();
+            this.setupFiles();
+            this.setupFileRemove();
+        }
+        Dropzone.prototype.setupDropzone = function () {
+            this.dropzone.addEventListener('dragover', this.onDragOver.bind(this));
+            this.dropzone.addEventListener('dragleave', this.onDragLeave.bind(this));
+            this.dropzone.addEventListener('drop', this.onDrop.bind(this));
+        }
+        Dropzone.prototype.onDragOver = function (event) {
+            event.preventDefault();
+            this.dropzone.classList.add('dropzone--dragover');
+        }
+        Dropzone.prototype.onDragLeave = function () {
+            this.dropzone.classList.remove('dropzone--dragover');
+        }
+        Dropzone.prototype.onDrop = function (event) {
+            event.preventDefault();
+            this.dropzone.classList.remove('dropzone--dragover');
+            this.files.classList.remove('hidden');
+            this.status.innerHTML = 'Uploading files, please wait...';
+            this.uploadFiles(event.dataTransfer.files);
+        }
+        Dropzone.prototype.setupFileInput = function () {
+            this.fileInput = document.querySelector('[data-dropzone-file]');
+            this.fileInput.addEventListener('change', this.onFileChange.bind(this));
+            this.fileInput.addEventListener('focus', this.onFileFocus.bind(this));
+            this.fileInput.addEventListener('blur', this.onFileBlur.bind(this));
+        }
+        Dropzone.prototype.onFileChange = function (event) {
+            this.files.classList.remove('hidden');
+            this.status.innerHTML = 'Uploading files, please wait...';
+            this.uploadFiles(event.currentTarget.files);
+        }
+        Dropzone.prototype.onFileFocus = function () {
+            this.dropzone.querySelector('[data-dropzone-label]').classList.add('dropzone__label--focused');
+        }
+        Dropzone.prototype.onFileBlur = function () {
+            this.dropzone.querySelector('[data-dropzone-label]').classList.remove('dropzone__label--focused');
+        }
+        Dropzone.prototype.setupStatusBox = function () {
+            this.status = document.createElement('div');
+            this.status.className = 'visually-hidden';
+            this.status.setAttribute('role', 'status');
+            this.status.setAttribute('aria-live', 'polite');
+            this.dropzone.appendChild(this.status);
+        }
+        Dropzone.prototype.setupFiles = function () {
+            this.filesHeading = document.createElement('h2');
+            this.filesHeading.className = 'heading';
+            this.filesHeading.innerHTML = 'Files';
+            this.file = document.createElement('ul');
+            this.file.className = 'file';
+            this.files = document.querySelector('[data-files]');
+            this.files.appendChild(this.filesHeading);
+            this.files.appendChild(this.file);
+        }
+        Dropzone.prototype.setupFileRemove = function () {
+            document.querySelector('[data-files]').addEventListener('click', this.onFileRemoveClick.bind(this));
+        }
+        Dropzone.prototype.onFileRemoveClick = function (event) {
+            const eventTarget = event.target;
+            if (eventTarget.hasAttribute('data-file-remove')) {
+                const listItem = eventTarget.parentNode;
+                listItem.parentNode.removeChild(listItem);
+            }
+        }
+        Dropzone.prototype.getStatusHtml = function (result, isSuccess) {
+            this.fileName = document.createElement('span');
+            this.fileStatus = document.createElement('span');
+            this.fileStatus.className = 'file__status file__status--error';
+            this.fileStatus.innerHTML = 'Error';
+            if (isSuccess) {
+                this.fileLink = document.createElement('a');
+                this.fileLink.className = 'anchor';
+                this.fileLink.setAttribute('href', '#');
+                this.fileLink.setAttribute('target', '_blank');
+                this.fileLink.innerHTML = result.name;
+                this.fileName = document.createElement('div');
+                this.fileName.appendChild(this.fileLink);
+                this.fileStatus.className = 'file__status file__status--success';
+                this.fileStatus.innerHTML = 'Success';
+            } else
+                this.fileName.innerHTML = result.name;
+            this.fileName.className = 'file__name';
+            this.fileRemove = document.createElement('button');
+            this.fileRemove.className = 'file__remove button';
+            this.fileRemove.setAttribute('type', 'button');
+            this.fileRemove.setAttribute('data-file-remove', '');
+            this.fileRemove.innerHTML = 'Remove';
+            this.fileItem = document.createElement('li');
+            this.fileItem.className = 'file__item';
+            this.fileItem.appendChild(this.fileName);
+            this.fileItem.appendChild(this.fileStatus);
+            this.fileItem.appendChild(this.fileRemove);
+            return this.fileItem;
+        }
+        Dropzone.prototype.uploadFiles = function (files) {
+            for (const file of files)
+                this.uploadFile(file);
+        }
+        Dropzone.prototype.uploadFile = function (file) {
+            currentFilesUpload.push(file);
+            this.file.appendChild(this.getStatusHtml(file, true));
+        }
+    }
+    if (typeof Dropzone != 'undefined')
+        new Dropzone(document.querySelector('[data-dropzone]'));
+</script>

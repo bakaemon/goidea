@@ -12,7 +12,7 @@ export class CategoryAPIController {
         private readonly service: CategoryService,
     ) { }
     @Post("create")
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async create(@Body() {name} : {name: String}, @Res() res: Response) {
         try {
             await this.service.create({name: name});
@@ -37,9 +37,9 @@ export class CategoryAPIController {
     }
 
     @Get(":id")
-    async getById(@Param() id: String, @Res() res: Response) {
+    async getById(@Param() id: string, @Res() res: Response) {
         try {
-            return res.json(await this.service.findOne({ _id: id }));
+            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) }));
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -49,7 +49,7 @@ export class CategoryAPIController {
     }
 
     @Patch(":id/update")
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async update(
         @Param() id: string,
         @Body() { name }: { name: String }, @Res() res: Response
@@ -70,7 +70,7 @@ export class CategoryAPIController {
     }
 
     @Delete(':id/delete')
-    @UseGuards(RoleGuard(Role.Admin))
+    @UseGuards(RoleGuard(Role.QAM))
     async delete(@Param() id: string, @Res() res: Response) {
         try {
             await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });

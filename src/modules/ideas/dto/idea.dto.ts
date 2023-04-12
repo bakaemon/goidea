@@ -17,12 +17,15 @@ export class IdeaDto {
     @IsBoolean()
     anonymous: boolean;
 
+    @IsString()
+    category: string;
+
     @IsArray()
     tags: string;
 
     @IsArray()
     flag: string[];
 
-    @IsString()
-    file?: string;
+    @IsArray()
+    files?: string[];
 }

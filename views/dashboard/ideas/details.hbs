@@ -1,0 +1,29 @@
+{{setVar "head"
+
+"
+<link href='https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css' rel='stylesheet' type='text/css'>
+<link href='/assets/css/modal.css' rel='stylesheet' type='text/css'>
+
+"
+
+}}
+
+{{setVarIter "scripts" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+
+{{setVarIter "scripts" '
+<script src="/assets/js/dashboard/idea_details.js"></script>'}}
+<script>
+    var eventId = '{{eventId}}';
+</script>
+
+<div id="table-area-ideas" style="width: 100%;">
+</div>
+
+<div class="modal-area"></div>
+
+

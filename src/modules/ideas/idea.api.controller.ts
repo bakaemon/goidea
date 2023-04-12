@@ -1,4 +1,4 @@
-import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
+import { ExceptionFilter, UploadedFile, UseInterceptors, ParseFilePipe, FileValidator, FileTypeValidator, UploadedFiles, Put, Req } from '@nestjs/common';
 import { Controller, Post, UseGuards, Body, Res, HttpStatus, Get, Param, Patch, Delete, Query, HttpException } from '@nestjs/common';
 import Role from "@src/common/enums/role.enum";
 import RoleGuard from "@src/common/guards/role.guard";
@@ -6,40 +6,52 @@ import { Response } from "express";
 import { IdeaService } from "./idea.service";
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
-import { AccountDocument } from '../accounts/schema/account.schema';
+import { AccountDocument, Account } from '../accounts/schema/account.schema';
 import { IdeaDto } from './dto/idea.dto';
-import { Idea } from './schema/idea.schema';
 import * as mongoose from 'mongoose';
 import { TagService } from '../tag/tag.service';
-import { ExecException } from 'child_process';
-import { FileInterceptor, AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { AuthService } from '@modules/auth/auth.service';
+import { CategoryService } from '../category/category.service';
+import { EmailTransporter } from '@src/common/email/email-transporter';
+import { AccountsService } from '../accounts/accounts.service';
+import * as fs from 'fs';
+import { DepartmentService } from '../department/department.service';
+
 @Controller('api')
 export class IdeaAPIController {
     constructor(
         private readonly service: IdeaService,
         private readonly tagService: TagService,
+        private readonly authService: AuthService,
+        private readonly categoryService: CategoryService,
+        private readonly emailTransporter: EmailTransporter,
+        private readonly accountService: AccountsService,
+        private readonly departmentService: DepartmentService,
     ) { }
 
     // Basic CRUD
     @Post("create")
     @UseGuards(AuthGuard)
-    @UseInterceptors(FilesInterceptor('files',10, {
+    @UseInterceptors(FilesInterceptor('files', 10, {
         storage: diskStorage({
-        destination: './public/assets/uploads',
-        filename: (req, file, cb) => {
-            const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-            return cb(null, `${randomName}${extname(file.originalname)}`);
-        }}), 
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
     }))
-    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>, @AccountDecorator() account: AccountDocument, @Res() res: Response) {
+    async create(@Body() ideaDto: IdeaDto, @UploadedFiles() files: Array<Express.Multer.File>,
+        @AccountDecorator() account: AccountDocument,
+        @Res() res: Response) {
         console.log(files);
         try {
-            
             ideaDto.author = account._id;
             var tagNames = ideaDto.tags.split(",");
             delete ideaDto.tags;
@@ -52,14 +64,15 @@ export class IdeaAPIController {
                 catch (e) {
                     var newTag = await this.tagService.create({ name: tagName });
                     newTags.push(newTag._id.toString());
-                }              
+                }
             }
             var ideaData = {
                 ...ideaDto,
-                files: files ?  files.map(file => file.filename) : [],
+                files: files ? files.map(file => file.filename) : [],
                 tags: newTags
             }
-            await this.service.create(ideaData);
+            var idea = await this.service.create(ideaData);
+            await this.notifyQAC(idea._id, ideaData, account);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Created Idea successfully"
@@ -74,24 +87,91 @@ export class IdeaAPIController {
         }
     }
 
+    // @Post('/allinfo')
+    // async info(@Body() {
+    //     createdAt, updateAt
+    // } : {
+    //     createdAt: {
+    //         month: number,
+    //         day: number,
+    //         year: number
+    //     },
+    //     updateAt: {
+    //         month: number,
+    //         day: number,
+    //         year: number
+    //     }
+    // }) {
+    //     var pipeline = [];
+    //     if (createdAt.day) pipeline.push(({$expr: { $eq: [{ $day: createdAt }, createdAt.day] }}));
+    //     if (createdAt.month) pipeline.push(({$expr: { $eq: [{ $month: createdAt }, createdAt.month] }}));
+    //     if (createdAt.year) pipeline.push(({$expr: { $eq: [{ $year: createdAt }, createdAt.year] }}));
+    //     var data = await this.service.aggregate({}, pipeline);
+    // }
+
     @Get("all")
-    async getAll(@Query() { page, limit, sort, sortMode }: { page?: number, limit?: number, sort?: string, sortMode?: any },
+    async getAll(@Query() { 
+        keyword, 
+        page, 
+        limit, 
+        sort, 
+        sortMode=1,
+        month,
+    }: { keyword?: string,
+         page?: number, 
+         limit?: number, 
+         sort?: string, 
+         sortMode?: any, 
+         month?: number
+        },
         @Res() res: Response) {
         if (!page) page = 1;
-        var ideas = await this.service.findAll({}, {
+        var filter = {};
+        if (keyword) {
+            filter["$or"] = [
+                { title: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+            ];
+            
+            // look for tags that match the keyword
+            var tags = await this.tagService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (tags.data.length > 0) {
+                filter["$or"].push({ tags: { $in: tags.data.map(tag => tag._id) } });
+            }
+            // look for categories that match the keyword
+            var categories = await this.categoryService.findAll({ name: { $regex: keyword, $options: "i" } });
+            if (categories.data.length > 0) {
+                filter["$or"].push({ category: { $in: categories.data.map(category => category._id) } });
+            }
+        }
+        if (month) {
+            filter['$expr'] =  { $eq: [{ $month: '$createdAt' }, month] }
+        }
+        var options = {
             page: page || 1,
             limit: limit || 10,
-            sort: sort ? { [sort]: sortMode } : null,
             populate: [
                 { path: "author" },
-                { path: "event" }
+                { path: "event" },
+                { path: "tags" },
+                { path: "category" }
+
             ]
-        });
+        };
+        var ideas = await this.service.findAll(filter, options);
         let promisedIdeas = await Promise.all(ideas.data.map(async (idea) => {
             let newIdea = idea.toObject();
             newIdea.votes = await this.service.countVote(idea._id);
             return newIdea;
         }));
+        promisedIdeas.sort((a, b) => {
+            if (a[sort] < b[sort]) {
+                return -1 * sortMode;
+            }
+            if (a[sort] > b[sort]) {
+                return 1 * sortMode;
+            }
+        });
         var results = {
             data: promisedIdeas,
             paginationOptions: ideas.paginationOptions
@@ -102,12 +182,20 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            return res.json(await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
+            var idea = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
                 {
                     populate: [
                         { path: "author" },
+                        { path: 'tags' },
+                        { path: 'category' },
+                        { path: 'event' },
+
                     ]
-                }))
+                }) as any;
+            var department = await this.departmentService.findOne({ _id: new mongoose.Types.ObjectId(idea.event.department) });
+            delete idea.event.department;
+            idea.event.department = department;
+            return res.json(idea)
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -117,13 +205,57 @@ export class IdeaAPIController {
     }
 
     @Patch(":id/update")
+    @UseInterceptors(FilesInterceptor('files', 10, {
+        storage: diskStorage({
+            destination: './public/assets/uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                return cb(null, `${randomName}${extname(file.originalname)}`);
+            }
+        }),
+    }))
     @UseGuards(AuthGuard)
     async update(
-        @Param() id: String,
-        @Body() ideaDto: IdeaDto, @Res() res: Response
+        @Param() id: string,
+        @Body() ideaDto: IdeaDto, 
+        @Res() res: Response,
+        @UploadedFiles() files: Array<Express.Multer.File>
     ) {
         try {
-            await this.service.update({ _id: id }, ideaDto);
+            var idea = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) });
+            if (!idea) throw new HttpException("Idea not found!", HttpStatus.NOT_FOUND);
+            
+            if (files) {
+                // check if the files are different, if so, delete the old files
+                var oldFiles = idea.files;
+                var newFiles = files.map(file => file.filename);
+                var deletedFiles = oldFiles.filter(oldFile => !newFiles.includes(oldFile));
+                deletedFiles.forEach(file => {
+                    fs.unlinkSync(`./public/assets/uploads/${file}`);
+                });
+                ideaDto.files = newFiles;
+            }
+            var tagNames = ideaDto.tags.split(",");
+            delete ideaDto.tags;
+            var newTags = [];
+            for (var tagName of tagNames) {
+                try {
+                    var tagCheck = await this.tagService.findOne({ name: tagName });
+                    newTags.push(tagCheck._id.toString());
+                }
+                catch (e) {
+                    var newTag = await this.tagService.create({ name: tagName });
+                    newTags.push(newTag._id.toString());
+                }
+            }
+            var ideaData = {
+                ...ideaDto,
+                tags: newTags
+            }
+            await this.service.update({ _id: new mongoose.Types.ObjectId(id) }, ideaData);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Update Idea successfully"
@@ -139,11 +271,11 @@ export class IdeaAPIController {
 
     @Delete(':id/delete')
     @UseGuards(AuthGuard)
-    async delete(@AccountDecorator() account: AccountDocument, @Param() id: String, @Res() res: Response) {
+    async delete(@AccountDecorator() account: AccountDocument, @Param() id: string, @Res() res: Response) {
         try {
-            if (account._id != id) throw new HttpException("You can't delete other people's idea!",
+            if (!account && !account.roles.includes(Role.Admin)) throw new HttpException("You can't delete other people's idea!",
                 HttpStatus.FORBIDDEN);
-            await this.service.delete({ _id: id });
+            await this.service.delete({ _id: new mongoose.Types.ObjectId(id) });
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Deleted Idea successfully"
@@ -158,12 +290,55 @@ export class IdeaAPIController {
     }
 
     // Advanced CRUD
-    @Get('comments/all')
-    async getAllCommentsByIdeaId(@Query('id') ideaId: string, @Res() res: Response) {
+    @Get(':id/comments/all')
+    async getAllCommentsByIdeaId(@Param('id') ideaId: string, @Res() res: Response, @Req() req: any) {
         try {
-            if (ideaId) {
-                return res.json(await this.service.findCommentsByIdeaId(ideaId));
-            } else return res.json(await this.service.findALlComment({}));
+            var dataResults = await this.service.findCommentsByIdeaId(ideaId, {
+                populate: [
+                    { path: "author" },
+                ]
+            });
+            var comments = dataResults.data;
+            delete dataResults.data;
+            var token = req.cookies['token'];
+            var results;
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token, 'jwt.accessTokenPrivateKey');
+                const checkVote = (comment) => {
+                    if (comment.upvoter.includes(account._id.toString())) {
+                        return "upvoted";
+                    }
+                    else if (comment.downvoter.includes(account._id.toString())) {
+                        return "downvoted";
+                    }
+                    else {
+                        return "not voted";
+                    }
+                };
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = checkVote(comment);
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            } else {
+                results = [...comments.map(comment => {
+                    var newComment = comment.toObject();
+                    newComment.voteStatus = "not voted";
+                    newComment.voteCount = comment.upvoter.length - comment.downvoter.length;
+                    delete newComment.upvoter;
+                    delete newComment.downvoter;
+                    return newComment;
+                })];
+            }
+
+            return res.json({
+                data: results,
+                ...dataResults
+            });
+
         } catch (error) {
             console.log(error);
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -173,23 +348,91 @@ export class IdeaAPIController {
         }
     }
 
-
-    @Get(':id/vote/:type')
+    // post comments to selected idea includes author, ideaID, content
+    @Post(':id/comments/create')
     @UseGuards(AuthGuard)
-    async vote(@AccountDecorator() account: AccountDocument,
-        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+    async createComment(@AccountDecorator() account: AccountDocument,
+        @Param('id') ideaID: string,
+        @Body() { content }: { content: string },
+        @Res() res: Response) {
         try {
-            
+            var idea = await (await this.service.findOne({ _id: new mongoose.Types.ObjectId(ideaID) })).populate('author');
+            var comment = await this.service.createComment(ideaID, content, account._id);
+            var ideaObj = idea.toObject();
+            if (idea.isNotified) {
+                this.emailTransporter.sendMail({
+                    from: "GOIDEA<no-reply>",
+                    to: ideaObj.author.email, // change to your email you want to send to
+                    subject: `You just receive an comment! from another ${account.username}`,
+                    html: `<h1>GOIDEA</h1><p>You just receive an comment! from ${account.username}.</p>
+                    <p>Click <a href="https://${process.env.DOMAIN}/home/idea/${idea._id}">right here</a> to view the comment.</p>`,
+                });
+            }
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                data: comment,
+                message: "Created Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    //vote comment
+    @Put(':id/comments/:commentId/vote/:type')
+    @UseGuards(AuthGuard)
+    async voteComment(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('commentId') commentId: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
             if (type == 'upvote') {
-                await this.service.upvote(id, account._id);
+                vote = await this.service.upvoteComment(commentId, account._id);
             } else if (type == 'downvote') {
-                await this.service.downvote(id, account._id);
+                vote = await this.service.downvoteComment(commentId, account._id);
             } else {
                 throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
             }
             return res.status(HttpStatus.OK).json({
                 success: true,
                 type,
+                data: vote.upvoter.length - vote.downvoter.length,
+                message: "Voted Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+
+
+
+    @Put(':id/vote/:type')
+    @UseGuards(AuthGuard)
+    async vote(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('type') type: string, @Res() res: Response) {
+        try {
+            // refresh vote
+            let vote;
+            if (type == 'upvote') {
+                vote = await this.service.upvote(id, account._id);
+            } else if (type == 'downvote') {
+                vote = await this.service.downvote(id, account._id);
+            } else {
+                throw new HttpException("Invalid type!", HttpStatus.BAD_REQUEST);
+            }
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                type,
+                data: vote.upvoter.length - vote.downvoter.length,
                 message: "Voted Idea successfully"
             });
 
@@ -202,12 +445,22 @@ export class IdeaAPIController {
     }
 
     @Get(':id/vote')
-    async getVote(@Param('id') id, @Res() res: Response) {
+    async getVote(@Param('id') id, @Res() res: Response, @Req() req: any) {
         try {
             var voteCount = await this.service.countVote(id);
+            var token = req.cookies['token'];
+            var voteStatus = null;
+            if (token) {
+                var account = await this.authService.verifyTokenFromRequest(token,
+                    'jwt.accessTokenPrivateKey');
+                if (account) {
+                    voteStatus = await this.service.checkVoted(id, account._id.toString())
+                }
+            }
             return res.json({
                 success: true,
-                data: voteCount,
+                voteStatus,
+                data: voteCount.toString(),
             })
         } catch (e) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -217,39 +470,62 @@ export class IdeaAPIController {
         }
     }
 
-    // //upload file
-    // @Post('file/upload')
-    // @UseGuards(AuthGuard)
-    // @UseInterceptors(FileInterceptor('file', {
-    //     storage: diskStorage({
-    //     destination: './public/assets/uploads',
-    //     filename: (req, file, cb) => {
-    //         const randomName = Array(32)
-    //         .fill(null)
-    //         .map(() => Math.round(Math.random() * 16).toString(16))
-    //         .join('');
-    //         return cb(null, `${randomName}${extname(file.originalname)}`);
-    //     }}),
-    // }))
-    // async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() res: Response) {
-    //     try {
-    //         console.log(file);
-    //         if(!file){
-    //             throw new HttpException("File not found!", HttpStatus.BAD_REQUEST);
-    //         } 
-    //         file.filename = file.originalname;
-    //         return res.json({
-    //             success: true,
-    //             data: file,
-    //         })
-    //     } catch (error) {
-    //         return res.status(HttpStatus.BAD_REQUEST).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-    // }
-       
+    //search ideas
+    @Get("search")
+    async search(@Res() res: Response, @Query() query: {
+        keyword: string,
+        page?: number,
+        limit?: number,
+        sort?: string,
+        sortMode?: string,
+    }) {
+        try {
+            var { keyword, page, limit, sort, sortMode } = query;
+            var filter = {
+                $or: [
+                    { title: { $regex: keyword, $options: 'i' } },
+                    { content: { $regex: keyword, $options: 'i' } },
+                    { tags: [{ $elemMatch: { name: { $regex: keyword, $options: 'i' } } }] },
+                    { category: { $elemMatch: { name: { $regex: keyword, $options: 'i' } } } },
+                ]
+            };
+            var options = {
+                page: page || 1,
+                limit: limit || 10,
+                sort: sort ? { [sort]: sortMode } : null,
+                populate: [
+                    { path: "author" },
+                    { path: "event" },
+                    { path: "tags" },
+                    { path: "category" }
+
+                ]
+            };
+            return res.json(await this.service.findAll(filter, options));
+        } catch (error) {
+            console.log(error);
+            return res.status(HttpStatus.NOT_FOUND).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    // notification to qac when a new idea is created
+    async notifyQAC( id, idea: any, author: AccountDocument) {
+        var qacs = await this.accountService.findAll({ roles: { $in: ['qac'] } },);
+        var ideaObj = idea;
+        qacs.data.forEach(async (qac) => {
+            this.emailTransporter.sendMail({
+                from: "GOIDEA<no-reply>",
+                to: qac.email, // change to your email you want to send to
+                subject: `${author.username} just uploaded an idea!`,
+                html: `<h1>GOIDEA</h1><p>${author.username} just uploaded an idea!.</p>
+                <p>Click <a href="https://${process.env.DOMAIN}/home/idea/${id}">${idea.title}</a> to view the idea.</p>`,
+            });
+        });
+
+    }
 }
 
-   
+

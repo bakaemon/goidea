@@ -1,0 +1,54 @@
+{{setVarIter "scripts" "
+<script src='/assets/js/simple-datatable.js' type='text/javascript'></script>
+
+"
+
+}}
+{{setVar "title" "Download Page "}}
+
+{{setVarIter 'scripts' '
+<script src="\assets\js\download.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+'}}
+<link rel="stylesheet" href="/assets/css/download.css">
+
+
+<div class="mt-4 f-flex align-items-center">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkbox-all" onclick="checkAll()">
+        <label class="form-check-all" for="checkbox-all">
+            Select All
+        </label>
+    </div>
+    <div id="button">
+        <button type="button" "btn-primary btn-sm btn-check-all-submit disabled" class="darkBlueBtn"
+            onclick="downloadFilesAsZip()">Attatchments
+            as ZIP</button>
+
+        <button type="button" "btn-primary btn-sm" class="darkBlueBtn" onclick="downloadIdeaDatas()">Ideas as
+            CSV</button>
+    </div>
+
+</div>
+
+<center>
+    <Table id="ideas-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Day Created</th>
+            </tr>
+        </thead>
+        <tbody id="table-ideas">
+
+        </tbody>
+    </Table>
+</center>
+<br><br>
+
+{{setVarIter 'scripts' '
+<script src="\assets\js\download.js"></script>
+'}}

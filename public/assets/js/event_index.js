@@ -28,7 +28,7 @@ async function loadEventTable() {
                     var newRow = [];
                     for (var key in row) {
                         if (!row || !row.hasOwnProperty(key)) continue;
-                        if (key == 'department' || key == 'category') {
+                        if (key == 'department') {
                             newRow.push(row[key].name ?? "no data!");
                         }
                         else if (key=="author") newRow.push(row[key].username);
@@ -72,13 +72,6 @@ async function createEventForm(e) {
             option.innerHTML = d.name;
             document.getElementById('department').appendChild(option);
         }
-        await populateCategoryData();
-        for (var c of categoryList) {
-            var option = document.createElement('option');
-            option.value = c._id;
-            option.innerHTML = c.name;
-            document.getElementById('category').appendChild(option);
-        }
     });
     modal.open();
 }
@@ -115,13 +108,6 @@ async function editEventForm(e, id) {
                 option.innerHTML = department.name;
                 document.getElementById('department').appendChild(option);
         });
-        await populateCategoryData();
-        categoryList.forEach(category => {
-            var option = document.createElement('option');
-            option.value = category._id;
-            option.innerHTML = category.name;
-            document.getElementById('category').appendChild(option);
-        });
         
         setPlaceHolders(form, '');
     });
@@ -137,14 +123,12 @@ async function createEvents() {
     var closureDate = document.getElementById('closureDate').value;
     var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
-    var category = document.getElementById('category').value;
     var data = {
         name: name,
         description: description,
         closureDate: closureDate,
         finalClosureDate: finalClosureDate,
         department: department,
-        category: category,
     }
     try {
         var response = await fetch('/event/api/create', {
@@ -178,7 +162,6 @@ async function editEvents() {
     var closureDate = document.getElementById('closureDate').value;
     var finalClosureDate = document.getElementById('finalClosureDate').value;
     var department = document.getElementById('department').value;
-    var category = document.getElementById('category').value;
     var data = {
         _id: id,
         name: name,
@@ -186,7 +169,6 @@ async function editEvents() {
         closureDate: closureDate,
         finalClosureDate: finalClosureDate,
         department: department,
-        category: category,
     }
     try {
         var response = await fetch('/event/api/' + selectedid + '/update', {

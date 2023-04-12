@@ -68,6 +68,7 @@ function openCreateForm(){
 async function editCategory(button, id){
     //var response = await fetch('/category/api' + id);
    // var data = await response.json();
+   selectedid = id;
    var modal = Modal(".modal-area", {
         title:"Edit Category",
         get:{url: ""},
@@ -82,8 +83,11 @@ async function editCategory(button, id){
    });
 
    modal.on("open", async (modal) => {
-        var response = await fetch('/category/api/' + id);
+        var response = await fetch(`/category/api/${id}`);
         console.log('loading...')
+    console.log('loading...')
+    var response = await fetch('/category/api/' + id);
+
         if(!response.ok) {
             alert("Something went wrong!!!")
             return;
@@ -91,7 +95,7 @@ async function editCategory(button, id){
         var data = await response.json();
         var name = document.getElementById('name');
         name.value = data.name;
-        console.log('close')
+        console.log('Done')
    });
 
    modal.on("close", (modal) => {
@@ -211,6 +215,36 @@ async function deleteCategory(id) {
         return false;
 }
 
+// update seleted category
+async function updateCategory() {
+    var name = document.getElementById('name').value;
+    var data = {
+        name: name,
+        id: selectedid
+    };
+    try {
+        var response = await fetch('/category/api/' + selectedid + '/update', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getCookie("token")
+            }
+        });
+        var data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/category";
+            return;
+        }
+        else {
+            alert(data.message);
+            return;
+        }
+    }
+    catch (error) {
+        alert(error);
+    }
+}
 
 window.onload = async (e) => {
     loadTable();

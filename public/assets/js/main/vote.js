@@ -1,40 +1,29 @@
 
 const upVote = (id) => {
-        fetch (`/ideas/api/${id}/vote/upvote`)
+    if (!getCookie('token')) {
+        alert('Please login to vote!')
+        return;
+    }
+    return fetch(`/ideas/api/${id}/vote/upvote`, { method: 'PUT' })
         .then(res => res.json())
-        .then(data => {
-           if(data.success){
-               console.log('You have successfully upvoted this idea');
-               getVoteCount();
-              } else {
-                console.log('upvote failed')
-           }
-        }
-    )
+        
 }
 
 const downVote = (id) => {
-        fetch (`/ideas/api/${id}/vote/downvote`)
+    if (!getCookie('token')) {
+        alert('Please login to vote!')
+        return;
+    }
+    return fetch(`/ideas/api/${id}/vote/downvote`, { method: 'PUT' })
         .then(res => res.json())
-        .then(data => {
-           if(data.success){
-               console.log('You have successfully downvoted this idea');
-               getVoteCount();
-              } else {
-                console.log('downvote failed')
-           }
-        }
-    )
+        
 }
 
 const getVoteCount = (id) => {
-    fetch(`/ideas/api/${id}/vote`)
-    .then(res => res.json())
-    .then(data => {
-        $('#voteCount').text(data.data)
-    })
+    return fetch(`/ideas/api/${id}/vote`, {
+        method: 'GET',
+    }).then(res => res.json())
+        
 }
 
-window.addEventListener('load', () => {
-    getVoteCount(ideaId)
-})
+

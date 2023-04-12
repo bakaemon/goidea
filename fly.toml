@@ -1,0 +1,45 @@
+# fly.toml file generated for goidea on 2023-03-30T05:53:38+07:00
+
+app = "goidea"
+kill_signal = "SIGTERM"
+primary_region = "sin"
+
+[env]
+  ACCESS_TOKEN_EXPIRES_TIME = "30m"
+  DOMAIN = "goidea.fly.dev"
+  JWT_ACCESS_SECRET = "supersecret"
+  JWT_REFRESH_SECRET = "supersecret1"
+  MONGO_URI = "mongodb+srv://admin2009:binhminh2001@cluster0.zb7re.mongodb.net/?retryWrites=true&w=majority"
+  PORT = "8080"
+  REFRESH_TOKEN_EXPIRES_TIME = "7d"
+  GMAIL_USER = "blackkillers20@gmail.com"
+  GMAIL_PASSWORD = "vlfuhbctehjxlrch"
+
+[experimental]
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

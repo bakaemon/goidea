@@ -1,0 +1,163 @@
+{{setVar "head"
+'
+<link rel="stylesheet" href="/assets/css/staff.css">
+<link rel="stylesheet" href="https://richtexteditor.com/richtexteditor/rte_theme_default.css" />
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/rte.js"></script>
+<script type="text/javascript" src="https://richtexteditor.com/richtexteditor/plugins/all_plugins.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+'
+}}
+
+{{setVarIter "scripts" '
+    <script src="/assets/js/main/ideas.functions.js"></script>
+    <script src="/assets/js/main/common/dz.js"></script>
+'}}
+
+
+<script>
+    var currentFilesUpload = []
+    var ideaId = '{{ideaId}}';
+</script>
+
+<script>
+    var ideaId = `{{ideaId}}`;
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 breadcrumbf">
+            <a href="#">Name Page</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-8">
+            <!-- POST -->
+            <div class="post">
+                <form action="#" class="form newtopic" method="post">
+                    <div class="topwrap">
+                        <div class="userinfo pull-left">
+                            <div class="avatar">
+                                <img src="/assets/images/avatar4.jpg" alt="" />
+                                <div class="status red">&nbsp;</div>
+                            </div>
+
+                            <div class="icons">
+                                <img src="/assets/images/icon3.jpg" alt="" /><img src="/assets/images/icon4.jpg"
+                                    alt="" /><img src="/assets/images/icon5.jpg" alt="" /><img
+                                    src="/assets/images/icon6.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div class="posttext pull-left">
+
+                            <div>
+                                <label for="topicName"><b>Topic</b></label>
+                                <input id="topicName" type="text" placeholder="Enter Idea Title" class="form-control" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="events"><b>Event</b></label>
+                                    <select class="form-control" data-show-subtext="false"
+                                        data-live-search="true" name="events" id="events">
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="category"><b>Category</b></label>
+                                    <select name="category" id="category" class="form-control"
+                                        data-show-subtext="false" data-live-search="true">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="tags"><b>Tag</b></label>
+                                    <input name='tags' id="tags" value=''>
+                                </div>
+                            </div><br>
+
+                            <div class="row">
+                                <section class="upload-file">
+                                    <h1 class="heading">Upload files</h1>
+                                    <p class="paragraph">You can upload multiple files.</p>
+                                    <div class="files hidden" data-files></div>
+                                    <form class="form" enctype="multipart/formdata">
+                                        <div class="dropzone" data-dropzone>
+                                            <div class="dropzone__field">
+                                                <label class="dropzone__label" for="files" data-dropzone-label>Upload
+                                                    files</label>
+                                                <input class="dropzone__file" id="files" name="files" type="file"
+                                                    multiple data-dropzone-file>
+                                            </div>
+                                            <button class="dropzone__upload button" name="uploadFile"
+                                                type="submit">Uploadfiles</button>
+                                        </div>
+                                    </form>
+                                </section>
+                            </div><br>
+
+
+
+                            <div class="row">
+                                <div>
+                                    <textarea name="desc" id="desc" placeholder="Description"
+                                        class="form-control uploadFile"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row newtopcheckbox">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="notiEmail" /> Notification reply?
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="anon" /> Anonymous?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        {{!-- <div class="clearfix"></div> --}}
+                    </div>
+                    <div class="postinfobot">
+
+                        <div class="notechbox pull-left">
+                            <input type="checkbox" name="note" id="note" class="form-control" />
+                        </div>
+
+                        <div class="pull-left">
+                            <label for="note"> I agree to terms & conditions</label>
+                        </div>
+
+                        <div class="pull-right postreply">
+                            <div class="pull-left smile"><a href="#"><i class="fa fa-smile-o"></i></a></div>
+                            <div class="pull-left">
+                                <a class="btn btn-primary" href="javascript:editIdea()">Post</a>
+                            </div>
+                            {{!-- <div class="clearfix"></div> --}}
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div><!-- POST -->
+

@@ -35,6 +35,13 @@ export class Idea {
     })
     tags: string[];
 
+    @Prop({
+        required: true,
+        ref: "Category",
+        type: mongoose.Schema.Types.ObjectId
+    })
+    category: string;
+
     // is anonymous
     @Prop({ default: false })
     anonymous: boolean;
@@ -51,6 +58,12 @@ export class Idea {
         default: []
     })
     files: string[];
+
+    
+    // comment notification email to author if it's true
+    @Prop({ default: false })
+    isNotified: boolean;
+
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);

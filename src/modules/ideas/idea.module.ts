@@ -5,6 +5,11 @@ import { IdeaService } from './idea.service';
 import { DatabaseModule } from "@src/common/database_module/database.module";
 import { RouterModule } from "@nestjs/core";
 import { TagService } from '../tag/tag.service';
+import { CategoryService } from "../category/category.service";
+import { EventService } from "../events/event.service";
+import { EmailTransporter } from "@src/common/email/email-transporter";
+import { AccountsService } from "../accounts/accounts.service";
+import { DepartmentService } from "../department/department.service";
 
 
 @Module({
@@ -16,7 +21,7 @@ import { TagService } from '../tag/tag.service';
     ]),
     ],
     controllers: [IdeaController, IdeaAPIController],
-    providers: [IdeaService, TagService],
+    providers: [IdeaService, TagService, CategoryService, EventService,EmailTransporter, AccountsService, DepartmentService],
     exports: []
 })
 export class IdeaModule { }
