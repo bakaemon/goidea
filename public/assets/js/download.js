@@ -1,4 +1,4 @@
-const { file } = require("jszip");
+// const { file } = require("jszip");
 
 var ideaData;
 
@@ -26,36 +26,6 @@ async function getIdeaData() {
 }
 
 
-// document.addEventListener('docContentLoaded', function () {
-//     var ideaId;
-//     var checkBoxAll = $('#checkbox-all');
-//     var ideaItemCheckbox = $('input[name"idea._id[]"]');
-//     var checkAllSubmit = $('.btn-check-all-submit');
-
-
-//     checkBoxAll.change(function () {
-//         var isChecked = $(this).prop('checked');
-//         ideaItemCheckbox.prop('checked', isChecked);
-//         renderCheckAllBtn();
-
-//     })
-
-//     ideaItemCheckbox.change(function () {
-//         var isChecked = ideaItemCheckbox.length === $('input[name"idea._id[]"]:checked').length
-//         checkBoxAll.prop('checked', isChecked);
-//         renderCheckAllBtn();
-//     });
-
-//     function renderCheckAllBtn() {
-//         var checkedCount = $('input[name"idea._id[]"]:checked').length;
-//         if (checkedCount > 0) {
-//             checkAllSubmit.removeClass('disabled');
-//         } else {
-//             checkAllSubmit.addClass('disabled');
-//         }
-//     }
-// });
-
 function checkAll() {
     const masterCheckbox = document.getElementById("checkbox-all");
     const checkboxes = document.querySelectorAll("input[type='checkbox']");
@@ -69,52 +39,97 @@ function checkAll() {
     });
 }
 
-// Function to download files
-function downloadFile(url, fileName) {
-    fetch(url).then(function (t) {
-        return t.blob().then((blob) => {
-            // Create a download link with the blob
-            var a = document.createElement("a");
-            a.href = window.URL.createObjectURL(blob);
-            a.download = fileName;
-            a.click();
-        })
-    })
+// // Function to download files
+// function downloadFile(url, fileName) {
+//     fetch(url).then(function (t) {
+//         return t.blob().then((blob) => {
+//             // Create a download link with the blob
+//             var a = document.createElement("a");
+//             a.href = window.URL.createObjectURL(blob);
+//             a.download = fileName;
+//             a.click();
+//         })
+//     })
+// }
+
+// // Create an array of file URLs to download
+// function getFile() {
+//     var fileUrls = ideaData.files.map(filename => '/assets/uploads/' + filename);
+
+//     // Loop through file URLs and download each file
+//     var downloadedFiles = [];
+//     var promiseArray = [];
+
+//     for (var i = 0; i < fileUrls.length; i++) {
+//         var promise = fetch(fileUrls[i]).then(function (response) {
+//             var content = response.blob();
+//             return {
+//                 name: fileUrls[i].match(/[^\/\\]+$/)[0],
+//                 data: content
+//             };
+//         });
+//         promiseArray.push(promise);
+//     }
+
+//     Promise.all(promiseArray).then(function (results) {
+//         // Create a zip object
+//         var zip = new JSZip();
+
+//         // Add each file to the zip object
+//         for (var j = 0; j < results.length; j++) {
+//             zip.file(results[j].name, results[j].data, { binary: true });
+//         }
+
+//         // Generate a zip file and download it
+//         zip.generateAsync({ type: "blob" }).then(function (content) {
+//             downloadFile(URL.createObjectURL(content), 'download.zip');
+//         });
+//     });
+// }
+
+function downloadFilesAsZip() {
+    // Fetch a list of the user's uploaded files from the server
+    fetch('/ideas/api/all')
+        .then(response => response.json())
+        .then(ideaData => {
+            const files = ideaData.data.map(filename => '/assets/fileUpload/' + filename);
+
+            if (!files || !Array.isArray(files)) {
+                // Handle the case where the files array is missing or not an array
+                console.error('Invalid or missing files array:', files);
+                return;
+            }
+
+            // Create a zip object
+            const zip = new JSZip();
+
+            // Loop through the files and download each file
+            const promises = files.map(file => {
+                // Fetch the file's contents
+                return fetch(file.url)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Add the file to the zip object
+                        zip.file(file.name, blob, { binary: true });
+                    });
+            });
+
+            // Wait for all the files to be downloaded and added to the zip object
+            Promise.all(promises).then(() => {
+                // Generate a zip file and download it
+                zip.generateAsync({ type: "blob" }).then(content => {
+                    downloadFile(URL.createObjectURL(content), 'my_files.zip');
+                });
+            });
+        });
 }
 
-// Create an array of file URLs to download
-function getFile() {
-    var fileUrls = ideaData.files.map(filename => '/assets/uploads/' + filename);
-
-    // Loop through file URLs and download each file
-    var downloadedFiles = [];
-    var promiseArray = [];
-
-    for (var i = 0; i < fileUrls.length; i++) {
-        var promise = fetch(fileUrls[i]).then(function (response) {
-            var content = response.blob();
-            return {
-                name: fileUrls[i].match(/[^\/\\]+$/)[0],
-                data: content
-            };
-        });
-        promiseArray.push(promise);
-    }
-
-    Promise.all(promiseArray).then(function (results) {
-        // Create a zip object
-        var zip = new JSZip();
-
-        // Add each file to the zip object
-        for (var j = 0; j < results.length; j++) {
-            zip.file(results[j].name, results[j].data, { binary: true });
-        }
-
-        // Generate a zip file and download it
-        zip.generateAsync({ type: "blob" }).then(function (content) {
-            downloadFile(URL.createObjectURL(content), 'download.zip');
-        });
-    });
+function downloadFile(url, fileName) {
+    // Create a download link with the blob
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
 }
 
 
