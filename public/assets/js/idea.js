@@ -47,6 +47,7 @@ async function uploadIdeas() {
         description: description,
         anonymous: identify,
         category: category,
+        isNotified: true
         
 
     }
