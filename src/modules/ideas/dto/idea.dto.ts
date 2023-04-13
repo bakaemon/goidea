@@ -20,7 +20,7 @@ export class IdeaDto {
     @IsString()
     category: string;
 
-    @IsArray()
+    @IsString()
     tags: string;
 
     @IsArray()
