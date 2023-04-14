@@ -1,4 +1,4 @@
-import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller, Delete, Get, Query } from '@nestjs/common';
+import { Post, Res, Body, HttpStatus, HttpException, Req, UseGuards, Controller, Delete, Get, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
 import { AccountDecorator } from "@src/common/decorators/account.decorator";
 import TokenEnum from "@src/common/enums/token.enum";
@@ -17,6 +17,8 @@ import RoleGuard from '@src/common/guards/role.guard';
 import { Request } from 'express';
 import { ObjectId } from 'mongoose';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Multer } from 'multer';
 
 
 @Controller('api')
@@ -61,9 +63,27 @@ export class AuthAPIController {
     }
 
     @Post("register")
-    async register(@Body() registerAccountDto: RegisterAccountDto) {
+    @UseInterceptors(FileInterceptor('avatar', {
+        dest: '/public/assets/uploads/avatars',
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: (req, file, cb) => {
+            if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+                cb(null, true);
+            } else {
+                cb(null, false);
+            }
+        }
+    }))
+    async register(@Body() registerAccountDto: RegisterAccountDto, @UploadedFile() avatarFile: Express.Multer.File) {
         try {
-            await this.authService.register(registerAccountDto);
+            var avatar = '/public/assets/uploads/avatars' + avatarFile.filename;
+            var registerForm = {
+                ...registerAccountDto,
+                avatar
+            }
+            await this.authService.register(registerForm);
             return {
                 message: "Register account successfully, you can login now.",
                 success: true

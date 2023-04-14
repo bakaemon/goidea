@@ -19,6 +19,8 @@ import { EmailTransporter } from '@src/common/email/email-transporter';
 import { AccountsService } from '../accounts/accounts.service';
 import * as fs from 'fs';
 import { DepartmentService } from '../department/department.service';
+import { EventDocument } from '../events/schema/event.schema';
+import { TagDocument } from '../tag/schema/tag.schema';
 
 @Controller('api')
 export class IdeaAPIController {
@@ -182,7 +184,7 @@ export class IdeaAPIController {
     @Get(":id")
     async getById(@Param('id') id: string, @Res() res: Response) {
         try {
-            var idea = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
+            var ideaData = await this.service.findOne({ _id: new mongoose.Types.ObjectId(id) },
                 {
                     populate: [
                         { path: "author" },
@@ -191,11 +193,26 @@ export class IdeaAPIController {
                         { path: 'event' },
 
                     ]
-                }) as any;
+                })
+            var author;
+            if (ideaData.anonymous) { author = { name: "Anonymous", avatar: "https://i.imgur.com/Uoeie1w.jpg" };}
+            else author = ideaData.author;
+            delete ideaData.author;
+            var idea= {
+                ...ideaData.toObject() as {_id: any, title: string, description: string, files: string[], tags: TagDocument[], category: string, event: EventDocument, anonymous: boolean, createdAt: Date, updatedAt: Date},
+                author: author
+            }
+
+
             var department = await this.departmentService.findOne({ _id: new mongoose.Types.ObjectId(idea.event.department) });
             delete idea.event.department;
-            idea.event.department = department;
-            return res.json(idea)
+            return res.json({
+                ...idea,
+                event: {
+                    ...idea.event.toObject(),
+                    department: department
+                }
+            });
         } catch (error) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 success: false,
@@ -372,6 +389,28 @@ export class IdeaAPIController {
                 success: true,
                 data: comment,
                 message: "Created Comment successfully"
+            });
+
+        } catch (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    // delete comment
+    @Delete(':id/comments/:commentId/delete')
+    @UseGuards(AuthGuard)
+    async deleteComment(@AccountDecorator() account: AccountDocument,
+        @Param() id: string, @Param('commentId') commentId: string, @Res() res: Response) {
+        try {
+            if (!account && !account.roles.includes(Role.Admin)) throw new HttpException("You can't delete other people's comment!",
+                HttpStatus.FORBIDDEN);
+            await this.service.deleteComment(commentId);
+            return res.status(HttpStatus.OK).json({
+                success: true,
+                message: "Deleted Comment successfully"
             });
 
         } catch (error) {

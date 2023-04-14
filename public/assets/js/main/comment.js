@@ -15,7 +15,13 @@ async function uploadComments() {
         });
         var data = await response.json();
         if (data.success) {
-            document.getElementsByClassName('comment-section')[0].innerHTML += commentDetail(data.data);
+            var comment = {
+                ...data.data
+            }
+            delete comment.author;
+            comment.author = account;
+            console.log(comment);
+            document.getElementsByClassName('comment-section')[0].innerHTML += commentDetail(comment);
             return;
         }
         else {
@@ -27,6 +33,55 @@ async function uploadComments() {
     }
     return false;
 }
+
+const generateCommentOptions = async (comment) => {
+    if (!checkAuth()) {
+        return;
+    }
+
+    var data = account;
+    const extraOptions = document.getElementById(comment._id + '-' + comment.author._id + '-delete');
+    if (comment.author._id != data._id) return;
+    if (data._id == comment.author._id) {
+        const html = `<a href="javascript:deleteComment('${comment._id}')"><i class="fa fa-trash"></i></a>`;
+        extraOptions.innerHTML = html;
+    }
+}
+
+const deleteComment = async (commentId) => {
+    if (!checkAuth()) {
+        alert('Please login to delete comment!');
+        return;
+    }
+    if (!confirm("Are you sure to delete this comment?")) return;
+    var res = await fetch('/auth/api/verify_token?token=' + getCookie('token'))
+    if (!res.ok) {
+        alert('Please login to delete comment!');
+        return;
+    }
+    var account = await res.json();
+
+    var response = await fetch('/ideas/api/' + ideaId + '/comments/' + commentId + '/delete', {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if (!response.ok) {
+        alert('Failed to delete comment!');
+        return;
+    }
+    var data = await response.json();
+    if (data.success) {
+        document.getElementById(commentId).remove();
+        return;
+    }
+    else {
+        alert(data.message);
+        return;
+    }
+}
+
 
 const commentDetail = (comment) => {
     return `<div class="post" id="${comment._id}">
@@ -61,10 +116,7 @@ const commentDetail = (comment) => {
 
                     <div class="posted pull-left"><i class="fa fa-clock-o"></i> Posted on : ${comment.createdAt}</div>
 
-                    <div class="next pull-right">
-                        <a href="#"><i class="fa fa-share"></i></a>
-
-                        <a href="#"><i class="fa fa-flag"></i></a>
+                    <div class="next pull-right" id="${comment._id}-${comment.author._id}-delete">
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -92,6 +144,7 @@ const loadComments = async (page) => {
         comments.forEach(comment => {
 
             commentSection.innerHTML += commentDetail(comment);
+            
             var upBtn = $('#' + comment._id + ' #u-comment');
             var downBtn = $('#' + comment._id + ' #d-comment');
             if (comment.voteStatus == 'upvoted') { upBtn.toggleClass('fa-regular fa-solid'); }
@@ -103,6 +156,7 @@ const loadComments = async (page) => {
             downBtn.click(() => {
                 downvoteComment(comment._id);
             });
+            generateCommentOptions(comment);
         });
     }
 }
